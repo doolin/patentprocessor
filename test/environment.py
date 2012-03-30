@@ -1,25 +1,20 @@
 #!/usr/bin/env python
 
-print "testing for imports"
-
-import datetime, copy, csv
-import math, os, random, re, sqlite3
-import sys, time, types, unicodedata
-from xml.dom  import minidom
-import zipfile
-
-imports = ["foo", "bar"]
-
-try:
-    import zipfile
-    print "zipfile found"
-except ImportError:
-    print "zipfile not found"
+print "Testing for system module i mports..."
 
 
-try:
-    import igraph
-    print "igraph found"
-except ImportError:
-    print "igraph not found"
+imports = ['datetime', "copy", "csv", "math", "os", "random", "re",
+           "sqlite3", "sys", "time", "types", "unicodedata", "xml",
+           "zipfile", "igraph"]
+
+def check_module(module):
+    try:
+        __import__(module)
+        print "module %s found" % module
+    except ImportError:
+        print "module %s not found" % module
+
+
+for module in imports:
+    check_module(module)
 
