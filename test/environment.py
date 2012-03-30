@@ -8,6 +8,7 @@ imports = ['datetime', "copy", "csv", "math", "os", "random", "re",
            "zipfile", "igraph"]
 
 def check_module(module):
+    """Test for the presence of a module on the system"""
     try:
         __import__(module)
         print "module %s found" % module
