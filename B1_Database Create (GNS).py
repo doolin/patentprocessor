@@ -1,5 +1,6 @@
-#http://earth-info.nga.mil/gns/html/gis_countryfiles.htm
-#http://geonames.usgs.gov/domestic/download_data.htm
+# International Country Files Geographic Names (GNS)
+# http://earth-info.nga.mil/gns/html/gis_countryfiles.htm
+# http://earth-info.nga.mil/gns/html/geonames_dd_dms_date_20120402.zip
 
 import datetime, csv, os, re, sqlite3, unicodedata
 from locFunc import uniasc, cityctry
@@ -8,9 +9,6 @@ cc_iso = {'BD': 'BM', 'BF': 'BS', 'BG': 'BD', 'BA': 'BH', 'WA': 'NA', 'BC': 'BW'
 
 flder = "GNS"
 fname = sorted([x for x in os.listdir(flder)])[-1]
-
-flderUS = "SASZip"
-fnameUS = [x for x in os.listdir(flderUS) if re.search(r'[.]csv', x, re.I)!=None]
 
 conn = sqlite3.connect("loctbl.sqlite3")
 c = conn.cursor()
@@ -83,7 +81,13 @@ c.executescript("""
     CREATE INDEX IF NOT EXISTS idx_ctsf ON gnsloc (SHORT_FORM, CC1);
     """)
 
-#US LOC
+# US LOC
+# http://geonames.usgs.gov/domestic/download_data.htm
+# http://geonames.usgs.gov/docs/stategaz/NationalFile_20120204.zip
+
+flderUS = "SASZip"
+fnameUS = [x for x in os.listdir(flderUS) if re.search(r'[.]csv', x, re.I)!=None]
+
 c.executescript("""
     CREATE TABLE IF NOT EXISTS usloc (
         Zipcode INTEGER,
@@ -100,7 +104,7 @@ c.executescript("""
 for x in fnameUS:
     c.executemany("INSERT OR REPLACE INTO usloc VALUES (?,?,?,?,?,?)", [x for x in csv.reader(open("%s/%s" % (flderUS, x), "r"))][1:])
 
-#TYPOS
+# TYPOS
 typos = [[cityctry(x[0], x[2]), x[1], cityctry(x[0], x[2], ret="ctry"),
           uniasc(unicode(x[3], "latin-1")).upper(), x[4], x[5]]
          for x in csv.reader(open("Typos\Typos.csv", "rb"))][1:]
