@@ -10,12 +10,14 @@ cc_iso = {'BD': 'BM', 'BF': 'BS', 'BG': 'BD', 'BA': 'BH', 'WA': 'NA', 'BC': 'BW'
 flder = "test/GNS"
 fname = sorted([x for x in os.listdir(flder)])[-1]
 
+
 conn = sqlite3.connect("loctbl.sqlite3")
 c = conn.cursor()
 
 #http://www.sqlite.org/faq.html#q7
 #tbls = [x[0] for x in c.execute("select name from sqlite_master where type='table'")]
-c.executescript("""
+def create_location_table_orig():
+    c.executescript("""
     CREATE TABLE IF NOT EXISTS gnsloc (
         RC INTEGER,
         UFI INTEGER,        UNI INTEGER,
@@ -36,7 +38,36 @@ c.executescript("""
         SORT_NAME4R VARCHAR(3),
         UNIQUE(RC, CC1, ADM1, ADM2, CC2, SORT_NAME));
     CREATE INDEX IF NOT EXISTS idx_all  ON gnsloc (RC, CC1, ADM1, ADM2, CC2, SORT_NAME);
-    """)
+        """)
+
+#create_location_table_orig()
+
+def create_location_table():
+    c.executescript("""
+    CREATE TABLE IF NOT EXISTS gnsloc (
+        RC INTEGER,
+        UFI INTEGER,        UNI INTEGER,
+        LAT FLOAT,          LONG FLOAT,
+        DMS_LAT INTEGER,    DMS_LONG INTEGER,
+        MGRS VARCHAR(15),   JOG VARCHAR(7),
+        FC VARCHAR(1),      DSG VARCHAR(5),
+        PC INTEGER,         CC1 VARCHAR(2),
+        ADM1 VARCHAR(2),    ADM2 VARCHAR(2),
+        POP INTEGER,        ELEV INTEGER,
+        CC2 VARCHAR(2),     NT VACRHAR(1),
+        LC VARCHAR(3),      SHORT_FORM VARCHAR(10),
+        GENERIC VARCHAR(15),SORT_NAME VARCHAR(15),
+        FULL_NAME VARCHAR(15),
+        FULL_NAME_ND VARCHAR(15),
+        MODIFY_DATE VARCHAR(10),
+        SORT_NAME3 VARCHAR(3),
+        SORT_NAME4R VARCHAR(3),
+        UNIQUE(RC, CC1, ADM1, ADM2, CC2, SORT_NAME));
+    CREATE INDEX IF NOT EXISTS idx_all  ON gnsloc (RC, CC1, ADM1, ADM2, CC2, SORT_NAME);
+        """)
+
+create_location_table()
+
 
 f = open(flder+"/"+fname, "r")
 print f.readline()
