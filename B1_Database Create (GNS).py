@@ -39,33 +39,43 @@ def create_location_table_orig():
         UNIQUE(RC, CC1, ADM1, ADM2, CC2, SORT_NAME));
     CREATE INDEX IF NOT EXISTS idx_all  ON gnsloc (RC, CC1, ADM1, ADM2, CC2, SORT_NAME);
         """)
-
 #create_location_table_orig()
 
 def create_location_table():
     c.executescript("""
     CREATE TABLE IF NOT EXISTS gnsloc (
         RC INTEGER,
-        UFI INTEGER,        UNI INTEGER,
-        LAT FLOAT,          LONG FLOAT,
-        DMS_LAT INTEGER,    DMS_LONG INTEGER,
-        MGRS VARCHAR(15),   JOG VARCHAR(7),
-        FC VARCHAR(1),      DSG VARCHAR(5),
-        PC INTEGER,         CC1 VARCHAR(2),
-        ADM1 VARCHAR(2),    ADM2 VARCHAR(2),
-        POP INTEGER,        ELEV INTEGER,
-        CC2 VARCHAR(2),     NT VACRHAR(1),
-        LC VARCHAR(3),      SHORT_FORM VARCHAR(10),
-        GENERIC VARCHAR(15),SORT_NAME VARCHAR(15),
+        UFI INTEGER,
+        UNI INTEGER,
+        LAT FLOAT,
+        LONG FLOAT,
+        DMS_LAT INTEGER,
+        DMS_LONG INTEGER,
+        MGRS VARCHAR(15),
+        JOG VARCHAR(7),
+        FC VARCHAR(1),
+        DSG VARCHAR(5),
+        PC INTEGER,
+        CC1 VARCHAR(2),
+        ADM1 VARCHAR(2),
+        POP INTEGER,
+        ELEV INTEGER,
+        CC2 VARCHAR(2),
+        NT VACRHAR(1),
+        LC VARCHAR(3),
+        SHORT_FORM VARCHAR(10),
+        GENERIC VARCHAR(15),
+        SORT_NAME VARCHAR(15),
         FULL_NAME VARCHAR(15),
         FULL_NAME_ND VARCHAR(15),
+        SORT_NAME_RG VARCHAR(15),
+        FULL_NAME_RG VARCHAR(15),
+        FULL_NAME_ND_RG VARCHAR(15),
+        NOTE VARCHAR(4000),
         MODIFY_DATE VARCHAR(10),
-        SORT_NAME3 VARCHAR(3),
-        SORT_NAME4R VARCHAR(3),
-        UNIQUE(RC, CC1, ADM1, ADM2, CC2, SORT_NAME));
-    CREATE INDEX IF NOT EXISTS idx_all  ON gnsloc (RC, CC1, ADM1, ADM2, CC2, SORT_NAME);
+        UNIQUE(RC, CC1, ADM1, CC2, SORT_NAME));
+    CREATE INDEX IF NOT EXISTS idx_all  ON gnsloc (RC, CC1, ADM1, CC2, SORT_NAME);
         """)
-
 create_location_table()
 
 
@@ -73,6 +83,7 @@ f = open(flder+"/"+fname, "r")
 print f.readline()
 j = 0
 for i,x in enumerate(f):
+    x = x.rstrip('\r\n')
     rec = x.split("\t")
 ##    if rec[9]=="P" and rec[11]!="": #if Unknown, super small right?
 ##    if rec[9]=="P":
@@ -82,9 +93,11 @@ for i,x in enumerate(f):
     rec[22] = uniasc(unicode(rec[22], "latin-1")).upper()
     rec[23] = uniasc(unicode(rec[23], "latin-1")).upper()
     rec[24] = uniasc(unicode(rec[24], "latin-1")).upper()
+    rec[25] = uniasc(unicode(rec[25], "latin-1")).upper()
     rec[25] = rec[25][:-1]
-    rec.extend([rec[22].upper()[:3], rec[22].upper()[::-1][:4]])
-    c.execute("INSERT OR REPLACE INTO gnsloc VALUES (%s)" % ",".join(["?"]*28), rec)
+    #rec.extend([rec[22].upper()[:3], rec[22].upper()[::-1][:4]])
+    #c.execute("INSERT OR REPLACE INTO gnsloc VALUES (%s)" % ",".join(["?"]*28), rec)
+    c.execute("INSERT OR REPLACE INTO gnsloc VALUES (%s)" % ",".join(["?"]*29), rec)
     if i%100000==0:
         conn.commit()
         print i, datetime.datetime.now()
@@ -93,24 +106,52 @@ for i,x in enumerate(f):
 ##        break
 conn.commit()
 
-print "INDEXING - BASIC"
-c.executescript("""
-    CREATE INDEX IF NOT EXISTS idx_rc   ON gnsloc (RC);
-    CREATE INDEX IF NOT EXISTS idx_cc1  ON gnsloc (CC1);
-    CREATE INDEX IF NOT EXISTS idx_cc2  ON gnsloc (CC2);
-    CREATE INDEX IF NOT EXISTS idx_adm1 ON gnsloc (ADM1);
-    CREATE INDEX IF NOT EXISTS idx_adm2 ON gnsloc (ADM2);
-    CREATE INDEX IF NOT EXISTS idx_fc   ON gnsloc (FC);
-    """)
-print "INDEXING - COMBO"
-c.executescript("""
-    CREATE INDEX IF NOT EXISTS idx_ctc0 ON gnsloc (SORT_NAME, CC1);
-    CREATE INDEX IF NOT EXISTS idx_ctc1 ON gnsloc (FULL_NAME, CC1);
-    CREATE INDEX IF NOT EXISTS idx_ctc2 ON gnsloc (FULL_NAME_ND, CC1);
-    CREATE INDEX IF NOT EXISTS idx_ct3  ON gnsloc (SORT_NAME3,  CC1);
-    CREATE INDEX IF NOT EXISTS idx_ct4r ON gnsloc (SORT_NAME4R, CC1);
-    CREATE INDEX IF NOT EXISTS idx_ctsf ON gnsloc (SHORT_FORM, CC1);
-    """)
+
+def gns_basic_indexing_orig():
+    print "INDEXING - BASIC"
+    c.executescript("""
+        CREATE INDEX IF NOT EXISTS idx_rc   ON gnsloc (RC);
+        CREATE INDEX IF NOT EXISTS idx_cc1  ON gnsloc (CC1);
+        CREATE INDEX IF NOT EXISTS idx_cc2  ON gnsloc (CC2);
+        CREATE INDEX IF NOT EXISTS idx_adm1 ON gnsloc (ADM1);
+        CREATE INDEX IF NOT EXISTS idx_adm2 ON gnsloc (ADM2);
+        CREATE INDEX IF NOT EXISTS idx_fc   ON gnsloc (FC);
+        """)
+
+def gns_combo_indexing_orig():
+    print "INDEXING - COMBO"
+    c.executescript("""
+        CREATE INDEX IF NOT EXISTS idx_ctc0 ON gnsloc (SORT_NAME, CC1);
+        CREATE INDEX IF NOT EXISTS idx_ctc1 ON gnsloc (FULL_NAME, CC1);
+        CREATE INDEX IF NOT EXISTS idx_ctc2 ON gnsloc (FULL_NAME_ND, CC1);
+        CREATE INDEX IF NOT EXISTS idx_ct3  ON gnsloc (SORT_NAME3,  CC1);
+        CREATE INDEX IF NOT EXISTS idx_ct4r ON gnsloc (SORT_NAME4R, CC1);
+        CREATE INDEX IF NOT EXISTS idx_ctsf ON gnsloc (SHORT_FORM, CC1);
+        """)
+
+
+
+def gns_basic_indexing():
+    print "INDEXING - BASIC"
+    c.executescript("""
+        CREATE INDEX IF NOT EXISTS idx_rc   ON gnsloc (RC);
+        CREATE INDEX IF NOT EXISTS idx_cc1  ON gnsloc (CC1);
+        CREATE INDEX IF NOT EXISTS idx_cc2  ON gnsloc (CC2);
+        CREATE INDEX IF NOT EXISTS idx_adm1 ON gnsloc (ADM1);
+        CREATE INDEX IF NOT EXISTS idx_fc   ON gnsloc (FC);
+        """)
+
+def gns_combo_indexing():
+    print "INDEXING - COMBO"
+    c.executescript("""
+        CREATE INDEX IF NOT EXISTS idx_ctc0 ON gnsloc (SORT_NAME, CC1);
+        CREATE INDEX IF NOT EXISTS idx_ctc1 ON gnsloc (FULL_NAME, CC1);
+        CREATE INDEX IF NOT EXISTS idx_ctc2 ON gnsloc (FULL_NAME_ND, CC1);
+        CREATE INDEX IF NOT EXISTS idx_ct3  ON gnsloc (SORT_NAME3,  CC1);
+        CREATE INDEX IF NOT EXISTS idx_ctsf ON gnsloc (SHORT_FORM, CC1);
+        """)
+
+
 
 # US LOC
 # http://geonames.usgs.gov/domestic/download_data.htm
