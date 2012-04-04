@@ -36,7 +36,8 @@ s.add('assigneeAsc', 'VARCHAR(30)')
 s.c.execute("UPDATE assignee_1 SET assigneeAsc = ascit(assignee);")
 s.commit()
 print "DONE: assignee_1 table created in assignee.sqlite3 with new column assigneeAsc", "\n   -", datetime.datetime.now()-t1
-s.merge(key=[['AsgNum', 'pdpass']], on=[['assigneeAsc', 'assignee']], keyType=['INTEGER'], tableFrom='main', db='db')
+#s.merge(key=[['AsgNum', 'pdpass']], on=[['assigneeAsc', 'assignee']], keyType=['INTEGER'], tableFrom='main', db='db')
+s.merge(key=[['AsgNum', 'pdpass']], on=[['assigneeAsc', 'assignee']], keyType=['INTEGER'], tableFrom='assignee.sqlite3', db='assignee_1')
 s.c.execute("UPDATE assignee_1 SET AsgNum=NULL WHERE AsgNum<0")
 print"DONE: NBER pdpass added to assignee_1 in column AsgNum", "\n   -", datetime.datetime.now()-t1
 s.commit()
