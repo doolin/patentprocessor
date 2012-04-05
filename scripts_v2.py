@@ -27,7 +27,7 @@ print "   - Loc Merge", "\n   -", datetime.datetime.now()-t1
 s = SQLite.SQLite(db = 'assignee.sqlite3', tbl = 'assignee_1')
 s.conn.create_function("ascit", 1, ascit)
 s.conn.create_function("cc", 3, locFunc.cityctry)
-s.attach(database = 'NBER_asg')
+s.attach(database='NBER_asg',name='NBER')
 s.c.execute("DROP TABLE IF EXISTS assignee_1")
 s.replicate(tableTo = 'assignee_1', table = 'assignee')
 #s.addSQL(data='assignee', insert="IGNORE")
@@ -36,8 +36,11 @@ s.add('assigneeAsc', 'VARCHAR(30)')
 s.c.execute("UPDATE assignee_1 SET assigneeAsc = ascit(assignee);")
 s.commit()
 print "DONE: assignee_1 table created in assignee.sqlite3 with new column assigneeAsc", "\n   -", datetime.datetime.now()-t1
+
 #s.merge(key=[['AsgNum', 'pdpass']], on=[['assigneeAsc', 'assignee']], keyType=['INTEGER'], tableFrom='main', db='db')
-s.merge(key=[['AsgNum', 'pdpass']], on=[['assigneeAsc', 'assignee']], keyType=['INTEGER'], tableFrom='assignee.sqlite3', db='assignee_1')
+#s.attach(database = 'NBER_asg')
+print "Tables call from script ", s.tables()
+s.merge(key=[['AsgNum', 'pdpass']], on=[['assigneeAsc', 'assignee']], keyType=['INTEGER'], tableFrom='assignee', db='NBER')
 s.c.execute("UPDATE assignee_1 SET AsgNum=NULL WHERE AsgNum<0")
 print"DONE: NBER pdpass added to assignee_1 in column AsgNum", "\n   -", datetime.datetime.now()-t1
 s.commit()

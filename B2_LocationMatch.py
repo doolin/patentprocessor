@@ -319,7 +319,7 @@ for scnt in range(-1, c.execute("select max(sep_cnt(city)) from loc").fetchone()
                 a.city as CityA, a.state as StateA, a.country as CountryA, a.zipcode as ZipcodeA,
                 b.full_name_nd, "", b.cc1, "", b.lat, b.long
           FROM  loc AS a INNER JOIN loc.gnsloc AS b
-            ON  REV_WRD(BLK_SPLIT(SEP_WRD(a.City, %d)),4)=b.sort_name4R AND a.country=b.cc1
+            ON  REV_WRD(BLK_SPLIT(SEP_WRD(a.City, %d)),4)=b.sort_name AND a.country=b.cc1
          WHERE  jaro>%s AND SEP_CNT(a.City)>=%d AND a.City!=""
       ORDER BY  a.City, a.Country, jaro;
         """ % (sep, sep, "20.90", scnt))
@@ -412,7 +412,7 @@ replace_loc("""
                FROM  loc
               WHERE  NCity IS NOT NULL) AS a
 INNER JOIN  loc.gnsloc AS b
-        ON  SUBSTR(BLK_SPLIT(a.NCity),1,3)=b.sort_name3 AND a.Ncountry=b.cc1
+        ON  SUBSTR(BLK_SPLIT(a.NCity),1,3)=b.sort_name AND a.Ncountry=b.cc1
      WHERE  jaro>%s 
   ORDER BY  a.NCity, a.NCountry, jaro;
     """ % "24.95")

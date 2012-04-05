@@ -104,7 +104,9 @@ class SQLite:
         Returns a list of table names that exist within the database.
         If lookup is specified, does that table exist within the list of tables?
         """
+        #retList = [x[0].lower() for x in self.c.execute("SELECT tbl_name FROM %ssqlite_master WHERE type='table' ORDER BY tbl_name" % dbAdd(db))]
         retList = [x[0].lower() for x in self.c.execute("SELECT tbl_name FROM %ssqlite_master WHERE type='table' ORDER BY tbl_name" % dbAdd(db))]
+
         if lookup==None:
             return retList
         else:
@@ -116,7 +118,8 @@ class SQLite:
         If search is specified, returns a list of indices that match the criteria
         """
         import re
-        retList = [x[0].lower() for x in self.c.execute("SELECT name FROM %ssqlite_master WHERE type='index' ORDER BY name" % dbAdd(db))]
+        #retList = [x[0].lower() for x in self.c.execute("SELECT name FROM %ssqlite_master WHERE type='index' ORDER BY name" % dbAdd(db))]
+        retList = [x[0].lower() for x in self.c.execute("SELECT name FROM sqlite_master WHERE type='index' ORDER BY name" )]
 
         if search!=None: #returns a range of numbers related to the search term
             nums = [(lambda x:len(x)>0 and int(x[0]) or 1)(re.findall('[0-9]+', x)) for x in retList if x.find(search)>=0]
@@ -383,10 +386,16 @@ class SQLite:
         self.c.executescript("""
             DROP TABLE IF EXISTS TblA;
             DROP TABLE IF EXISTS TblB;
-            CREATE TEMPORARY TABLE TblA AS SELECT %s FROM %s GROUP BY %s;
-            CREATE TEMPORARY TABLE TblB AS SELECT %s, %s FROM %s%s GROUP BY %s;
-            """ % (huggleMe(on), table, huggleMe(on),
-                   huggleMe(key, idx=1), huggleMe(on, idx=1), dbAdd(db), tableFrom, huggleMe(on, idx=1)))
+            """)
+        self.c.executescript("""CREATE TEMPORARY TABLE TblA AS SELECT %s FROM %s GROUP BY %s;""" % (huggleMe(on), table, huggleMe(on)))
+        print "tableFrom ", tableFrom
+        print huggleMe(key, idx=1), huggleMe(on, idx=1)
+        print self.tables()
+        print ("CREATE TEMPORARY TABLE TblB AS SELECT %s, %s FROM %s%s GROUP BY %s;" % 
+                             (huggleMe(key, idx=1), huggleMe(on, idx=1), dbAdd(db), tableFrom, huggleMe(on, idx=1)))
+        self.c.executescript("""CREATE TEMPORARY TABLE TblB AS SELECT %s, %s FROM %s%s GROUP BY %s;""" % 
+                             (huggleMe(key, idx=1), huggleMe(on, idx=1), dbAdd(db), tableFrom, huggleMe(on, idx=1)))
+
         self.index(keys=[x[0] for x in on], table="TblA", index='idx_temp_TblA')
         self.index(keys=[x[1] for x in on], table="TblB", index='idx_temp_TblB')
         
