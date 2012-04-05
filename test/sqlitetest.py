@@ -16,6 +16,24 @@ def close_connections():
     conn1.close()
     conn2.close()
 
+def create_assignee_schema(cursor):
+    cursor.executescript("""
+        CREATE TABLE IF NOT EXISTS assignee (
+            Patent VARCHAR(8),      AsgType INTEGER,        Assignee VARCHAR(30),
+            City VARCHAR(10),       State VARCHAR(2),       Country VARCHAR(2),
+            Nationality VARCHAR(2), Residence VARCHAR(2),   AsgSeq INTEGER);
+        CREATE UNIQUE INDEX IF NOT EXISTS uqAsg ON assignee (Patent, AsgSeq);
+        DROP INDEX IF EXISTS idx_pata;
+        DROP INDEX IF EXISTS idx_patent;
+        DROP INDEX IF EXISTS idx_asgtyp;
+        DROP INDEX IF EXISTS idx_stt;
+        DROP INDEX IF EXISTS idx_cty;
+        """)
+
+def initialize_assignees(conn):
+    q = ('D0656296',2,'Frito-Lay North America, Inc.','Plano','TX','US','','',0)
+    conn.cursor().execute("""INSERT OR IGNORE INTO assignee VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)""", q)
+    conn.commit()
 
 class TestSQLite(unittest.TestCase):
 
@@ -58,9 +76,17 @@ class TestSQLite(unittest.TestCase):
         assert(s.db == 'foobar.sqlite3')
         assert(s.tbl == 'table_foo')
 
+#    def test_merge(self):
+#        s = SQLite.SQLite()
+#        s.merge(key=[['AsgNum', 'pdpass']], on=[['assigneeAsc', 'assignee']],
+#                keyType=['INTEGER'], tableFrom='main', db='db')
+#        assert(1 == 1)
 
-
-    #def test_indexes(self):
+    def test_index(self):
+        s = SQLite.SQLite('test.sqlite3')
+        create_assignee_schema(s.c)
+        initialize_assignees(s.conn)
+        assert(1 == 1)
 
 if __name__ == '__main__':
     unittest.main()
