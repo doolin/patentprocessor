@@ -8,15 +8,15 @@ print "Start", t1
 ##Create invpat
 ip = SQLite.SQLite(db = 'invpat.sqlite3', tbl = 'invpat')
 ip.c.execute("DROP TABLE IF EXISTS invpat")
-ip.c.execute("""CREATE TABLE invpat(Firstname TEXT, Lastname TEXT, Street TEXT,
-            City TEXT, State TEXT, Country TEXT, Zipcode TEXT, Lat REAL,
-            Lng REAL, InvSeq INT, Patent TEXT, AppYear TEXT, GYear INT,
-            AppDate TEXT, Assignee TEXT, AsgNum INT, Class TEXT, Invnum,
-            Invnum_N TEXT);""")
+ip.c.execute("""CREATE TABLE invpat(Firstname TEXT, Middlename TEXT, Lastname TEXT, Street TEXT,
+            City TEXT, State TEXT, Country TEXT, Zipcode TEXT, Latitude REAL,
+            Longitude REAL, InvSeq INT, Patent TEXT, AppYear TEXT, GYear INT,
+            AppDate TEXT, Assignee TEXT, AsgNum INT, Class TEXT, Invnum TEXT,
+            Invnum_N TEXT, Unique_Record_ID TEXT);""")
 
-##From inventor.sqlite3: Firstname, Lastname, Street, City, State, Country, Zipcode, Lat, Lng, InvSeq
+##From inventor.sqlite3: Firstname, Lastname, Street, City, State, Country, Zipcode, Latitude, Longitude, InvSeq
 ip.attach('inventor.sqlite3')
-ip.c.execute("""INSERT INTO invpat (Firstname, Lastname, Street, City, State, Country, Zipcode, Lat, Lng, Patent, InvSeq)
+ip.c.execute("""INSERT INTO invpat (Firstname, Lastname, Street, City, State, Country, Zipcode, Latitude, Longitude, Patent, InvSeq)
                 SELECT Firstname, Lastname, Street, NCity, NState, NCountry, NZipcode, NLat, NLong, Patent, InvSeq FROM db.inventor_1""")
 ip.detach()
 
@@ -39,6 +39,8 @@ ip.commit()
 ##Generate invnum
 ip.c.execute("UPDATE invpat SET invnum = patent || '-' || invseq")
 ip.c.execute("UPDATE invpat SET Invnum_N = Invnum")
+ip.c.execute("UPDATE invpat SET Unique_Record_ID = Invnum")
+ip.c.execute("UPDATE invpat SET Middlename = Firstname")
 ip.commit()
 
 ##Index invpat
