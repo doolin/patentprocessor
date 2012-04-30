@@ -21,7 +21,7 @@ print "Total files: %d" % (len(files))
 
 tables = ["assignee", "citation", "class", "inventor", "patent", "patdesc", "lawyer", "sciref", "usreldoc"]
 total_count = 0
-for filenum, filename in enumerate(files):    
+for filenum, filename in enumerate(files):
     print " > Regular Expression: %s" % filename
     XMLs = re.findall(
             r"""
