@@ -20,6 +20,7 @@ print "Total files: %d" % (len(files))
 #sys.exit()
 
 tables = ["assignee", "citation", "class", "inventor", "patent", "patdesc", "lawyer", "sciref", "usreldoc"]
+total_count = 0
 for filenum, filename in enumerate(files):    
     print " > Regular Expression: %s" % filename
     XMLs = re.findall(
@@ -42,10 +43,11 @@ for filenum, filename in enumerate(files):
             count += 1
     print "   - number of patents:", len(xmllist), datetime.datetime.now()-t1
     print "   - number of errors: " ,count
+    total_count += count
     for table in tables:
         SQLPatent().dbBuild(q=SQLPatent().tblBuild(xmllist, tbl=table), tbl=table, week=filename)
     print "   -", datetime.datetime.now()-t1
-
+    print "   -total errors: ", total_count
 
 for table in tables:
     SQLPatent().dbFinal(tbl=table)
