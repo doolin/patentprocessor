@@ -1,3 +1,4 @@
+invpat*.csv
 *.pyc
 *.sqlite3
 data/

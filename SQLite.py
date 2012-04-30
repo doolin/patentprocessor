@@ -338,7 +338,9 @@ class SQLite:
 
         #only create indexes if its necessary!  (it doens't already exist)
         idxA = self.baseIndex()
-        idxSQL = "CREATE %sINDEX %s%s ON %s (%s)" % (unique and "UNIQUE " or "", dbAdd(db), index, table, ",".join(keys))
+        #idxSQL = "CREATE %sINDEX %s%s ON %s (%s)" % (unique and "UNIQUE " or "", dbAdd(db), index, table, ",".join(keys))
+        # Prevent failure on duplicate index
+        idxSQL = "CREATE %sINDEX IF NOT EXISTS %s%s ON %s (%s)" % (unique and "UNIQUE " or "", dbAdd(db), index, table, ",".join(keys))
         if self.baseIndex(idx=idxSQL, db=db) not in idxA:
             self.c.execute(idxSQL)
             return "%s%s" % (dbAdd(db), index)
