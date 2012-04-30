@@ -6,7 +6,7 @@ from fwork  import *
 import os, datetime, re
 
 #flder='test'
-flder = '../../patents/2011'
+flder = '/var/share/patentdata/patents/2010'
 t1 = datetime.datetime.now()
 
 #get a listing of all files within the directory that follow the naming pattern
