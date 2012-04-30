@@ -10,8 +10,8 @@ ip = SQLite.SQLite(db = 'invpat.sqlite3', tbl = 'invpat')
 ip.c.execute("DROP TABLE IF EXISTS invpat")
 ip.c.execute("""CREATE TABLE invpat(Firstname TEXT, Middlename TEXT, Lastname TEXT, Street TEXT,
             City TEXT, State TEXT, Country TEXT, Zipcode TEXT, Latitude REAL,
-            Longitude REAL, InvSeq INT, Patent TEXT, AppYear TEXT, GYear INT,
-            AppDate TEXT, Assignee TEXT, AsgNum INT, Class TEXT, Invnum TEXT,
+            Longitude REAL, InvSeq INT, Patent TEXT, AppYear TEXT, ApplyYear TEXT, GYear INT,
+            AppDate TEXT, Assignee TEXT, AsgNum INT, Class TEXT, Coauthor TEXT, Invnum TEXT,
             Invnum_N TEXT, Unique_Record_ID TEXT);""")
 
 ##From inventor.sqlite3: Firstname, Lastname, Street, City, State, Country, Zipcode, Latitude, Longitude, InvSeq
@@ -41,6 +41,7 @@ ip.c.execute("UPDATE invpat SET invnum = patent || '-' || invseq")
 ip.c.execute("UPDATE invpat SET Invnum_N = Invnum")
 ip.c.execute("UPDATE invpat SET Unique_Record_ID = Invnum")
 ip.c.execute("UPDATE invpat SET Middlename = Firstname")
+ip.c.execute("UPDATE invpat SET ApplyYear = AppYear")
 ip.commit()
 
 ##Index invpat
