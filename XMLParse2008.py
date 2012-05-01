@@ -1,15 +1,22 @@
 #!/usr/bin/env python
-
+import logging
 import sys
 sys.path.append( '.' )
+import shutil
 from patXML import SQLPatent
 from patXML import XMLPatent
 from patXML import uniasc
 from fwork  import *
 import os, datetime, re
 
-#flder='test'
-flder = '/var/share/patentdata/patents/2010'
+flder = '/var/share/patentdata/patents/testem'
+logfile = flder + "/" + 'xml-parsing.log'
+logging.basicConfig(filename=logfile, level=logging.DEBUG)
+#logging.debug('This message should go to the log file')
+#logging.info('So should this')
+#logging.warning('And this, too')
+
+
 t1 = datetime.datetime.now()
 
 #get a listing of all files within the directory that follow the naming pattern
@@ -18,6 +25,7 @@ files = [x for x in os.listdir(flder)
          #if re.match(r"ipg\d{6}.one.xml", x, re.I)!=None]
          if re.match(r"ipg\d{6}.xml", x, re.I)!=None]
 print "Total files: %d" % (len(files))
+logging.info("Total files: %d" % (len(files)))
 
 #sys.exit()
 
@@ -34,6 +42,7 @@ for filenum, filename in enumerate(files):
              """,
             open(flder+"/"+files[filenum]).read(), re.I + re.S + re.X)
     print "   - Total Patents: %d" % (len(XMLs))
+    logging.info("   - Total Patents: %d" % (len(XMLs)))
 
     xmllist = []
     count = 0
@@ -45,11 +54,15 @@ for filenum, filename in enumerate(files):
             patents += 1
         except Exception as inst:
             print type(inst)
+            logging.error(type(inst))
             print "  - Error: %s (%d)  %s" % (filename, i, x[175:200])
+            logging.error("  - Error: %s (%d)  %s" % (filename, i, x[175:200]))
             count += 1
 
     print "   - number of patents:", len(xmllist), datetime.datetime.now()-t1
+    logging.info("   - number of patents: %d %s ", len(xmllist), datetime.datetime.now()-t1)
     print "   - number of errors: ", count
+    logging.info( "   - number of errors: %d", count)
     total_count += count
     total_patents += patents
 
@@ -57,11 +70,20 @@ for filenum, filename in enumerate(files):
         # Cut the chaining here to better parameterize the call, allowing
         # the databases to be built in place
         # (/var/share/patentdata/patents/<year>)
-        SQLPatent().dbBuild(q=SQLPatent().tblBuild(xmllist, tbl=table), tbl=table, week=filename)
+        # outdb = flder + "/" + table
+        q = SQLPatent().tblBuild(xmllist, tbl=table)
+        SQLPatent().dbBuild(q, tbl=table, week=filename)
+        #SQLPatent().dbBuild(q=SQLPatent().tblBuild(xmllist, tbl=table), tbl=table, week=filename)
 
     print "   -", datetime.datetime.now()-t1
-    print "   - total errors: ", total_count
-    print "   - total patents: ", total_patents
+    logging.info("   - %s", datetime.datetime.now()-t1)
+    logging.info("   - total errors: %d", total_count)
+    logging.info("   - total patents: %d", total_patents)
 
 for table in tables:
     SQLPatent().dbFinal(tbl=table)
+
+for table in tables:
+    filename = table + ".sqlite3"
+    shutil.move(filename,flder)
+
