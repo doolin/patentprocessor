@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 import sys
 sys.path.append( '.' )
 from patXML import SQLPatent
@@ -52,6 +54,9 @@ for filenum, filename in enumerate(files):
     total_patents += patents
 
     for table in tables:
+        # Cut the chaining here to better parameterize the call, allowing
+        # the databases to be built in place
+        # (/var/share/patentdata/patents/<year>)
         SQLPatent().dbBuild(q=SQLPatent().tblBuild(xmllist, tbl=table), tbl=table, week=filename)
 
     print "   -", datetime.datetime.now()-t1
