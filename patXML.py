@@ -26,7 +26,7 @@ def ron_d(xml, itr=0, defList=[], cat="", debug=False):
                    len(re.findall("[A-Z0-9]", innerHTML(x), re.I))>0:
                     xmlist.append(cat+x.nodeName)
                 xmlist.extend(ron_d(x, itr-1, cat=cat+x.nodeName+"|", debug=debug))
-                
+
         xmlcopy = copy.copy(xmlist)
         for x in xmlist:
             if xmlcopy.count(x)>1:
@@ -44,7 +44,7 @@ def innerHTML(dom_element):
             if node.nodeType == node.TEXT_NODE:
                 rc = rc + node.data
         return rc
-    
+
 def XMLstruct(strList, debug=False):
     xmlstruct = []
     for i,x in enumerate(strList):
@@ -61,7 +61,7 @@ class SQLPatent:
 ##            conn = sqlite3.connect(tbl+"_l.sqlite3")
 ##        else:
         table = os.path.isfile("%s.sqlite3" % tbl)
-        conn = sqlite3.connect("%s.sqlite3" % tbl)            
+        conn = sqlite3.connect("%s.sqlite3" % tbl)
         c = conn.cursor()
         ##c.execute("PRAGMA synchronous = 0")
         self.dbTbl(tbl=tbl, c=c, legacy=legacy)
@@ -94,7 +94,7 @@ class SQLPatent:
         conn=None
 
     def dbFinal(self, tbl, legacy=True):
-        conn = sqlite3.connect("%s.sqlite3" % tbl)            
+        conn = sqlite3.connect("%s.sqlite3" % tbl)
         c = conn.cursor()
         if tbl=="assignee":
 ##            c.execute("CREATE INDEX IF NOT EXISTS idx_pata ON %s (Patent, AsgSeq)" % tbl)
@@ -192,7 +192,7 @@ class SQLPatent:
             c.executescript("""
                 CREATE TABLE IF NOT EXISTS patent (
                     Patent VARCHAR(8),      Kind VARCHAR(3),        Claims INTEGER,
-                    AppType INTEGER,        AppNum VARCHAR(8),      
+                    AppType INTEGER,        AppNum VARCHAR(8),
                     GDate INTEGER,          GYear INTEGER,
                     AppDate INTEGER,        AppYear INTEGER, PatType VARCHAR(15) );
                 CREATE UNIQUE INDEX IF NOT EXISTS uqPat on patent (Patent);
@@ -235,7 +235,7 @@ class SQLPatent:
                 DROP INDEX IF EXISTS idx_pator;
                 DROP INDEX IF EXISTS idx_patent;
                 """)
-            
+
     def tblBuild(self, patents, tbl, legacy=True):
         q = [] # creating the list of lists
         for x in patents:
@@ -272,14 +272,14 @@ class SQLPatent:
                         q.extend([[x.patent, y[0], y[1], y[3], y[2], y[4], y[5], y[6]]])
                     else:
                         q.extend([[x.patent, y[0], y[1], y[3], y[2], y[4], "", ""]])
-                        
-        return q            
-            
+
+        return q
+
 class XMLPatent:
     def __init__(self, XMLString, debug=False):
         #XMLString conversion so tags are all lower
         XMLString = re.sub(r"<[/]?[A-Za-z-]+?[ >]", lambda x: x.group().lower(), XMLString)
-##        XMLString = re.sub(r"(?<![</A-Za-z-])[/]?[A-Za-z-]+?>", lambda x: "<"+x.group().lower(), XMLString)        
+##        XMLString = re.sub(r"(?<![</A-Za-z-])[/]?[A-Za-z-]+?>", lambda x: "<"+x.group().lower(), XMLString)
         xmldoc = minidom.parseString(XMLString)
         #patent related detail
         #  patent number, kind, date_grant, date_app, country, pat_type
@@ -340,7 +340,7 @@ class XMLPatent:
             for node in dom_element.childNodes:
                 if node.nodeType == node.TEXT_NODE:
                     rc = rc + node.data
-            return rc       
+            return rc
 
     def __tagSplit__(self, xmldoc, xmlList, tagList, baseList=[], idx=0, blank=False, iHTML=True, debug=False):
         d_list = []
@@ -353,7 +353,7 @@ class XMLPatent:
                     print y
                 record.extend(self.__tagNme__(x, tagList=y, blank=blank, iHTML=iHTML, debug=debug, idx=idx))
             d_list.append(record)
-        return d_list        
+        return d_list
 
     def __tagNme__(self, xmldoc, tagList, idx=0, listType=False, blank=False, iHTML=True, debug=False):
         xmldoc = [xmldoc]
@@ -386,17 +386,17 @@ class XMLPatent:
             elif iHTML:
                 print [self.__innerHTML__(x) for x in xmldoc]
             else:
-                print xmldoc        
+                print xmldoc
 
         if len(xmldoc)==1 and iHTML:
             if listType:
                 return [self.__innerHTML__(xmldoc[0])]
             else:
-                return self.__innerHTML__(xmldoc[0])                
+                return self.__innerHTML__(xmldoc[0])
         elif iHTML:
             return [self.__innerHTML__(x) for x in xmldoc]
         else:
-            return xmldoc        
+            return xmldoc
 
     def __asg_detail__(self, xmldoc):
         d_list = []
@@ -411,7 +411,7 @@ class XMLPatent:
             record.extend(self.__tagNme__(x, ["addressbook", "address", ["street", "city", "state", "country", "postcode"]], blank=True))
             record.extend(self.__tagNme__(x, [["nationality", "residence"], "country"], blank=True))
             d_list.append(record)
-        return d_list        
+        return d_list
 
     def __cit_detail__(self, xmldoc):
         d_list = []
@@ -428,7 +428,7 @@ class XMLPatent:
             else:
                 print x.toxml()
             d_list.append(record)
-        return d_list        
+        return d_list
 
     def __rel_detail__(self, xmldoc, debug=False):
         d_list = []
