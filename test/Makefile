@@ -1,4 +1,4 @@
 
 
 clean:
-	rm -rf *.sqlite3 *~
+	rm -rf *.sqlite3 *~ *.pyc
