@@ -44,6 +44,9 @@ for filenum, filename in enumerate(files):
     print "   - Total Patents: %d" % (len(XMLs))
     logging.info("   - Total Patents: %d" % (len(XMLs)))
 
+    #print XMLs[1]
+    #sys.exit()
+
     xmllist = []
     count = 0
     patents = 0
@@ -52,6 +55,8 @@ for filenum, filename in enumerate(files):
         try:
             xmllist.append(XMLPatent(x))
             patents += 1
+            print xmllist[0]
+            sys.exit()
         except Exception as inst:
             print type(inst)
             logging.error(type(inst))
