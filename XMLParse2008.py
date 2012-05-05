@@ -9,7 +9,7 @@ from patXML import uniasc
 from fwork  import *
 import os, datetime, re
 
-flder = '/var/share/patentdata/patents/testem'
+flder = '/var/share/patentdata/patents/2009'
 logfile = flder + "/" + 'xml-parsing.log'
 logging.basicConfig(filename=logfile, level=logging.DEBUG)
 #logging.debug('This message should go to the log file')
