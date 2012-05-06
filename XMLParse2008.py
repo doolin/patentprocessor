@@ -9,13 +9,9 @@ from patXML import uniasc
 from fwork  import *
 import os, datetime, re
 
-flder = '/var/share/patentdata/patents/2009'
+flder = '/var/share/patentdata/patents/test/18'
 logfile = flder + "/" + 'xml-parsing.log'
 logging.basicConfig(filename=logfile, level=logging.DEBUG)
-#logging.debug('This message should go to the log file')
-#logging.info('So should this')
-#logging.warning('And this, too')
-
 
 t1 = datetime.datetime.now()
 
@@ -26,8 +22,6 @@ files = [x for x in os.listdir(flder)
          if re.match(r"ipg\d{6}.xml", x, re.I)!=None]
 print "Total files: %d" % (len(files))
 logging.info("Total files: %d" % (len(files)))
-
-#sys.exit()
 
 tables = ["assignee", "citation", "class", "inventor", "patent", "patdesc", "lawyer", "sciref", "usreldoc"]
 total_count = 0
@@ -44,8 +38,6 @@ for filenum, filename in enumerate(files):
     print "   - Total Patents: %d" % (len(XMLs))
     logging.info("   - Total Patents: %d" % (len(XMLs)))
 
-    #print XMLs[1]
-    #sys.exit()
 
     xmllist = []
     count = 0
@@ -55,8 +47,6 @@ for filenum, filename in enumerate(files):
         try:
             xmllist.append(XMLPatent(x))
             patents += 1
-            print xmllist[0]
-            sys.exit()
         except Exception as inst:
             print type(inst)
             logging.error(type(inst))
@@ -88,7 +78,7 @@ for filenum, filename in enumerate(files):
 for table in tables:
     SQLPatent().dbFinal(tbl=table)
 
-for table in tables:
-    filename = table + ".sqlite3"
-    shutil.move(filename,flder)
+#for table in tables:
+#    filename = table + ".sqlite3"
+#    shutil.move(filename,flder)
 
