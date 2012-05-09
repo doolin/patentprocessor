@@ -1,5 +1,6 @@
 import SQLite
 import datetime
+import shutil
 
 
 t1 = datetime.datetime.now()
@@ -61,3 +62,8 @@ ip.close()
 
 print "Finish", datetime.datetime.now()-t1
 
+
+#tables = ["assignee", "citation", "class", "inventor", "patent", "patdesc", "lawyer", "sciref", "usreldoc"]
+#for table in tables:
+#    filename = table + ".sqlite3"
+#    shutil.move(filename,flder)
