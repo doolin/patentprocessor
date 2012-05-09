@@ -10,7 +10,7 @@ from  xml_patent import XMLPatent
 
 xmlfile = open('xml/ipg120327.one.xml')
 
-class TestXMLParse(unittest.TestCase):
+class TestXMLPatent(unittest.TestCase):
 
     def setUp(self):
         self.foo = 'bar'
@@ -18,7 +18,7 @@ class TestXMLParse(unittest.TestCase):
     def test_dummy(self):
         assert(1 == 1)
 
-    def test_parse(self):
+    def test_patent(self):
         attlist = XMLPatent(xmlfile.read())
         #print attlist
         # Assert against whatever python uses for array or list
