@@ -3,6 +3,7 @@ from types import *
 import datetime, csv, os, re, sqlite3
 import copy
 
+
 class SQLPatent:
 
     def dbBuild(self, q, tbl, week=0, legacy=True):
@@ -46,6 +47,7 @@ class SQLPatent:
     def dbFinal(self, tbl, legacy=True):
         conn = sqlite3.connect("%s.sqlite3" % tbl)
         c = conn.cursor()
+
         if tbl=="assignee":
 ##            c.execute("CREATE INDEX IF NOT EXISTS idx_pata ON %s (Patent, AsgSeq)" % tbl)
             c.execute("CREATE INDEX IF NOT EXISTS idx_patent ON %s (Patent)" % tbl)
@@ -53,11 +55,13 @@ class SQLPatent:
             c.execute("CREATE INDEX IF NOT EXISTS idx_asgtyp ON %s (AsgType)" % tbl)
             c.execute("CREATE INDEX IF NOT EXISTS idx_stt ON %s (State)" % tbl)
             c.execute("CREATE INDEX IF NOT EXISTS idx_cty ON %s (Country)" % tbl)
+
         elif tbl=="citation":
 ##            print "[citation] to be continued..."
             c.execute("CREATE INDEX IF NOT EXISTS idx_patc ON %s (Patent, Citation)" % tbl)
             c.execute("CREATE INDEX IF NOT EXISTS idx_patent ON %s (Patent)" % tbl)
             c.execute("CREATE INDEX IF NOT EXISTS idx_cit ON %s (Citation)" % tbl)
+
         elif tbl=="class":
 ##            c.execute("CREATE INDEX IF NOT EXISTS idx_patcs ON %s (Patent, Class, SubClass)" % tbl)
             c.execute("CREATE INDEX IF NOT EXISTS idx_patent ON %s (Patent)" % tbl)
@@ -65,32 +69,42 @@ class SQLPatent:
             c.execute("CREATE INDEX IF NOT EXISTS idx_cls  ON %s (Class)" % tbl)
             c.execute("CREATE INDEX IF NOT EXISTS idx_scls ON %s (SubClass)" % tbl)
             c.execute("CREATE INDEX IF NOT EXISTS idx_cscl ON %s (Class,SubClass)" % tbl)
+
         elif tbl=="inventor":
 ##            c.execute("CREATE INDEX IF NOT EXISTS idx_pati ON %s (Patent, InvSeq)" % tbl)
             c.execute("CREATE INDEX IF NOT EXISTS idx_patent ON %s (Patent)" % tbl)
             c.execute("CREATE INDEX IF NOT EXISTS idx_stt ON %s (State)" % tbl)
             c.execute("CREATE INDEX IF NOT EXISTS idx_cty ON %s (Country)" % tbl)
+
         elif tbl=="patent":
             c.execute("CREATE INDEX IF NOT EXISTS idx_patent ON %s (Patent)" % tbl)
             c.execute("CREATE INDEX IF NOT EXISTS idx_ayr ON %s (AppYear)" % tbl)
             c.execute("CREATE INDEX IF NOT EXISTS idx_gyr ON %s (GYear)" % tbl)
+
         elif tbl=="patdesc":
             c.execute("CREATE INDEX IF NOT EXISTS idx_patent ON %s (Patent)" % tbl)
+
         elif tbl=="lawyer":
             c.execute("CREATE INDEX IF NOT EXISTS idx_patl ON %s (Patent, LawSeq)" % tbl)
             c.execute("CREATE INDEX IF NOT EXISTS idx_patent ON %s (Patent)" % tbl)
+
         elif tbl=="sciref":
 ##            c.execute("CREATE INDEX IF NOT EXISTS idx_patc ON %s (Patent, CitSeq)" % tbl)
             c.execute("CREATE INDEX IF NOT EXISTS idx_patent ON %s (Patent)" % tbl)
+
         elif tbl=="usreldoc":
 ##            c.execute("CREATE INDEX IF NOT EXISTS idx_pator ON %s (Patent, OrderSeq, RelPatent)" % tbl)
             c.execute("CREATE INDEX IF NOT EXISTS idx_patent ON %s (Patent)" % tbl)
             c.execute("CREATE INDEX IF NOT EXISTS idx_relpat ON %s (RelPatent)" % tbl)
+
         c.close()
         conn.close()
 
+
     def dbTbl(self, tbl, c, legacy=True):
+
         c.execute("CREATE TABLE IF NOT EXISTS gXML ( week VARCHAR )")
+
         if tbl=="assignee":
             c.executescript("""
                 CREATE TABLE IF NOT EXISTS assignee (
@@ -104,6 +118,7 @@ class SQLPatent:
                 DROP INDEX IF EXISTS idx_stt;
                 DROP INDEX IF EXISTS idx_cty;
                 """)
+
         elif tbl=="citation":
             c.executescript("""
                 CREATE TABLE IF NOT EXISTS citation (
@@ -115,6 +130,7 @@ class SQLPatent:
                 DROP INDEX IF EXISTS idx_patent;
                 DROP INDEX IF EXISTS idx_cit;
                 """)
+
         elif tbl=="class":
             c.executescript("""
                 CREATE TABLE IF NOT EXISTS class (
@@ -125,6 +141,7 @@ class SQLPatent:
                 DROP INDEX IF EXISTS idx_patent;
                 DROP INDEX IF EXISTS idx_prim;
                 """)
+
         elif tbl=="inventor":
             c.executescript("""
                 CREATE TABLE IF NOT EXISTS inventor (
@@ -138,6 +155,7 @@ class SQLPatent:
                 DROP INDEX IF EXISTS idx_stt;
                 DROP INDEX IF EXISTS idx_cty;
                 """)
+
         elif tbl=="patent": #add PatType VARCHAR(15)
             c.executescript("""
                 CREATE TABLE IF NOT EXISTS patent (
@@ -150,6 +168,7 @@ class SQLPatent:
                 DROP INDEX IF EXISTS idx_ayr;
                 DROP INDEX IF EXISTS idx_gyr;
                 """)
+
         elif tbl=="patdesc":
             c.executescript("""
                 CREATE TABLE IF NOT EXISTS patdesc (
@@ -158,6 +177,7 @@ class SQLPatent:
                 CREATE UNIQUE INDEX IF NOT EXISTS uqPatDesc ON patdesc (Patent);
                 DROP INDEX IF EXISTS idx_patent;
                 """)
+
         elif tbl=="lawyer":
             c.executescript("""
                 CREATE TABLE IF NOT EXISTS lawyer (
@@ -167,6 +187,7 @@ class SQLPatent:
                 DROP INDEX IF EXISTS idx_patl;
                 DROP INDEX IF EXISTS idx_patent;
                 """)
+
         elif tbl=="sciref":
             c.executescript("""
                 CREATE TABLE IF NOT EXISTS sciref (
@@ -175,6 +196,7 @@ class SQLPatent:
                 DROP INDEX IF EXISTS idx_patc;
                 DROP INDEX IF EXISTS idx_patent;
                 """)
+
         elif tbl=="usreldoc":
             c.executescript("""
                 CREATE TABLE IF NOT EXISTS usreldoc (
@@ -186,36 +208,47 @@ class SQLPatent:
                 DROP INDEX IF EXISTS idx_patent;
                 """)
 
+
     def tblBuild(self, patents, tbl, legacy=True):
         q = [] # creating the list of lists
+
         for x in patents:
+
             if tbl=="assignee":
                 for i,y in enumerate(x.asg_list):
                     if y[0]==0:
                         q.extend([[x.patent, y[2], y[1], y[4], y[5], y[6], y[7], y[8], i]])
                     else:
                         q.extend([[x.patent, "00", "%s, %s" % (y[2], y[1]), y[4], y[5], y[6], y[7], y[8], i]])
+
             elif tbl=="citation":
                 cit_list = [y for y in x.cit_list if y[1]!=""]
                 for i,y in enumerate(cit_list):
                     q.extend([[x.patent, y[3], y[5], y[4], y[1], y[2], y[0], i]])
+
             elif tbl=="class":
                 for i,y in enumerate(x.classes):
                     q.extend([[x.patent, (i==0)*1, y[0], y[1]]])
+
             elif tbl=="inventor":
                 for i,y in enumerate(x.inv_list):
                     q.extend([[x.patent, y[1], y[0], y[2], y[3], y[4], y[5], y[6], y[8], i]])
+
             elif tbl=="patent":
                 q.extend([[x.patent, x.kind, x.clm_num, x.code_app, x.patent_app, x.date_grant, x.date_grant[:4], x.date_app, x.date_app[:4], x.pat_type]]) #add x.pat_type
+
             elif tbl=="patdesc":
                 q.extend([[x.patent, x.abstract, x.invention_title]])
+
             elif tbl=="lawyer":
                 for i,y in enumerate(x.law_list):
                     q.extend([[x.patent, y[1], y[0], y[2], y[3], i]])
+
             elif tbl=="sciref":
                 cit_list = [y for y in x.cit_list if y[1]==""]
                 for i,y in enumerate(cit_list):
                     q.extend([[x.patent, y[-1], i]])
+
             elif tbl=="usreldoc":
                 for i,y in enumerate(x.rel_list):
                     if y[1]==1:
