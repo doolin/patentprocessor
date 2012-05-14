@@ -6,10 +6,6 @@ from yaml import load, dump
 
 from  sql_patent import SQLPatent
 
-#imp.load_source("sql_patent", ".")
-
-xmlfile = open('xml/ipg120327.one.xml')
-
 class TestSQLPatent(unittest.TestCase):
 
     def setUp(self):
@@ -17,6 +13,11 @@ class TestSQLPatent(unittest.TestCase):
 
     def test_dummy(self):
         assert(1 == 1)
+
+    def test_sql_patent(self):
+        sqlpatent = SQLPatent()
+        assert(sqlpatent)
+
 
 
 if __name__ == '__main__':
