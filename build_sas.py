@@ -8,7 +8,7 @@ from locFunc import uniasc, cityctry
 conn = sqlite3.connect("loctbl.sqlite3")
 c = conn.cursor()
 
-flderUS = "test/SAS"
+flderUS = "/var/share/patentdata/Typos/SAS"
 fnameUS = [x for x in os.listdir(flderUS) if re.search(r'[.]csv', x, re.I)!=None]
 
 c.executescript("""
@@ -33,7 +33,7 @@ for x in fnameUS:
 typos = [[cityctry(x[0], x[2]), x[1], cityctry(x[0], x[2], ret="ctry"),
           uniasc(unicode(x[3], "latin-1")).upper(), x[4], x[5]]
          #for x in csv.reader(open("Typos\Typos.csv", "rb"))][1:]
-         for x in csv.reader(open("test/typos.csv", "rb"))][1:]
+         for x in csv.reader(open("/var/share/patentdata/Typos/typos.csv", "rb"))][1:]
 
 c.executescript("""
     DROP TABLE IF EXISTS typos;
