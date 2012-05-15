@@ -10,6 +10,7 @@ from fwork  import *
 import os, datetime, re
 
 flder = '/var/share/patentdata/patents/test/18'
+#flder = '/var/share/patentdata/patents/2007'
 logfile = flder + "/" + 'xml-parsing.log'
 logging.basicConfig(filename=logfile, level=logging.DEBUG)
 
