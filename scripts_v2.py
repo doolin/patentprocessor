@@ -1,15 +1,12 @@
 import sys
 
-#sys.path.append('/home/ron/PythonBase')
-#sys.path.append("/home/ron/disambig/python")
-
 sys.path.append( '.' )
 sys.path.append( './lib/' )
 
 import SQLite
 import datetime
 from senAdd import *
-import locFunc # this is currently in /home/ron/disambig/python
+import locFunc
 import orgClean
 
 debug = False
