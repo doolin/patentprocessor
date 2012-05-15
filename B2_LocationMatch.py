@@ -33,7 +33,7 @@ c.executescript("""
 
     ATTACH DATABASE 'assignee.sqlite3' AS asg;
     ATTACH DATABASE 'inventor.sqlite3' AS inv;
-    ATTACH DATABASE 'loctbl.sqlite3'   AS loc;
+    ATTACH DATABASE 'loctbl'   AS loc;
     """)
 
 c.executescript("""
