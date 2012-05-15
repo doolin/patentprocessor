@@ -1,7 +1,9 @@
+import sys
 import SQLite
 import datetime
 import shutil
 
+sys.path.append( './lib/' )
 
 t1 = datetime.datetime.now()
 print "Start", t1

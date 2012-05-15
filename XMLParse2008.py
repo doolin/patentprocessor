@@ -2,6 +2,7 @@
 import logging
 import sys
 sys.path.append( '.' )
+sys.path.append( './lib/' )
 import shutil
 from patXML import SQLPatent
 from patXML import XMLPatent
