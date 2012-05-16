@@ -1,6 +1,5 @@
 import sys
 
-sys.path.append("/home/ron/PythonBase")
 from SQLite import *
 from senAdd import *
 import datetime
