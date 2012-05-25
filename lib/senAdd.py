@@ -81,26 +81,6 @@ def colGrad(col1="#000000", col2="#FF0000", pct=50):
 def csvInput(fname):
     return [x for x in csv.reader(open(fname, "rb"))]
 
-def ascit(x, strict=True):
-    import unicodedata
-    x = x.upper()
-    #Solves that {UMLAUT OVER (A)}
-    x = re.sub(r"[{].*?[(].*?[)].*?[}]", lambda(x):re.findall("[(](.*?)[)]", x.group())[0], x)
-    #remove space(s) + punctuation
-    x = re.sub(r" *?[,|-] *?", lambda(x):re.findall(r"[,|-]", x.group())[0], x)
-    if strict:
-        #remove stuff in between (), {}
-        x = re.sub(r"[(].*?[)]|[{].*?[}]", "", x)
-        #remove periods, ampersand, etc
-        ##x = re.sub(r"[!@#$%^&*.,(){}]", "", x)
-        x = re.sub(r"[^A-Za-z0-9 ]", " ", x)
-    x = re.sub(r"  +", " ", x)
-    
-    #remove duplicates
-    x = re.sub(r"[ ,|-]{2,}", lambda(x):re.findall(r"[ ,|-]", x.group())[0], x)
-    #remove all unicode
-    x = unicodedata.normalize('NFKD', unicode(x)).encode('ascii', 'ignore')
-    return x.strip()
 
 def jarow(s1,s2):
     try:
