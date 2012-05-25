@@ -13,6 +13,7 @@ def jarow(s1,s2):
         mtch2=[]
         dist = len(long)/2-1
         m = 0.0
+
         for i, x in enumerate(long):
           jx, jy = (lambda x,y: x==y and (x,y+1) or (x,y))(max(0, i-dist), min(len(short), i+dist))
           for j in range(jx, jy):
@@ -24,6 +25,7 @@ def jarow(s1,s2):
               break
         mtch2 = "".join(x[1] for x in sorted(mtch2))
         t = 0.0
+
         for i in range(0, len(mtch)):      
           if mtch[i]!=mtch2[i]:
             t += 0.5
@@ -39,6 +41,7 @@ def jarow(s1,s2):
         print "Jaro-Winkler exception thrown on comparison between " + s1 + " and " + s2
         return 0
 
+
 class uQvals:
     def __init__(self):
         self.dList=[]
@@ -48,14 +51,17 @@ class uQvals:
         out = list(set(self.dList))
         return len(out)>1 and "|".join(out) or ""
 
+
 def tblExist(c, table):
     return c.execute("SELECT count(*) FROM sqlite_master WHERE tbl_name='%s'" % table).fetchone()[0]>0
+
 
 def uniVert(data):
     def uni(data):
         try: return unicode(data, "utf-8")
         except: return unicode("")
     return [[uni(y) for y in x] for x in data]
+
 
 def quickSQL(c, data, table="", header=False, typescan=50, typeList = []):
     if table=="":
@@ -92,14 +98,17 @@ def quickSQL(c, data, table="", header=False, typescan=50, typeList = []):
     else:
         c.executemany("INSERT INTO %s VALUES (%s)" % (table, ", ".join(["?"]*len(data[0]))), data[1:])
 
+
 def tabFile(fname, delim="\t"):
 ##    tFile = [x.split("\t") for x in open(fname).read().split("\n")]
 ##    return [x for x in tFile if len(x)==len(tFile[0])]
     tFile = csv.reader(open(fname, "rb"), delimiter=delim, quotechar='"')
     return [x for x in tFile]
 
+
 def remspace(x):
     return re.sub(r" ", "", x)
+
 
 def ascit(x, strict=True):
     x = x.upper()
@@ -125,6 +134,7 @@ def ascit(x, strict=True):
     #remove all unicode
     x = unicodedata.normalize('NFKD', unicode(x)).encode('ascii', 'ignore')
     return x.strip()
+
 
 def uniasc(x):
     if type(x)==types.IntType or type(x)==types.FloatType:
@@ -155,6 +165,7 @@ def uniasc(x):
         #remove all unicode
         x = unicodedata.normalize('NFKD', unicode(x)).encode('ascii', 'ignore')
         return x
+
 
 def cityctry(city, ctry, ret="city"):
 
@@ -352,6 +363,7 @@ def cityctry(city, ctry, ret="city"):
         city = re.sub(r"([-]|  +)", " ", city)
         return city.strip()
 
+
 def ftpUpload(filename, password="", zips=True, ftp="people.hbs.edu", login="rolai", direc="protectedWWW", debug=False):
     ftp = FTP(ftp)
     if password=="":
@@ -380,6 +392,7 @@ def ftpUpload(filename, password="", zips=True, ftp="people.hbs.edu", login="rol
         if debug:
             print("  - removing "+fname)
         os.remove(fname)
+
 
 def flatten(l, ltypes=(list, tuple)):
     ltype = type(l)
