@@ -113,7 +113,13 @@ def ascit(x, strict=True):
         #remove periods, ampersand, etc
         ##x = re.sub(r"[!@#$%^&*.,(){}]", "", x)
         x = re.sub(r"[^A-Za-z0-9 ]", "", x)
-    
+        # This version was in sedAdd.py
+        #x = re.sub(r"[^A-Za-z0-9 ]", " ", x)
+
+    # This line was in the version of this function which was in the
+    # senAdd file, but which wasn't used.
+    #x = re.sub(r"  +", " ", x)
+
     #remove duplicates
     x = re.sub(r"[ ,|-]{2,}", lambda(x):re.findall(r"[ ,|-]", x.group())[0], x)
     #remove all unicode
