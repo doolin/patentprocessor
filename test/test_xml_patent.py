@@ -11,12 +11,16 @@ from optparse import OptionParser
 
 # Test Files
 
-xml_file1 = 'unittest/test1.xml' #manually doing these just for now
+xml_file1 = 'unittest/test1.xml' # Manually doing these just for now
 xml_file2 = 'unittest/test2.xml'
 xml_file3 = 'unittest/test3.xml'
 xml_file4 = 'unittest/test4.xml'
 xml_file5 = 'unittest/test5.xml'
 xml_file6 = 'unittest/test6.xml'
+xml_file7 = 'unittest/test7.xml'
+xml_file8 = 'unittest/test8.xml'
+xml_file9 = 'unittest/test9.xml'
+xml_file10 = 'unittest/test10.xml'
 
 # Data structures/variables used in testing
 
@@ -43,7 +47,11 @@ class TestXMLPatent(unittest.TestCase):
         xml_files.append(xml_file4)
         xml_files.append(xml_file5)
         xml_files.append(xml_file6)
-        self.assertTrue(xml_files)      # Make sure you aren't testing nothing
+        xml_files.append(xml_file7)
+        xml_files.append(xml_file8)
+        xml_files.append(xml_file9)
+        xml_files.append(xml_file10)
+        self.assertTrue(xml_files)      # Make sure you aren't testing nothing, basic sanity check
         
     def test_patent_construction(self): # High-level test, testing legacy code construction, if doesn't construct obviously won't pass other tests, fail-fast mentality
         if debug:
