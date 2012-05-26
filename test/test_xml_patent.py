@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 import unittest
 import sys
 import imp
@@ -36,16 +34,17 @@ parsed_xml = []
 class TestXMLPatent(unittest.TestCase):
 
     def setUp(self):
-        xml_files.append(xml_file1)     # Want to append all files to test, manually doing it for now, will change later 
+        xml_files.append(xml_file1)     # Want to append all files to test, manually doing it for now, will change later to a os.lisdir(etc..)
         xml_files.append(xml_file2)
         xml_files.append(xml_file3)
         self.assertTrue(xml_files)      # Make sure you aren't testing nothing
         
-    def test_patent_construction(self): # High-level test, testing legacy code construction
-        for xml in xml_files:
+    def test_patent_construction(self): # High-level test, testing legacy code construction, if doesn't construct obviously won't pass other tests, fail-fast mentality
+        for i, xml in enumerate(xml_files):
             xml_patent = XMLPatent(open(xml, 'U'))
-            parsed_xml.append((xml, xml_patent))# Storing tuple (original XML, parsed XML) for later, finer block testing
-            #print xml_patent.invention_title
+            parsed_xml.append((xml, xml_patent))# Storing tuple (original XML file, parsed XML) for later, finer block testing
+            if debug:
+                print " - Testing Patent: %d" %(i+1)
 
     def test_patent_fields(self): # Medium-level test, testing fields of the parsed XML
         for xml_tuple in parsed_xml: 
@@ -59,20 +58,29 @@ class TestXMLPatent(unittest.TestCase):
             self.assertTrue(parsed_fields.kind.isalnum())
 
     def test_patent_validity(self): # Low-level test, testing presence of fields in original XML, thinking of compiling regex's but no point as each pattern only used once.
-        for xml_tuple in parsed_xml:
+        for xml_tuple in parsed_xml: # xml_tuple = (file of xml, XMLpatent(xml))
             original_xml_string = open(xml_tuple[0]).read()
             parsed_fields = xml_tuple[1]
             country_match = re.search(r"[<]country[>]"+parsed_fields.country+"[<][/]country[>]", original_xml_string, re.I + re.S + re.X)
             self.assertTrue(country_match)
             kind_match = re.search(r"[<]kind[>]"+parsed_fields.kind+"[<][/]kind[>]", original_xml_string, re.I + re.S + re.X)
             self.assertTrue(kind_match)
+
+            #still working on this one and others, may have annoying \n, whitespace in middle, need to use rstrip, lstrip
+            
             #print "[>]"+parsed_fields.invention_title+"[<][/]invention-title[>]"
             #invention_title_match = re.search("[>]"+parsed_fields.invention_title+"[<][/]invention-title[>]", original_xml_string, re.I + re.S + re.X)
-            #self.assertTrue(invention_title_match) #still working on this one, may have annoying \n, whitespace in middle, need to use rstrip, lstrip
+            #self.assertTrue(invention_title_match) 
+            
+    def tearDown(self):
+        
+        #anything needed to be torn down should be added here
+        pass
+    
 
 if __name__ == '__main__':
     
-    parser = OptionParser()
+    parser = OptionParser() #Set up Options parser to have a debugging flag, future folder/dirs to store logging can be added here as well
     parser.add_option("-d", "--debugging", dest="debugging", action="store_true")                
     (options, args) = parser.parse_args()
 
