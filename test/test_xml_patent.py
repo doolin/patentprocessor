@@ -46,14 +46,18 @@ class TestXMLPatent(unittest.TestCase):
         self.assertTrue(xml_files)      # Make sure you aren't testing nothing
         
     def test_patent_construction(self): # High-level test, testing legacy code construction, if doesn't construct obviously won't pass other tests, fail-fast mentality
+        if debug:
+            print "\n     Testing Well-formedness and Construction\n"
         for i, xml in enumerate(xml_files):
             xml_patent = XMLPatent(open(xml, 'U'))
             parsed_xml.append((xml, xml_patent))# Storing tuple (original XML file, parsed XML) for later, finer block testing
             if debug:
-                print " - Testing Patent: %d" %(i+1)
+                print " - Testing Patent: %d ..... Passed!" %(i+1)
 
     def test_patent_fields(self): # Medium-level test, testing fields of the parsed XML
-        for xml_tuple in parsed_xml: 
+        if debug:
+            print "\n     Testing Logic and Format of Patent Fields\n"
+        for i, xml_tuple in enumerate(parsed_xml): 
             parsed_fields = xml_tuple[1]                                                             # Note that str.isalum()/isdigit() intrinsically check for non-emptyness
             self.assertTrue(parsed_fields.pat_type.isalnum())                                        # Testing legitimate patent type, e.g. design, scientific, etc... is alphanumeric
             self.assertTrue(parsed_fields.patent.isalnum())                                          # Testing patent , e.g. D0656296
@@ -62,9 +66,13 @@ class TestXMLPatent(unittest.TestCase):
             self.assertTrue(parsed_fields.country.isalnum())                                         # Similar testing for the following....
             self.assertTrue(parsed_fields.country_app.isalnum())
             self.assertTrue(parsed_fields.kind.isalnum())
+            if debug:
+                print " - Testing Patent: %d ..... Passed!" %(i+1)
 
     def test_patent_validity(self): # Low-level test, testing presence of fields in original XML, thinking of compiling regex's but no point as each pattern only used once.
-        for xml_tuple in parsed_xml: # xml_tuple = (file of xml, XMLpatent(xml))
+        if debug:
+            print "\n     Testing XML Presence of Patent Fields\n"
+        for i, xml_tuple in enumerate(parsed_xml): # xml_tuple = (file of xml, XMLpatent(xml))
             original_xml_string = open(xml_tuple[0]).read()
             parsed_fields = xml_tuple[1]
             country_match = re.search(r"[<]country[>]"+parsed_fields.country+"[<][/]country[>]", original_xml_string, re.I + re.S + re.X)
@@ -76,13 +84,14 @@ class TestXMLPatent(unittest.TestCase):
             
             #print "[>]"+parsed_fields.invention_title+"[<][/]invention-title[>]"
             #invention_title_match = re.search("[>]"+parsed_fields.invention_title+"[<][/]invention-title[>]", original_xml_string, re.I + re.S + re.X)
-            #self.assertTrue(invention_title_match) 
+            #self.assertTrue(invention_title_match)
+
+            if debug:
+                print " - Testing Patent: %d ..... Passed!" %(i+1)
             
     def tearDown(self):
-        
-        #anything needed to be torn down should be added here
+        #anything needed to be torn down should be added here, pass for now
         pass
-    
 
 if __name__ == '__main__':
     
@@ -99,8 +108,9 @@ if __name__ == '__main__':
     
     if options.debugging:
         debug = True
-    del sys.argv[1:]    
-    
+    del sys.argv[1:]
+    if debug:
+        print "\n     Starting Unit Testing for XMLPatent()"
     unittest.main()
 
 
