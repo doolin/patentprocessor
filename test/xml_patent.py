@@ -21,9 +21,9 @@ import unicodedata
 class XMLPatent:
     def __init__(self, XMLString, debug=False):
         #XMLString conversion so tags are all lower
-        XMLString = re.sub(r"<[/]?[A-Za-z-]+?[ >]", lambda x: x.group().lower(), XMLString)
+        #XMLString = re.sub(r"<[/]?[A-Za-z-]+?[ >]", lambda x: x.group().lower(), XMLString)
 ##        XMLString = re.sub(r"(?<![</A-Za-z-])[/]?[A-Za-z-]+?>", lambda x: "<"+x.group().lower(), XMLString)
-        xmldoc = minidom.parseString(XMLString)
+        xmldoc = minidom.parse(XMLString)
         #patent related detail
         #  patent number, kind, date_grant, date_app, country, pat_type
         if debug:
