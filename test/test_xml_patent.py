@@ -11,9 +11,12 @@ from optparse import OptionParser
 
 # Test Files
 
-xml_file1 = 'unittest/ipg120327.one.xml' #want to open with 'U' for unix line endings
+xml_file1 = 'unittest/test1.xml' #manually doing these just for now
 xml_file2 = 'unittest/test2.xml'
 xml_file3 = 'unittest/test3.xml'
+xml_file4 = 'unittest/test4.xml'
+xml_file5 = 'unittest/test5.xml'
+xml_file6 = 'unittest/test6.xml'
 
 # Data structures/variables used in testing
 
@@ -37,6 +40,9 @@ class TestXMLPatent(unittest.TestCase):
         xml_files.append(xml_file1)     # Want to append all files to test, manually doing it for now, will change later to a os.lisdir(etc..)
         xml_files.append(xml_file2)
         xml_files.append(xml_file3)
+        xml_files.append(xml_file4)
+        xml_files.append(xml_file5)
+        xml_files.append(xml_file6)
         self.assertTrue(xml_files)      # Make sure you aren't testing nothing
         
     def test_patent_construction(self): # High-level test, testing legacy code construction, if doesn't construct obviously won't pass other tests, fail-fast mentality
