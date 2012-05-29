@@ -9,9 +9,8 @@ from xml.dom.minidom import parse, parseString
 from xml_patent import XMLPatent
 from optparse import OptionParser
 
-# Test Files
-
-xml_file1 = 'unittest/test1.xml' # Manually doing these just for now
+# xml fixtures
+xml_file1 = 'unittest/test1.xml'
 xml_file2 = 'unittest/test2.xml'
 xml_file3 = 'unittest/test3.xml'
 xml_file4 = 'unittest/test4.xml'
@@ -23,25 +22,26 @@ xml_file9 = 'unittest/test9.xml'
 xml_file10 = 'unittest/test10.xml'
 
 # Data structures/variables used in testing
-
 debug = False
 xml_files = []
 parsed_xml = []
 
 
 """
+ Fields useful for legacy code testing: self.country, self.patent, self.kind,
+ self.date_grant, self.pat_type, self.date_app, self.country_app,
+ self.patent_app (each patent should have these)
 
- Fields useful for legacy code testing: self.country, self.patent, self.kind, self.date_grant
- self.pat_type, self.date_app, self.country_app, self.patent_app (each patent should have these)
-
- self.code_app, self.clm_num, self.classes <-- can't easily test these, vary differently across all general patents, still thinking of a solution
- 
+ self.code_app, self.clm_num, self.classes <-- can't easily test these,
+ vary differently across all general patents, still thinking of a solution 
 """
 
 class TestXMLPatent(unittest.TestCase):
 
     def setUp(self):
-        xml_files.append(xml_file1)     # Want to append all files to test, manually doing it for now, will change later to a os.lisdir(etc..)
+        # Want to append all files to test, manually doing it for now,
+        # will change later to a os.lisdir(et cetera)
+        xml_files.append(xml_file1)
         xml_files.append(xml_file2)
         xml_files.append(xml_file3)
         xml_files.append(xml_file4)
@@ -51,14 +51,18 @@ class TestXMLPatent(unittest.TestCase):
         xml_files.append(xml_file8)
         xml_files.append(xml_file9)
         xml_files.append(xml_file10)
-        self.assertTrue(xml_files)      # Make sure you aren't testing nothing, basic sanity check
-        
-    def test_patent_construction(self): # High-level test, testing legacy code construction, if doesn't construct obviously won't pass other tests, fail-fast mentality
+        # Basic sanity check
+        self.assertTrue(xml_files) 
+
+    def test_patent_construction(self):
+        # High-level test, testing legacy code construction,
+        # if doesn't construct obviously won't pass other tests, fail-fast mentality
         if debug:
             print "\n     Testing Well-formedness and Construction\n"
         for i, xml in enumerate(xml_files):
             xml_patent = XMLPatent(open(xml, 'U'))
-            parsed_xml.append((xml, xml_patent))# Storing tuple (original XML file, parsed XML) for later, finer block testing
+            # Storing tuple (original XML file, parsed XML) for later, finer block testing
+            parsed_xml.append((xml, xml_patent))
             if debug:
                 print " - Testing Patent: %d ..... Passed!" %(i+1)
 
@@ -89,31 +93,31 @@ class TestXMLPatent(unittest.TestCase):
             self.assertTrue(kind_match)
 
             #still working on this one and others, may have annoying \n, whitespace in middle, need to use rstrip, lstrip
-            
+
             #print "[>]"+parsed_fields.invention_title+"[<][/]invention-title[>]"
             #invention_title_match = re.search("[>]"+parsed_fields.invention_title+"[<][/]invention-title[>]", original_xml_string, re.I + re.S + re.X)
             #self.assertTrue(invention_title_match)
 
             if debug:
                 print " - Testing Patent: %d ..... Passed!" %(i+1)
-            
+
     def tearDown(self):
         #anything needed to be torn down should be added here, pass for now
         pass
 
 if __name__ == '__main__':
-    
+
     parser = OptionParser() #Set up Options parser to have a debugging flag, future folder/dirs to store logging can be added here as well
-    parser.add_option("-d", "--debugging", dest="debugging", action="store_true")                
+    parser.add_option("-d", "--debugging", dest="debugging", action="store_true")
     (options, args) = parser.parse_args()
 
     """
         Complications passing in command-line arguments along with unit-testing, 
-        Need to delete sys.argv from index one onewards or else flag keeps getting interpreted, solution found 
+        Need to delete sys.argv from index one onewards or else flag keeps getting
+        interpreted, solution found 
         http://stackoverflow.com/questions/1029891/python-unittest-is-there-a-way-to-pass-command-line-options-to-the-app
-
     """
-    
+
     if options.debugging:
         debug = True
     del sys.argv[1:]
@@ -121,8 +125,3 @@ if __name__ == '__main__':
         print "\n     Starting Unit Testing for XMLPatent()"
     unittest.main()
 
-
-
-
-    
-    
