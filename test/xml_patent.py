@@ -18,55 +18,38 @@ import unicodedata
 #                rc = rc + node.data
 #        return rc
 
+# TODO:
+# Fix Parsing for fringe patents. 
+
 class XMLPatent:
     def __init__(self, XMLString, debug=False):
-        #XMLString conversion so tags are all lower
-        #XMLString = re.sub(r"<[/]?[A-Za-z-]+?[ >]", lambda x: x.group().lower(), XMLString)
-##        XMLString = re.sub(r"(?<![</A-Za-z-])[/]?[A-Za-z-]+?>", lambda x: "<"+x.group().lower(), XMLString)
+        
         xmldoc = minidom.parse(XMLString)
-        #patent related detail
-        #  patent number, kind, date_grant, date_app, country, pat_type
-        if debug:
-            print "  - country, patent, kind, date_grant"
+
         self.country, self.patent, self.kind, self.date_grant = self.__tagNme__(xmldoc, ["publication-reference", ["country", "doc-number", "kind", "date"]])
-        if debug:
-            print "  - pat_type"
+
         self.pat_type = self.__tagNme__(xmldoc, ["application-reference"], iHTML=False)[0].attributes["appl-type"].value
-        if debug:
-            print "  - date_app, country_app, patent_app"
+
         self.date_app, self.country_app, self.patent_app = self.__tagNme__(xmldoc, ["application-reference", ["date", "country", "doc-number"]])
-        if debug:
-            print "  - code_app"
+
         self.code_app = self.__tagNme__(xmldoc, ["us-application-series-code"])
-        if debug:
-            print "  - clm_num"
+
         self.clm_num = self.__tagNme__(xmldoc, ["number-of-claims"])
-        if debug:
-            print "  - classes"
+
         self.classes = [[x[:3].replace(' ',''), x[3:].replace(' ','')] for x in self.__tagNme__(xmldoc, ["classification-national", ["main-classification", "further-classification"]], idx=1, listType=True)]
 
-        if debug:
-            print "  - abstract"
         self.abstract = self.__allHTML__(xmldoc, ["abstract", "p"])
-        if debug:
-            print "  - invention_title"
+
         self.invention_title = self.__allHTML__(xmldoc, ["invention-title"])
 
-        if debug:
-            print "  - asg_list"
         self.asg_list = self.__asg_detail__(self.__tagNme__(xmldoc, ["assignees", "assignee"], iHTML=False))
-        if debug:
-            print "  - cit_list"
+
         self.cit_list = self.__cit_detail__(self.__tagNme__(xmldoc, ["references-cited", "citation"], iHTML=False))
-        if debug:
-            print "  - rel_list"
+
         self.rel_list = self.__rel_detail__(self.__tagNme__(xmldoc, ["us-related-documents"], iHTML=False))
 
-        if debug:
-            print "  - inv_list"
         self.inv_list = self.__tagSplit__(xmldoc, ["parties", "applicant"], [["addressbook", ["last-name", "first-name"]], ["addressbook", "address", ["street", "city", "state", "country", "postcode"]], [["nationality", "residence"], "country"]], blank=True)
-        if debug:
-            print "  - law_list"
+
         self.law_list = self.__tagSplit__(xmldoc, ["parties", "agents", "agent"], [["addressbook", ["last-name", "first-name", "country", "orgname"]]], blank=True)
 
     def __allHTML__(self, xmldoc, tagList):
