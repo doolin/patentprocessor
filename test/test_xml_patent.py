@@ -75,9 +75,10 @@ class TestXMLPatent(unittest.TestCase):
             print "\n     Testing Logic and Format of Patent Fields\n"
         for i, xml_tuple in enumerate(parsed_xml): 
             parsed_fields = xml_tuple[1]                                                             
-            self.assertTrue(parsed_fields.pat_type.isalnum())                                       
-            self.assertTrue(parsed_fields.patent.isalnum())                                          
-            self.assertTrue(parsed_fields.date_grant.isdigit() and len(parsed_fields.date_app) is 8)
+            self.assertTrue(parsed_fields.pat_type.isalnum() or not parsed_fields.pat_type)                                       
+            self.assertTrue(parsed_fields.patent.isalnum() or not parsed_fields.patent.isalnum())                                          
+            self.assertTrue((parsed_fields.date_grant.isdigit() and len(parsed_fields.date_app) is 8) or
+                            not parsed_fields.date_grant)
             self.assertTrue(parsed_fields.date_app.isdigit() and len(parsed_fields.date_grant) is 8) 
             self.assertTrue(parsed_fields.country.isalnum())                                         
             self.assertTrue(parsed_fields.country_app.isalnum())

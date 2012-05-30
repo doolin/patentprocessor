@@ -26,8 +26,9 @@ class XMLPatent:
         
         xmldoc = minidom.parse(XMLString)
 
+        appl_exist = xmldoc.getElementsByTagName("application-reference")
+
         #publ_exist = xmldoc.getElementsByTagName("publication-reference")
-        #appl_exist = xmldoc.getElementsByTagName("application-reference")
         #code_app_exist = xmldoc.getElementsByTagName("us-application-series-code")
         #clm_num_exist = xmldoc.getElementsByTagName("number-of-claims")
         #classes_exist = xmldoc.getElementsByTagName("classification-national")
@@ -44,11 +45,19 @@ class XMLPatent:
         #agents_exist = xmldoc.getElementsByTagName("agents")
         #agent_exist = xmldoc.getElementsByTagName("agent")
 
+        
         self.country, self.patent, self.kind, self.date_grant = self.__tagNme__(xmldoc, ["publication-reference", ["country", "doc-number", "kind", "date"]])
 
-        self.pat_type = self.__tagNme__(xmldoc, ["application-reference"], iHTML=False)[0].attributes["appl-type"].value
+        # Empty check
+        if appl_exist:
+            self.pat_type = self.__tagNme__(xmldoc, ["application-reference"], iHTML=False)[0].attributes["appl-type"].value
+            self.date_app, self.country_app, self.patent_app = self.__tagNme__(xmldoc, ["application-reference", ["date", "country", "doc-number"]])
+        else:
+            self.pat_type = ''
+            self.date_app, self.country_app, self.patent_app, self.patent_app = ['','','','']
 
-        self.date_app, self.country_app, self.patent_app = self.__tagNme__(xmldoc, ["application-reference", ["date", "country", "doc-number"]])
+
+       
 
         self.code_app = self.__tagNme__(xmldoc, ["us-application-series-code"])
 
