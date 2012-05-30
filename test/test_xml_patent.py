@@ -9,7 +9,7 @@ from xml.dom.minidom import parse, parseString
 from xml_patent import XMLPatent
 from optparse import OptionParser
 
-# xml fixtures
+# xml fixtures 
 xml_file1 = 'unittest/test1.xml'
 xml_file2 = 'unittest/test2.xml'
 xml_file3 = 'unittest/test3.xml'
@@ -26,9 +26,15 @@ debug = False
 xml_files = []
 parsed_xml = []
 
+dir = os.path.dirname(__file__) 
+folder = os.path.join(dir, 'unittest/')
+xml_files = [x for x in os.listdir(folder)]
+
+
 # TODO:
 #Fix formatting
 #Update field logic tests
+# - test months not past 12, days past 31, years past 2012?
 #Update xml presence tests
 #Implement logging
 #Profiling?
@@ -46,20 +52,11 @@ parsed_xml = []
 class TestXMLPatent(unittest.TestCase):
 
     def setUp(self):
-        # Want to append all files to test, manually doing it for now,
-        # will change later to a os.lisdir(et cetera)
-        xml_files.append(xml_file1)
-        xml_files.append(xml_file2)
-        xml_files.append(xml_file3)
-        xml_files.append(xml_file4)
-        xml_files.append(xml_file5)
-        xml_files.append(xml_file6)
-        xml_files.append(xml_file7)
-        xml_files.append(xml_file8)
-        xml_files.append(xml_file9)
-        xml_files.append(xml_file10)
+        
+   
         # Basic sanity check
-        self.assertTrue(xml_files) 
+        self.assertTrue(xml_files)
+        print xml_files
 
     def test_patent_construction(self):
         # High-level test, testing legacy code construction,
@@ -67,7 +64,7 @@ class TestXMLPatent(unittest.TestCase):
         if debug:
             print "\n     Testing Well-formedness and Construction\n"
         for i, xml in enumerate(xml_files):
-            xml_patent = XMLPatent(open(xml, 'U'))
+            xml_patent = XMLPatent(open(folder + xml, 'U'))
             # Storing tuple (original XML file, parsed XML) for later, finer block testing
             parsed_xml.append((xml, xml_patent))
             if debug:
@@ -80,7 +77,7 @@ class TestXMLPatent(unittest.TestCase):
             parsed_fields = xml_tuple[1]                                                             
             self.assertTrue(parsed_fields.pat_type.isalnum())                                       
             self.assertTrue(parsed_fields.patent.isalnum())                                          
-            self.assertTrue(parsed_fields.date_grant.isdigit() andlen(parsed_fields.date_app) is 8)
+            self.assertTrue(parsed_fields.date_grant.isdigit() and len(parsed_fields.date_app) is 8)
             self.assertTrue(parsed_fields.date_app.isdigit() and len(parsed_fields.date_grant) is 8) 
             self.assertTrue(parsed_fields.country.isalnum())                                         
             self.assertTrue(parsed_fields.country_app.isalnum())
@@ -92,7 +89,7 @@ class TestXMLPatent(unittest.TestCase):
         if debug:
             print "\n     Testing XML Presence of Patent Fields\n"
         for i, xml_tuple in enumerate(parsed_xml): # xml_tuple = (file of xml, XMLpatent(xml))
-            original_xml_string = open(xml_tuple[0]).read()
+            original_xml_string = open(folder + xml_tuple[0]).read()
             parsed_fields = xml_tuple[1]
             country_match = re.search(r"[<]country[>]"+parsed_fields.country+"[<][/]country[>]",
                                       original_xml_string, re.I + re.S + re.X)
@@ -134,5 +131,9 @@ if __name__ == '__main__':
     del sys.argv[1:]
     if debug:
         print "\n     Starting Unit Testing for XMLPatent()"
+
+    
+    
+    
     unittest.main()
 
