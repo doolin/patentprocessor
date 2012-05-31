@@ -21,6 +21,11 @@ xml_file8 = 'unittest/test8.xml'
 xml_file9 = 'unittest/test9.xml'
 xml_file10 = 'unittest/test10.xml'
 
+# Non working xml fixtures
+# xml_fileu1 = 'unittest/testu1.xml'
+# xml_fileu2 = 'unittest/testu2.xml'
+# xml_fileu3 = 'unittest/testu3.xml'
+
 # Data structures/variables used in testing
 debug = False
 xml_files = []
@@ -29,6 +34,7 @@ parsed_xml = []
 dir = os.path.dirname(__file__) 
 folder = os.path.join(dir, 'unittest/')
 xml_files = [x for x in os.listdir(folder)]
+
 
 
 # TODO:
@@ -52,11 +58,8 @@ xml_files = [x for x in os.listdir(folder)]
 class TestXMLPatent(unittest.TestCase):
 
     def setUp(self):
-        
-   
         # Basic sanity check
         self.assertTrue(xml_files)
-        print xml_files
 
     def test_patent_construction(self):
         # High-level test, testing legacy code construction,
@@ -75,14 +78,20 @@ class TestXMLPatent(unittest.TestCase):
             print "\n     Testing Logic and Format of Patent Fields\n"
         for i, xml_tuple in enumerate(parsed_xml): 
             parsed_fields = xml_tuple[1]                                                             
-            self.assertTrue(parsed_fields.pat_type.isalnum() or not parsed_fields.pat_type)                                       
-            self.assertTrue(parsed_fields.patent.isalnum() or not parsed_fields.patent.isalnum())                                          
-            self.assertTrue((parsed_fields.date_grant.isdigit() and len(parsed_fields.date_app) is 8) or
-                            not parsed_fields.date_grant)
-            self.assertTrue(parsed_fields.date_app.isdigit() and len(parsed_fields.date_grant) is 8) 
-            self.assertTrue(parsed_fields.country.isalnum())                                         
-            self.assertTrue(parsed_fields.country_app.isalnum())
-            self.assertTrue(parsed_fields.kind.isalnum())
+            self.assertTrue(parsed_fields.pat_type.isalnum() or not
+                            parsed_fields.pat_type)                                       
+            self.assertTrue(parsed_fields.patent.isalnum() or not
+                            parsed_fields.patent.isalnum())
+            self.assertTrue((parsed_fields.date_grant.isdigit() and
+                             len(parsed_fields.date_grant) is 8) or not parsed_fields.date_grant)
+            self.assertTrue((parsed_fields.date_app.isdigit() and
+                             len(parsed_fields.date_app) is 8) or not parsed_fields.date_app)
+            self.assertTrue(parsed_fields.country.isalnum() or not
+                            parsed_fields.country)                                         
+            self.assertTrue(parsed_fields.country_app.isalnum() or not
+                            parsed_fields.country_app)
+            self.assertTrue(parsed_fields.kind.isalnum() or not
+                            parsed_fields.kind)
             if debug:
                 print " - Testing Patent: %d ..... Passed!" %(i+1)
 
@@ -133,8 +142,5 @@ if __name__ == '__main__':
     if debug:
         print "\n     Starting Unit Testing for XMLPatent()"
 
-    
-    
-    
     unittest.main()
 

@@ -56,9 +56,6 @@ class XMLPatent:
             self.pat_type = ''
             self.date_app, self.country_app, self.patent_app, self.patent_app = ['','','','']
 
-
-       
-
         self.code_app = self.__tagNme__(xmldoc, ["us-application-series-code"])
 
         self.clm_num = self.__tagNme__(xmldoc, ["number-of-claims"])
