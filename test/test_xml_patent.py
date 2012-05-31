@@ -9,7 +9,7 @@ from xml.dom.minidom import parse, parseString
 from xml_patent import XMLPatent
 from optparse import OptionParser
 
-# xml fixtures 
+# xml fixtures
 xml_file1 = 'unittest/test1.xml'
 xml_file2 = 'unittest/test2.xml'
 xml_file3 = 'unittest/test3.xml'
@@ -34,7 +34,7 @@ max_years = "2012"
 max_months = "12"
 max_days = "31"
 
-dir = os.path.dirname(__file__) 
+dir = os.path.dirname(__file__)
 folder = os.path.join(dir, 'unittest/')
 xml_files = [x for x in os.listdir(folder)]
 
@@ -55,7 +55,7 @@ xml_files = [x for x in os.listdir(folder)]
  self.patent_app (each patent should have these)
 
  self.code_app, self.clm_num, self.classes <-- can't easily test these,
- vary differently across all general patents, still thinking of a solution 
+ vary differently across all general patents, still thinking of a solution
 """
 
 class TestXMLPatent(unittest.TestCase):
@@ -79,14 +79,14 @@ class TestXMLPatent(unittest.TestCase):
     def test_patent_fields(self): # Medium-level test, testing fields of the parsed XML
         if debug:
             print "\n     Testing Logic and Format of Patent Fields\n"
-        for i, xml_tuple in enumerate(parsed_xml): 
-            parsed_fields = xml_tuple[1]                                                             
+        for i, xml_tuple in enumerate(parsed_xml):
+            parsed_fields = xml_tuple[1]
             self.assertTrue(parsed_fields.pat_type.isalnum() or not
-                            parsed_fields.pat_type)                                       
+                            parsed_fields.pat_type)
             self.assertTrue(parsed_fields.patent.isalnum() or not
                             parsed_fields.patent.isalnum())
             self.assertTrue(parsed_fields.country.isalnum() or not
-                            parsed_fields.country)                                         
+                            parsed_fields.country)
             self.assertTrue(parsed_fields.country_app.isalnum() or not
                             parsed_fields.country_app)
             self.assertTrue(parsed_fields.kind.isalnum() or not
@@ -113,6 +113,7 @@ class TestXMLPatent(unittest.TestCase):
         for i, xml_tuple in enumerate(parsed_xml): # xml_tuple = (file of xml, XMLpatent(xml))
             original_xml_string = open(folder + xml_tuple[0]).read()
             parsed_fields = xml_tuple[1]
+            # Starting search for xml tags , <tag>field</tag>
             country_match = re.search(r"[<]country[>]"+parsed_fields.country+"[<][/]country[>]",
                                       original_xml_string, re.I + re.S + re.X)
             self.assertTrue(country_match)
@@ -142,9 +143,9 @@ if __name__ == '__main__':
     (options, args) = parser.parse_args()
 
     """
-        Complications passing in command-line arguments along with unit-testing, 
+        Complications passing in command-line arguments along with unit-testing,
         Need to delete sys.argv from index one onewards or else flag keeps getting
-        interpreted, solution found 
+        interpreted, solution found
         http://stackoverflow.com/questions/1029891/python-unittest-is-there-a-way-to-pass-command-line-options-to-the-app
     """
 
@@ -155,4 +156,3 @@ if __name__ == '__main__':
         print "\n     Starting Unit Testing for XMLPatent()"
 
     unittest.main()
-
