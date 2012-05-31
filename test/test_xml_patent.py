@@ -30,6 +30,9 @@ xml_file10 = 'unittest/test10.xml'
 debug = False
 xml_files = []
 parsed_xml = []
+max_years = "2012"
+max_months = "12"
+max_days = "31"
 
 dir = os.path.dirname(__file__) 
 folder = os.path.join(dir, 'unittest/')
@@ -82,16 +85,25 @@ class TestXMLPatent(unittest.TestCase):
                             parsed_fields.pat_type)                                       
             self.assertTrue(parsed_fields.patent.isalnum() or not
                             parsed_fields.patent.isalnum())
-            self.assertTrue((parsed_fields.date_grant.isdigit() and
-                             len(parsed_fields.date_grant) is 8) or not parsed_fields.date_grant)
-            self.assertTrue((parsed_fields.date_app.isdigit() and
-                             len(parsed_fields.date_app) is 8) or not parsed_fields.date_app)
             self.assertTrue(parsed_fields.country.isalnum() or not
                             parsed_fields.country)                                         
             self.assertTrue(parsed_fields.country_app.isalnum() or not
                             parsed_fields.country_app)
             self.assertTrue(parsed_fields.kind.isalnum() or not
                             parsed_fields.kind)
+            # Dates must be in following format: yyyy/mm/dd
+            self.assertTrue((parsed_fields.date_grant.isdigit() and
+                             len(parsed_fields.date_grant) is 8) or not parsed_fields.date_grant)
+            self.assertTrue((parsed_fields.date_app.isdigit() and
+                             len(parsed_fields.date_app) is 8) or not parsed_fields.date_app)
+            if (parsed_fields.date_grant):
+                self.assertTrue((parsed_fields.date_grant[0:4] <= max_years) and
+                                (parsed_fields.date_grant[4:6] <= max_months) and
+                                (parsed_fields.date_grant[6:8] <= max_days))
+            if (parsed_fields.date_app):
+                self.assertTrue((parsed_fields.date_app[0:4] <= max_years) and
+                                (parsed_fields.date_app[4:6] <= max_months) and
+                                (parsed_fields.date_app[6:8] <= max_days))
             if debug:
                 print " - Testing Patent: %d ..... Passed!" %(i+1)
 
@@ -104,8 +116,8 @@ class TestXMLPatent(unittest.TestCase):
             country_match = re.search(r"[<]country[>]"+parsed_fields.country+"[<][/]country[>]",
                                       original_xml_string, re.I + re.S + re.X)
             self.assertTrue(country_match)
-            kind_match = re.search(r"[<]kind[>]"+parsed_fields.kind+"[<][/]kind[>]", original_xml_string,
-                                   re.I + re.S + re.X)
+            kind_match = re.search(r"[<]kind[>]"+parsed_fields.kind+"[<][/]kind[>]",
+                                   original_xml_string, re.I + re.S + re.X)
             self.assertTrue(kind_match)
 
             #still working on this one and others, may have annoying \n, whitespace in middle
