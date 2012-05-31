@@ -22,9 +22,9 @@ xml_file9 = 'unittest/test9.xml'
 xml_file10 = 'unittest/test10.xml'
 
 # Non working xml fixtures
-# xml_fileu1 = 'unittest/testu1.xml'
-# xml_fileu2 = 'unittest/testu2.xml'
-# xml_fileu3 = 'unittest/testu3.xml'
+xml_fileu1 = 'unittest/testu1.xml'
+xml_fileu2 = 'unittest/testu2.xml'
+xml_fileu3 = 'unittest/testu3.xml'
 
 # Data structures/variables used in testing
 debug = False
@@ -37,8 +37,6 @@ max_days = "31"
 dir = os.path.dirname(__file__)
 folder = os.path.join(dir, 'unittest/')
 xml_files = [x for x in os.listdir(folder)]
-
-
 
 # TODO:
 #Fix formatting
@@ -114,12 +112,18 @@ class TestXMLPatent(unittest.TestCase):
             original_xml_string = open(folder + xml_tuple[0]).read()
             parsed_fields = xml_tuple[1]
             # Starting search for xml tags , <tag>field</tag>
-            country_match = re.search(r"[<]country[>]"+parsed_fields.country+"[<][/]country[>]",
+            country_match = re.search(r"[<]document-id[>].*?[<]country[>]"+parsed_fields.country+
+                                      "[<][/]country[>].*?[<][/]document-id[>]",
                                       original_xml_string, re.I + re.S + re.X)
             self.assertTrue(country_match)
-            kind_match = re.search(r"[<]kind[>]"+parsed_fields.kind+"[<][/]kind[>]",
+            kind_match = re.search(r"[<]document-id[>].*?[<]kind[>]"+parsed_fields.kind+"[<][/]kind[>].*?[<][/]document-id[>]",
                                    original_xml_string, re.I + re.S + re.X)
             self.assertTrue(kind_match)
+            print "[<]application-reference appl-type"+parsed_fields.pat_type+"[>]"
+	    if parsed_fields.pat_type:
+	        app_type_match = re.search(r"[<]application-reference appl-type[=]\""+parsed_fields.pat_type
+                                           +"\"[>]", original_xml_string, re.I + re.S + re.X)
+	    #self.assertTrue(app_type_match)
 
             #still working on this one and others, may have annoying \n, whitespace in middle
             #need to use rstrip, lstrip
