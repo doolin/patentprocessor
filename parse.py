@@ -10,6 +10,7 @@ from patXML import uniasc
 from fwork  import *
 import os, datetime, re
 
+# TODO: implement as a command line option
 flder = '/var/share/patentdata/patents/test/18'
 #flder = '/var/share/patentdata/patents/2007'
 #logfile = flder + "/" + 'xml-parsing.log'
