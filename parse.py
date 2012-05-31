@@ -12,7 +12,8 @@ import os, datetime, re
 
 flder = '/var/share/patentdata/patents/test/18'
 #flder = '/var/share/patentdata/patents/2007'
-logfile = flder + "/" + 'xml-parsing.log'
+#logfile = flder + "/" + 'xml-parsing.log'
+logfile = "./" + 'xml-parsing.log'
 logging.basicConfig(filename=logfile, level=logging.DEBUG)
 
 t1 = datetime.datetime.now()
@@ -55,6 +56,7 @@ for filenum, filename in enumerate(files):
             print "  - Error: %s (%d)  %s" % (filename, i, x[175:200])
             logging.error("  - Error: %s (%d)  %s" % (filename, i, x[175:200]))
             count += 1
+        print xmllist
 
     print "   - number of patents:", len(xmllist), datetime.datetime.now()-t1
     logging.info("   - number of patents: %d %s ", len(xmllist), datetime.datetime.now()-t1)
