@@ -28,8 +28,6 @@ xml_files = [x for x in os.listdir(folder)
 # Logging setup
 logging.basicConfig(filename=log_file, level=logging.DEBUG)
 
-
-
 # TODO:
 # Update xml presence tests, make it more robust. 
 # Implement logging
@@ -55,14 +53,21 @@ class TestXMLPatent(unittest.TestCase):
         # if doesn't construct obviously won't pass other tests, fail-fast mentality
         if debug:
             print "\n     Testing Well-formedness and Construction\n"
+        logging.info("Testing Construction of %d Patents!" % (len(xml_files)))
+        patent_count = 0
         for i, xml in enumerate(xml_files):
             try:
                 xml_patent = XMLPatent(open(folder + xml, 'U'))
-                
+                patent_count = patent_count + 1
+            except Exception as exPatError:
+                logging.error("Construction Error at patent %d, filename %s" % (i+1, xml))
             # Storing tuple (original XML file, parsed XML) for later, finer block testing
             parsed_xml.append((xml, xml_patent))
             if debug:
                 print " - Testing Patent: %d ..... Passed!" %(i+1)
+        logging.info("%d Patents have passed construction!", patent_count)
+        if patent_count is len(xml_files):
+            logging.info("All patents passed!")
 
     def test_patent_fields(self): # Medium-level test, testing fields of the parsed XML
         if debug:
@@ -146,5 +151,5 @@ if __name__ == '__main__':
     del sys.argv[1:]
     if debug:
         print "\n     Starting Unit Testing for XMLPatent()"
-
+    open(log_file, 'w')
     unittest.main()
