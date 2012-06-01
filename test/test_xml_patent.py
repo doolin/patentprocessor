@@ -29,8 +29,7 @@ xml_files = [x for x in os.listdir(folder)
 logging.basicConfig(filename=log_file, level=logging.DEBUG)
 
 # TODO:
-# Update xml presence tests, make it more robust. 
-# Implement logging
+# Update xml presence tests, make it more robust.
 
 
 """
@@ -87,14 +86,14 @@ class TestXMLPatent(unittest.TestCase):
                 field_count = field_count + 1
             except Exception as assertionError:
                 logging.error("Patent %d, pattern type: %s is not valid" % (i+1, self.pat_type))
-                
+
             try:
                 self.assertTrue(parsed_fields.patent.isalnum() or not
                                 parsed_fields.patent.isalnum())
                 field_count = field_count + 1
             except Exception as assertionError:
                 logging.error("Patent %d, patent doc number: %s is not valid" % (i+1, self.patent))
-                
+
             try:
                 self.assertTrue(parsed_fields.country.isalnum() or not
                                 parsed_fields.country)
@@ -115,9 +114,9 @@ class TestXMLPatent(unittest.TestCase):
                 field_count = field_count + 1
             except Exception as assertionError:
                 logging.error("Patent %d, kind: %s is not valid" % (i+1, self.kind))
-                
+
             # Dates must be in following format: yyyy/mm/dd
-            
+
             try:
                 self.assertTrue((parsed_fields.date_grant.isdigit() and
                                  len(parsed_fields.date_grant) is 8) or not parsed_fields.date_grant)
@@ -131,7 +130,7 @@ class TestXMLPatent(unittest.TestCase):
                 field_count = field_count + 1
             except Exception as assertionError:
                 logging.error("Patent %d, date app: %s is not valid" % (i+1, self.date_app))
-                
+
             if parsed_fields.date_grant:
                 try:
                     self.assertTrue((parsed_fields.date_grant[0:4] <= max_years) and
@@ -140,7 +139,7 @@ class TestXMLPatent(unittest.TestCase):
                     field_count = field_count + 1
                 except Exception as assertionError:
                     logging.error("Patent %d, date grant format: %s is not valid" % (i+1, self.date_grant))
-                    
+
             if parsed_fields.date_app:
                 try:
                     self.assertTrue((parsed_fields.date_app[0:4] <= max_years) and
@@ -152,10 +151,10 @@ class TestXMLPatent(unittest.TestCase):
 
             if (field_count is 9):
                 patent_count = patent_count + 1
-                    
+
             if debug:
                 print " - Testing Patent: %d ..... Passed!" %(i+1)
-                
+
         if patent_count is len(xml_files):
             logging.info("All patents passed field testing")
 
@@ -168,7 +167,7 @@ class TestXMLPatent(unittest.TestCase):
             field_count = 0
             original_xml_string = open(folder + xml_tuple[0]).read()
             parsed_fields = xml_tuple[1]
-            
+
             # Starting search for xml tags , <tag>field</tag>
             country_match = re.search(r"[<]document-id[>].*?[<]country[>]"+parsed_fields.country+
                                       "[<][/]country[>].*?[<][/]document-id[>]",
@@ -181,29 +180,29 @@ class TestXMLPatent(unittest.TestCase):
                 self.assertTrue(country_match)
                 field_count = field_count + 1
             except Exception as assertionError:
-                logging.error("Patent %d, xml presence not detected of field: %s" % (i+1, parsed_fields.country)) 
-            
+                logging.error("Patent %d, xml presence not detected of field: %s" % (i+1, parsed_fields.country))
+
             try:
                 self.assertTrue(kind_match)
                 field_count = field_count + 1
             except Exception as assertionError:
-                logging.error("Patent %d, xml presence not detected of field: %s" % (i+1, parsed_fields.kind)) 
-            
+                logging.error("Patent %d, xml presence not detected of field: %s" % (i+1, parsed_fields.kind))
+
             if parsed_fields.pat_type:
                 try:
-	            self.assertTrue(pat_type_match)
-	            field_count = field_count + 1
-	        except Exception as assertionError:
-                    logging.error("Patent %d, xml presence not detected of field: %s" % (i+1, parsed_fields.pat_type)) 
+                    self.assertTrue(pat_type_match)
+                    field_count = field_count + 1
+                except Exception as assertionError:
+                    logging.error("Patent %d, xml presence not detected of field: %s" % (i+1, parsed_fields.pat_type))
             else:
                 try:
-	            self.assertTrue(not pat_type_match)
-	            field_count = field_count + 1
-	        except Exception as assertionError:
+                    self.assertTrue(not pat_type_match)
+                    field_count = field_count + 1
+                except Exception as assertionError:
                     logging.error("Patent %d, xml presence detected of field: %s" % (i+1, parsed_fields.pat_type))
-                    
+
             if (field_count is 3):
-                patent_count = patent_count + 1 
+                patent_count = patent_count + 1
             if debug:
                 print " - Testing Patent: %d ..... Passed!" %(i+1)
         if (patent_count is len(xml_files)):
