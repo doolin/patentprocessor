@@ -72,18 +72,39 @@ class TestXMLPatent(unittest.TestCase):
     def test_patent_fields(self): # Medium-level test, testing fields of the parsed XML
         if debug:
             print "\n     Testing Logic and Format of Patent Fields\n"
+        logging.info("Testing Fields of %d Patents!" % (len(xml_files)))
         for i, xml_tuple in enumerate(parsed_xml):
             parsed_fields = xml_tuple[1]
-            self.assertTrue(parsed_fields.pat_type.isalnum() or not
-                            parsed_fields.pat_type)
-            self.assertTrue(parsed_fields.patent.isalnum() or not
-                            parsed_fields.patent.isalnum())
-            self.assertTrue(parsed_fields.country.isalnum() or not
-                            parsed_fields.country)
-            self.assertTrue(parsed_fields.country_app.isalnum() or not
+            
+            try:
+                self.assertTrue(parsed_fields.pat_type.isalnum() or not
+                                parsed_fields.pat_type)
+            except Exception as assertionError:
+                logging.error("Patent %d, pattern type: %s is not valid" % (i+1, self.pat_type))
+                
+            try:
+                self.assertTrue(parsed_fields.patent.isalnum() or not
+                                parsed_fields.patent.isalnum())
+            except Exception as assertionError:
+                logging.error("Patent %d, patent doc number: %s is not valid" % (i+1, self.patent))
+                
+            try:
+                self.assertTrue(parsed_fields.country.isalnum() or not
+                                parsed_fields.country)
+            except Exception as assertionError:
+                logging.error("Patent %d, country: %s is not valid" % (i+1, self.country))
+
+            try:
+                self.assertTrue(parsed_fields.country_app.isalnum() or not
                             parsed_fields.country_app)
-            self.assertTrue(parsed_fields.kind.isalnum() or not
+            except Exception as assertionError:
+                logging.error("Patent %d, country: %s is not valid" % (i+1, self.country_app))
+
+            try:
+                self.assertTrue(parsed_fields.kind.isalnum() or not
                             parsed_fields.kind)
+            except Exception as assertionError:
+                logging.error("Patent %d, kind: %s is not valid" % (i+1, self.kind))
             # Dates must be in following format: yyyy/mm/dd
             self.assertTrue((parsed_fields.date_grant.isdigit() and
                              len(parsed_fields.date_grant) is 8) or not parsed_fields.date_grant)
