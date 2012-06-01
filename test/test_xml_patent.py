@@ -173,23 +173,22 @@ class TestXMLPatent(unittest.TestCase):
             country_match = re.search(r"[<]document-id[>].*?[<]country[>]"+parsed_fields.country+
                                       "[<][/]country[>].*?[<][/]document-id[>]",
                                       original_xml_string, re.I + re.S + re.X)
-            
+            kind_match = re.search(r"[<]document-id[>].*?[<]kind[>]"+parsed_fields.kind+"[<][/]kind[>].*?[<][/]document-id[>]",
+                                   original_xml_string, re.I + re.S + re.X)
+            pat_type_match = re.search(r"appl-type=\""+parsed_fields.pat_type+"\"",
+                                          original_xml_string, re.I + re.S + re.X)
             try:
                 self.assertTrue(country_match)
                 field_count = field_count + 1
             except Exception as assertionError:
                 logging.error("Patent %d, xml presence not detected of field: %s" % (i+1, parsed_fields.country)) 
-            kind_match = re.search(r"[<]document-id[>].*?[<]kind[>]"+parsed_fields.kind+"[<][/]kind[>].*?[<][/]document-id[>]",
-                                   original_xml_string, re.I + re.S + re.X)
             
             try:
                 self.assertTrue(kind_match)
                 field_count = field_count + 1
             except Exception as assertionError:
                 logging.error("Patent %d, xml presence not detected of field: %s" % (i+1, parsed_fields.kind)) 
-         
-            pat_type_match = re.search(r"appl-type=\""+parsed_fields.pat_type+"\"",
-                                          original_xml_string, re.I + re.S + re.X)
+            
             if parsed_fields.pat_type:
                 try:
 	            self.assertTrue(pat_type_match)
@@ -202,9 +201,9 @@ class TestXMLPatent(unittest.TestCase):
 	            field_count = field_count + 1
 	        except Exception as assertionError:
                     logging.error("Patent %d, xml presence detected of field: %s" % (i+1, parsed_fields.pat_type))
-            if (field_count is 5):
-                patent_count = patent_count + 1
                     
+            if (field_count is 3):
+                patent_count = patent_count + 1 
             if debug:
                 print " - Testing Patent: %d ..... Passed!" %(i+1)
         if (patent_count is len(xml_files)):
