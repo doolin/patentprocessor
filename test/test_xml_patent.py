@@ -119,12 +119,14 @@ class TestXMLPatent(unittest.TestCase):
             kind_match = re.search(r"[<]document-id[>].*?[<]kind[>]"+parsed_fields.kind+"[<][/]kind[>].*?[<][/]document-id[>]",
                                    original_xml_string, re.I + re.S + re.X)
             self.assertTrue(kind_match)
-            print "[<]application-reference appl-type"+parsed_fields.pat_type+"[>]"
-	    if parsed_fields.pat_type:
-	        app_type_match = re.search(r"[<]application-reference appl-type[=]\""+parsed_fields.pat_type
-                                           +"\"[>]", original_xml_string, re.I + re.S + re.X)
-	    #self.assertTrue(app_type_match)
 
+	    if parsed_fields.pat_type:
+	        #app_type_match = re.search(r"[<]application-reference appl-type=\""+parsed_fields.pat_type+"\"[>]",
+                #                          original_xml_string, re.I + re.S + re.X)
+                app_type_match = re.search(r"appl-type=\""+parsed_fields.pat_type+"\"",
+                                          original_xml_string, re.I + re.S + re.X)
+	    self.assertTrue(app_type_match)
+	    
             #still working on this one and others, may have annoying \n, whitespace in middle
             #need to use rstrip, lstrip
 
