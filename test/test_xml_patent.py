@@ -111,6 +111,7 @@ class TestXMLPatent(unittest.TestCase):
         for i, xml_tuple in enumerate(parsed_xml): # xml_tuple = (file of xml, XMLpatent(xml))
             original_xml_string = open(folder + xml_tuple[0]).read()
             parsed_fields = xml_tuple[1]
+            
             # Starting search for xml tags , <tag>field</tag>
             country_match = re.search(r"[<]document-id[>].*?[<]country[>]"+parsed_fields.country+
                                       "[<][/]country[>].*?[<][/]document-id[>]",
@@ -119,21 +120,13 @@ class TestXMLPatent(unittest.TestCase):
             kind_match = re.search(r"[<]document-id[>].*?[<]kind[>]"+parsed_fields.kind+"[<][/]kind[>].*?[<][/]document-id[>]",
                                    original_xml_string, re.I + re.S + re.X)
             self.assertTrue(kind_match)
-
+            
 	    if parsed_fields.pat_type:
 	        #app_type_match = re.search(r"[<]application-reference appl-type=\""+parsed_fields.pat_type+"\"[>]",
                 #                          original_xml_string, re.I + re.S + re.X)
                 app_type_match = re.search(r"appl-type=\""+parsed_fields.pat_type+"\"",
                                           original_xml_string, re.I + re.S + re.X)
 	    self.assertTrue(app_type_match)
-	    
-            #still working on this one and others, may have annoying \n, whitespace in middle
-            #need to use rstrip, lstrip
-
-            #print "[>]"+parsed_fields.invention_title+"[<][/]invention-title[>]"
-            #invention_title_match = re.search("[>]"+parsed_fields.invention_title+"[<][/]invention-title[>]",
-            #                                  original_xml_string, re.I + re.S + re.X)
-            #self.assertTrue(invention_title_match)
 
             if debug:
                 print " - Testing Patent: %d ..... Passed!" %(i+1)
