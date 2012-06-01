@@ -36,15 +36,12 @@ max_days = "31"
 
 dir = os.path.dirname(__file__)
 folder = os.path.join(dir, 'unittest/')
-xml_files = [x for x in os.listdir(folder)]
+xml_files = [x for x in os.listdir(folder)
+             if re.match(r"test.*?xml", x) != None]
 
 # TODO:
-#Fix formatting
-#Update field logic tests
-# - test months not past 12, days past 31, years past 2012?
-#Update xml presence tests
+#Update xml presence tests, make it more robust. 
 #Implement logging
-#Profiling?
 
 
 """
