@@ -21,11 +21,13 @@ max_days = "31"
 
 dir = os.path.dirname(__file__)
 folder = os.path.join(dir, 'unittest/')
-log_folder = os.path.join(dir, 'unittest/log/unit-test-log.log)
+log_file = os.path.join(dir, 'unittest/log/unit-test-log.log')
 xml_files = [x for x in os.listdir(folder)
              if re.match(r"patent.*?xml", x) != None]
 
 # Logging setup
+logging.basicConfig(filename=log_file, level=logging.DEBUG)
+
 
 
 # TODO:
@@ -54,7 +56,9 @@ class TestXMLPatent(unittest.TestCase):
         if debug:
             print "\n     Testing Well-formedness and Construction\n"
         for i, xml in enumerate(xml_files):
-            xml_patent = XMLPatent(open(folder + xml, 'U'))
+            try:
+                xml_patent = XMLPatent(open(folder + xml, 'U'))
+                
             # Storing tuple (original XML file, parsed XML) for later, finer block testing
             parsed_xml.append((xml, xml_patent))
             if debug:
@@ -106,13 +110,16 @@ class TestXMLPatent(unittest.TestCase):
             kind_match = re.search(r"[<]document-id[>].*?[<]kind[>]"+parsed_fields.kind+"[<][/]kind[>].*?[<][/]document-id[>]",
                                    original_xml_string, re.I + re.S + re.X)
             self.assertTrue(kind_match)
-            
-	    if parsed_fields.pat_type:
-	        #app_type_match = re.search(r"[<]application-reference appl-type=\""+parsed_fields.pat_type+"\"[>]",
-                #                          original_xml_string, re.I + re.S + re.X)
-                app_type_match = re.search(r"appl-type=\""+parsed_fields.pat_type+"\"",
+         
+            app_type_match = re.search(r"appl-type=\""+parsed_fields.pat_type+"\"",
                                           original_xml_string, re.I + re.S + re.X)
-	    self.assertTrue(app_type_match)
+            if parsed_fields.pat_type:
+	        self.assertTrue(app_type_match)
+            else:
+                self.assertTrue(not app_type_match)
+                          
+                          
+                
 
             if debug:
                 print " - Testing Patent: %d ..... Passed!" %(i+1)
