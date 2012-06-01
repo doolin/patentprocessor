@@ -9,29 +9,7 @@ from xml.dom.minidom import parse, parseString
 from xml_patent import XMLPatent
 from optparse import OptionParser
 
-# xml fixtures, general patents that parsed originally
-xml_file1 = 'unittest/test1.xml'
-xml_file2 = 'unittest/test2.xml'
-xml_file3 = 'unittest/test3.xml'
-xml_file4 = 'unittest/test4.xml'
-xml_file5 = 'unittest/test5.xml'
-xml_file6 = 'unittest/test6.xml'
-xml_file7 = 'unittest/test7.xml'
-xml_file8 = 'unittest/test8.xml'
-xml_file9 = 'unittest/test9.xml'
-xml_file10 = 'unittest/test10.xml'
-
-# Non working xml fixtures (previously), grabbed from error log of parse.py
-xml_fileu1 = 'unittest/testu1.xml' # dna-related sequence 
-xml_fileu2 = 'unittest/testu2.xml' # regular patent 
-xml_fileu3 = 'unittest/testu3.xml' # regular patent
-xml_fileu4 = 'unittest/testu4.xml' # regular patent
-xml_fileu5 = 'unittest/testu5.xml' # dna-related sequence
-xml_fileu6 = 'unittest/testu6.xml' # dna-related sequence
-xml_fileu7 = 'unittest/testu7.xml' # dna-related sequence
-xml_fileu8 = 'unittest/testu8.xml' # dna-related sequence
-xml_fileu9 = 'unittest/testu9.xml' # dna-related sequence
-xml_fileu10 = 'unittest/testu10.xml' # dna-related sequence
+# Details of xml fixtures can be found on googlegroups
 
 # Data structures/variables used in testing
 debug = False
@@ -43,8 +21,12 @@ max_days = "31"
 
 dir = os.path.dirname(__file__)
 folder = os.path.join(dir, 'unittest/')
+log_folder = os.path.join(dir, 'unittest/log/unit-test-log.log)
 xml_files = [x for x in os.listdir(folder)
-             if re.match(r"test.*?xml", x) != None]
+             if re.match(r"patent.*?xml", x) != None]
+
+# Logging setup
+
 
 # TODO:
 # Update xml presence tests, make it more robust. 
