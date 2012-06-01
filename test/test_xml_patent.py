@@ -106,18 +106,32 @@ class TestXMLPatent(unittest.TestCase):
             except Exception as assertionError:
                 logging.error("Patent %d, kind: %s is not valid" % (i+1, self.kind))
             # Dates must be in following format: yyyy/mm/dd
-            self.assertTrue((parsed_fields.date_grant.isdigit() and
-                             len(parsed_fields.date_grant) is 8) or not parsed_fields.date_grant)
-            self.assertTrue((parsed_fields.date_app.isdigit() and
-                             len(parsed_fields.date_app) is 8) or not parsed_fields.date_app)
-            if (parsed_fields.date_grant):
-                self.assertTrue((parsed_fields.date_grant[0:4] <= max_years) and
-                                (parsed_fields.date_grant[4:6] <= max_months) and
-                                (parsed_fields.date_grant[6:8] <= max_days))
-            if (parsed_fields.date_app):
-                self.assertTrue((parsed_fields.date_app[0:4] <= max_years) and
+            try:
+                self.assertTrue((parsed_fields.date_grant.isdigit() and
+                                 len(parsed_fields.date_grant) is 8) or not parsed_fields.date_grant)
+            except Exception as assertionError:
+                logging.error("Patent %d, date grant: %s is not valid" % (i+1, self.date_grant))
+
+            try:
+                self.assertTrue((parsed_fields.date_app.isdigit() and
+                                 len(parsed_fields.date_app) is 8) or not parsed_fields.date_app)
+            except Exception as assertionError:
+                logging.error("Patent %d, date app: %s is not valid" % (i+1, self.date_app))
+                
+            if parsed_fields.date_grant:
+                try:
+                    self.assertTrue((parsed_fields.date_grant[0:4] <= max_years) and
+                                    (parsed_fields.date_grant[4:6] <= max_months) and
+                                    (parsed_fields.date_grant[6:8] <= max_days))
+                except Exception as assertionError:
+                    logging.error("Patent %d, date grant format: %s is not valid" % (i+1, self.date_grant))
+            if parsed_fields.date_app:
+                try:
+                    self.assertTrue((parsed_fields.date_app[0:4] <= max_years) and
                                 (parsed_fields.date_app[4:6] <= max_months) and
                                 (parsed_fields.date_app[6:8] <= max_days))
+                except Exception as assertionError:
+                    logging.error("Patent %d, date app format: %s is not valid" % (i+1, self.date_grant))
             if debug:
                 print " - Testing Patent: %d ..... Passed!" %(i+1)
 
