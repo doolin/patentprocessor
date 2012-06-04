@@ -4,7 +4,6 @@ import SQLite
 import datetime
 import shutil
 
-
 t1 = datetime.datetime.now()
 print "Start", t1
 
