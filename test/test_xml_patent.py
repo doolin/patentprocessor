@@ -254,14 +254,14 @@ class TestXMLPatent(unittest.TestCase):
                 date_string = "[<]date[>]"+date+"[<][/]date[>]"
 
                 if date < "17900731":
-                    logging.error("Date %d, referenced before first patent, possible problem!!" 
+                    logging.error("Date %s, referenced before first patent, possible problem!!" 
                                   % (date))
 
                 cit_match = re.search(country_string+".*?"+doc_string+".*?"+date_string,
                                           original_xml_string, re.I + re.S + re.X)
 
                 self.assertTrue(cit_match or (cited_by and not country and not doc_number
-                                and not date and not kind and not name))
+                                and not date and not kind and not name) or not reference)
 
                 logging.error("Patent %d, xml presence detected of field: %s" 
                                   % (i+1, parsed_fields.pat_type))
