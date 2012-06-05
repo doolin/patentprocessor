@@ -82,6 +82,7 @@ def csvInput(fname):
     return [x for x in csv.reader(open(fname, "rb"))]
 
 
+
 def jarow(s1,s2):
     try:
         s1 = s1.upper()
@@ -112,7 +113,7 @@ def jarow(s1,s2):
         for i in range(0, len(mtch)):      
           if mtch[i]!=mtch2[i]:
             t += 0.5
-        
+
         d = 0.1 
         # this is the jaro-distance 
         if m==0:
@@ -122,7 +123,7 @@ def jarow(s1,s2):
         return d_j + (l * d * (1 - d_j))
     except:
         return 0
-        
+
 #SPECIFICALLY FOR SEN
 def invComp(s1, s2):
     sX = re.split(r" ?[.,] ?", s1)
@@ -145,7 +146,7 @@ def invXMtch(st):
                 ok = True
                 break
     return ok
-            
+
 #---------------------
 
 class uQvals:
