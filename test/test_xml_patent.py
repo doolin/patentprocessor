@@ -63,9 +63,8 @@ class TestXMLPatent(unittest.TestCase):
                              % (i+1, xml))
             try:
                 xml_patent = XMLPatent(file_to_open)
-                # print xml_patent
                 # print "asg list is...", xml_patent.asg_list
-                # print "cit list is...", xml_patent.cit_list
+                print "rel list is...", xml_patent.rel_list
                 patent_count = patent_count + 1
             except Exception as exPatError:
                 logging.error("Construction Error at patent %d, filename %s" 
@@ -92,40 +91,40 @@ class TestXMLPatent(unittest.TestCase):
                                 or not parsed_fields.pat_type)
                 field_count = field_count + 1
             except Exception as assertionError:
-                logging.error("Patent %d, pattern type: %s is not valid"
-                              % (i+1, parsed_fields.pat_type))
+                logging.error("Patent %s, pattern type: %s is not valid"
+                              % (xml_tuple[0], parsed_fields.pat_type))
 
             try:
                 self.assertTrue(parsed_fields.patent.isalnum() 
                                 or not parsed_fields.patent.isalnum())
                 field_count = field_count + 1
             except Exception as assertionError:
-                logging.error("Patent %d, patent doc number: %s is not valid" 
-                              % (i+1, parsed_fields.patent))
+                logging.error("Patent %s, patent doc number: %s is not valid" 
+                              % (xml_tuple[0], parsed_fields.patent))
 
             try:
                 self.assertTrue(parsed_fields.country.isalnum() 
                                 or not parsed_fields.country)
                 field_count = field_count + 1
             except Exception as assertionError:
-                logging.error("Patent %d, country: %s is not valid" 
-                              % (i+1, parsed_fields.country))
+                logging.error("Patent %s, country: %s is not valid" 
+                              % (xml_tuple[0], parsed_fields.country))
 
             try:
                 self.assertTrue(parsed_fields.country_app.isalnum() 
                                 or not parsed_fields.country_app)
                 field_count = field_count + 1
             except Exception as assertionError:
-                logging.error("Patent %d, country: %s is not valid" 
-                              % (i+1, parsed_fields.country_app))
+                logging.error("Patent %s, country: %s is not valid" 
+                              % (xml_tuple[0], parsed_fields.country_app))
 
             try:
                 self.assertTrue(parsed_fields.kind.isalnum() 
                                 or not parsed_fields.kind)
                 field_count = field_count + 1
             except Exception as assertionError:
-                logging.error("Patent %d, kind: %s is not valid" 
-                              % (i+1, parsed_fields.kind))
+                logging.error("Patent %s, kind: %s is not valid" 
+                              % (xml_tuple[0], parsed_fields.kind))
 
             # Dates must be in following format: yyyy/mm/dd
 
@@ -135,8 +134,8 @@ class TestXMLPatent(unittest.TestCase):
                                  or not parsed_fields.date_grant)
                 field_count = field_count + 1
             except Exception as assertionError:
-                logging.error("Patent %d, date grant: %s is not valid" 
-                              % (i+1, parsed_fields.date_grant))
+                logging.error("Patent %s, date grant: %s is not valid" 
+                              % (xml_tuple[0], parsed_fields.date_grant))
 
             try:
                 self.assertTrue((parsed_fields.date_app.isdigit() 
@@ -144,8 +143,8 @@ class TestXMLPatent(unittest.TestCase):
                                  or not parsed_fields.date_app)
                 field_count = field_count + 1
             except Exception as assertionError:
-                logging.error("Patent %d, date app: %s is not valid" 
-                              % (i+1, parsed_fields.date_app))
+                logging.error("Patent %s, date app: %s is not valid" 
+                              % (xml_tuple[0], parsed_fields.date_app))
 
             if parsed_fields.date_grant:
                 try:
@@ -155,8 +154,8 @@ class TestXMLPatent(unittest.TestCase):
                                      and (parsed_fields.date_grant >= first_patent))
                     field_count = field_count + 1
                 except Exception as assertionError:
-                    logging.error("Patent %d, date grant field: %s is not valid" 
-                                  % (i+1, parsed_fields.date_grant))
+                    logging.error("Patent %s, date grant field: %s is not valid" 
+                                  % (xml_tuple[0], parsed_fields.date_grant))
 
             if parsed_fields.date_app:
                 try:
@@ -166,14 +165,14 @@ class TestXMLPatent(unittest.TestCase):
                                      and (parsed_fields.date_app >= first_patent))
                     field_count = field_count + 1
                 except Exception as assertionError:
-                    logging.error("Patent %d, date app field: %s is not valid" 
-                                  % (i+1, parsed_fields.date_grant))
+                    logging.error("Patent %s, date app field: %s is not valid" 
+                                  % (xml_tuple[0], parsed_fields.date_grant))
 
             if (field_count is 9):
                 patent_count = patent_count + 1
 
             if debug:
-                print " - Testing Patent: %d ..... Passed!" % (i+1)
+                print " - Testing Patent: %s ..... Passed!" % (xml_tuple[0])
 
         if patent_count is len(xml_files):
             logging.info("All patents passed field testing")
@@ -188,7 +187,8 @@ class TestXMLPatent(unittest.TestCase):
             original_xml_string = open(folder + xml_tuple[0]).read() # rstrip('\t\n\r')
             parsed_fields = xml_tuple[1]
 
-            # Starting search for xml tags , <tag>field</tag>
+            # Starting search for xml tags , <tag>field</tag>, if field exists, tags must also
+
             country_match = re.search(r"[<]document-id[>].*?[<]country[>]"+parsed_fields.country+
                                        "[<][/]country[>].*?[<][/]document-id[>]",
                                        original_xml_string, re.I + re.S + re.X)
