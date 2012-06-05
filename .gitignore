@@ -1,3 +1,4 @@
+*.log
 invpat*.csv
 *.pyc
 *.sqlite3
