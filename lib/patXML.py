@@ -12,6 +12,7 @@ def uniasc(x, form='NFKD', action='replace', debug=False):
         print x
     return unicodedata.normalize(form, x).encode('ascii', action)
 
+
 def ron_d(xml, itr=0, defList=[], cat="", debug=False):
     xmlcopy = []
     if itr==0:
@@ -34,6 +35,7 @@ def ron_d(xml, itr=0, defList=[], cat="", debug=False):
         xmlcopy.sort()
     return xmlcopy 
 
+
 def innerHTML(dom_element):
     #if blank return nothing as well!
     if dom_element == '':
@@ -45,6 +47,7 @@ def innerHTML(dom_element):
                 rc = rc + node.data
         return rc
 
+
 def XMLstruct(strList, debug=False):
     xmlstruct = []
     for i,x in enumerate(strList):
@@ -52,6 +55,7 @@ def XMLstruct(strList, debug=False):
             print i
         xmlstruct = ron_d(minidom.parseString(x), 10, defList=xmlstruct)
     return xmlstruct
+
 
 class SQLPatent:
 
