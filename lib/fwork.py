@@ -3,8 +3,12 @@ from ftplib import *
 
 def jarow(s1,s2):
     try:
+        #s1 = s1.upper()
+        #s2 = s2.upper()
         if s1==s2:
             return 1.0
+        #if s1=="" or s2=="":
+        #    return 0.0
         short, long = len(s1)>len(s2) and [s2, s1] or [s1, s2]
         for l in range(0, min(5, len(short))):
           if short[l] != long[l]:
@@ -29,7 +33,7 @@ def jarow(s1,s2):
         for i in range(0, len(mtch)):      
           if mtch[i]!=mtch2[i]:
             t += 0.5
-        
+
         d = 0.1 
         # this is the jaro-distance 
         if m==0:
