@@ -76,7 +76,7 @@ def cityctry(city, ctry, ret="city"):
 
 ##    if z != city:
 ##        print z, city, ctry
-    
+
     if ret=="ctry":
         ##CZECH REPUBLIC
         if ctry=="CS":
@@ -127,6 +127,7 @@ def cityctry(city, ctry, ret="city"):
         ##BELGIUM
         elif ctry=="BE":
             city = re.sub(r"[/]| ?SUR ?", ",", city)
+
         ##CANADA
         elif ctry=="CA":
             #13 provinces
@@ -142,12 +143,13 @@ def cityctry(city, ctry, ret="city"):
         ##FRANCE
         elif ctry=="FR":
             city = re.sub(r"[/]| ?SUR ?", ",", city)
-            city = re.sub(r"\b(CEDEX|ALL)\b", "", city)    
+            city = re.sub(r"\b(CEDEX|ALL)\b", "", city)
         ##GERMANY
         elif ctry=="DE":
             city = re.sub(r"[/]| ?AN DER ?", ",", city)
             if re.search(r"\b(ITZEHOE|AUE|EUE)\b", city)==None:
                 city = re.sub(r"AE|OE|UE", lambda(x):x.group()[0], city)
+
         ##HONG KONG
         elif ctry=="HK":
             city = re.sub(r"\b[,]?(HK|HONG KONG)\b", "", city)
@@ -178,11 +180,12 @@ def cityctry(city, ctry, ret="city"):
             city = re.sub(r"\b[HKG]{1,2}[YAEOU]{1,3}N{0,2}[AEOU]?[GDK]", "KYONG", city) 
             city = re.sub(r"\b[GK]Y[EOU]{1,2}NG?[SE][AU]NG{0,2}\b", "GYEONGSANG", city)
             city = re.sub(r"\bCHEJU\b", "JEJU", city)
-            city = re.sub(r"(CH|J)[EOU]{1,3}N?[LR]+A", "CHEOLLA", city)        
+            city = re.sub(r"(CH|J)[EOU]{1,3}N?[LR]+A", "CHEOLLA", city)
             prov = ["SEOUL", "CHUNGCHEONGBUGDO", "CHUNGCHEONGNAMDO", "KANGWONDO", ["KYONG[- ]?[GDK]?[IOE]{0,2}DO", "KYONGGIDO"], "GYEONGSANGBUGDO", "GYEONGSANGNAMDO", "JEJU", "JEOLLABUGDO", "JEOLLANAMDO"]
         ##LUXEMBURG
         elif ctry=="LU":
             city = re.sub(r"[/]| ?AN DER ?", ",", city)
+
         ##NETHERLANDS
         elif ctry=="NL":
             prov = [["AM(ER)?STERDA[MN]{0,2}", "AMSTERDAM"]]
@@ -210,6 +213,7 @@ def cityctry(city, ctry, ret="city"):
             city = re.sub(r"\b(AREA|INDUSTRIAL|TOWN|CITY|COUNTY|DIST(RICT)?|COUNTRY)\b", "", city)
             city = re.sub(r"\b(SHIEN)\b", "HSIEN", city)
             prov = [["T[EA]I[- ]?PEI", "TAIPEI"], ["T[EA]I[- ]?CHUNG", "TAICHUNG"], ["T[EA]I[- ]?NAN", "TAINAN"], ["[GK]AO[- ]?HSI[AEU]?NG", "KAOHSIUNG"], ["T[EA][IO]?[- ]?YUANG?", "TAOYUAN"], ["CHIA[- ]?[YI]{1,2}", "CHIAYI"], ["HSIN[- ]?CHU", "HSINCHU"], ["[CZ]HANG[- ]?H[UW]A", "CHANGHUA"], ["NAN[- ]?TOU?", "NANTOU"], ["PING[- ]?T[UO]NG", "PINGTUNG"], ["MIA[UO][- ]?LIH?", "MIAOLI"], ["YUN[- ]?LIN", "YUNLIN"], ["HUA[- ]?LIEN", "HUALIEN"], ["PENG[- ]?H[UY]", "PENGHU"], ["ILA[MN]", "ILAM"]]
+
         ##UK
         elif ctry=="GB":
             city = re.sub(r"COUNTY( OF)|CO?", "", city)
@@ -259,7 +263,7 @@ def cityctry(city, ctry, ret="city"):
                 city = city[1:]
             if city[-1]==",":
                 city = city[:-1]
-            
+
         #remove dash, excess spaces with single space
         city = re.sub(r"([-]|  +)", " ", city)
         return city.strip()
