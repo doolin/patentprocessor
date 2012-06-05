@@ -24,10 +24,10 @@ def jarow(s1,s2):
           break
     mtch2 = "".join(x[1] for x in sorted(mtch2))
     t = 0.0
-    for i in range(0, len(mtch)):      
+    for i in range(0, len(mtch)):
       if mtch[i]!=mtch2[i]:
         t += 0.5
-    
+
     d = 0.1 
     # this is the jaro-distance 
     if m==0:
@@ -35,6 +35,7 @@ def jarow(s1,s2):
     else:
       d_j = 1/3.0 * ((m/len(short)) + (m/len(long)) + ((m - t)/m))
     return d_j + (l * d * (1 - d_j)) 
+
 
 def uniasc(x):
     if type(x)==types.IntType or type(x)==types.FloatType:
@@ -65,6 +66,7 @@ def uniasc(x):
         #remove all unicode
         x = unicodedata.normalize('NFKD', unicode(x)).encode('ascii', 'ignore')
         return x
+
 
 def cityctry(city, ctry, ret="city"):
 
