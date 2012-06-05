@@ -58,18 +58,21 @@ class TestXMLPatent(unittest.TestCase):
             try:
                 file_to_open = open(folder + xml, 'U')
             except Exception as fileError:
-                logging.error("Error opening patent %d, filename: %s" %
-                              (i+1, xml))
+                logging.error("Error opening patent %d, filename: %s" 
+                             % (i+1, xml))
             try:
                 xml_patent = XMLPatent(file_to_open)
+                # print xml_patent
+                # print "asg list is...", xml_patent.asg_list
+                # print "cit list is...", xml_patent.cit_list
                 patent_count = patent_count + 1
             except Exception as exPatError:
-                logging.error("Construction Error at patent %d, filename %s" %
-                             (i+1, xml))
+                logging.error("Construction Error at patent %d, filename %s" 
+                             % (i+1, xml))
             # Storing tuple (original XML file, parsed XML) for later, finer block testing
             parsed_xml.append((xml, xml_patent))
             if debug:
-                print " - Testing Patent: %d ..... Passed!" %(i+1)
+                print " - Testing Patent: %d ..... Passed!" % (i+1)
         logging.info("%d Patents have passed construction!", patent_count)
         if patent_count is len(xml_files):
             logging.info("All patents passed construction!")
@@ -77,90 +80,91 @@ class TestXMLPatent(unittest.TestCase):
     def test_patent_fields(self): # Medium-level test, testing fields of the parsed XML
         if debug:
             print "\n     Testing Logic and Format of Patent Fields\n"
-        logging.info("Testing Fields of %d Patents!" % (len(xml_files)))
+        logging.info("Testing Fields of %d Patents!" 
+                    % (len(xml_files)))
         patent_count = 0
         for i, xml_tuple in enumerate(parsed_xml):
             parsed_fields = xml_tuple[1]
             field_count = 0
             try:
-                self.assertTrue(parsed_fields.pat_type.isalnum() or not
-                                parsed_fields.pat_type)
+                self.assertTrue(parsed_fields.pat_type.isalnum() 
+                                or not parsed_fields.pat_type)
                 field_count = field_count + 1
             except Exception as assertionError:
-                logging.error("Patent %d, pattern type: %s is not valid" %
-                             (i+1, self.pat_type))
+                logging.error("Patent %d, pattern type: %s is not valid"
+                              % (i+1, self.pat_type))
 
             try:
-                self.assertTrue(parsed_fields.patent.isalnum() or not
-                                parsed_fields.patent.isalnum())
+                self.assertTrue(parsed_fields.patent.isalnum() 
+                                or not parsed_fields.patent.isalnum())
                 field_count = field_count + 1
             except Exception as assertionError:
-                logging.error("Patent %d, patent doc number: %s is not valid" %
-                             (i+1, self.patent))
+                logging.error("Patent %d, patent doc number: %s is not valid" 
+                              % (i+1, self.patent))
 
             try:
-                self.assertTrue(parsed_fields.country.isalnum() or not
-                                parsed_fields.country)
+                self.assertTrue(parsed_fields.country.isalnum() 
+                                or not parsed_fields.country)
                 field_count = field_count + 1
             except Exception as assertionError:
-                logging.error("Patent %d, country: %s is not valid" %
-                             (i+1, self.country))
+                logging.error("Patent %d, country: %s is not valid" 
+                              % (i+1, self.country))
 
             try:
-                self.assertTrue(parsed_fields.country_app.isalnum() or not
-                            parsed_fields.country_app)
+                self.assertTrue(parsed_fields.country_app.isalnum() 
+                                or not parsed_fields.country_app)
                 field_count = field_count + 1
             except Exception as assertionError:
-                logging.error("Patent %d, country: %s is not valid" %
-                             (i+1, self.country_app))
+                logging.error("Patent %d, country: %s is not valid" 
+                              % (i+1, self.country_app))
 
             try:
-                self.assertTrue(parsed_fields.kind.isalnum() or not
-                            parsed_fields.kind)
+                self.assertTrue(parsed_fields.kind.isalnum() 
+                                or not parsed_fields.kind)
                 field_count = field_count + 1
             except Exception as assertionError:
-                logging.error("Patent %d, kind: %s is not valid" %
-                             (i+1, self.kind))
+                logging.error("Patent %d, kind: %s is not valid" 
+                              % (i+1, self.kind))
 
             # Dates must be in following format: yyyy/mm/dd
 
             try:
-                self.assertTrue((parsed_fields.date_grant.isdigit() and
-                                 len(parsed_fields.date_grant) is 8) or not
-                                 parsed_fields.date_grant)
+                self.assertTrue((parsed_fields.date_grant.isdigit() 
+                                 and len(parsed_fields.date_grant) is 8) 
+                                 or not parsed_fields.date_grant)
                 field_count = field_count + 1
             except Exception as assertionError:
-                logging.error("Patent %d, date grant: %s is not valid" %
-                             (i+1, self.date_grant))
+                logging.error("Patent %d, date grant: %s is not valid" 
+                              % (i+1, self.date_grant))
 
             try:
-                self.assertTrue((parsed_fields.date_app.isdigit() and
-                                len(parsed_fields.date_app) is 8) or not
-                                parsed_fields.date_app)
+                self.assertTrue((parsed_fields.date_app.isdigit() 
+                                 and len(parsed_fields.date_app) is 8) 
+                                 or not parsed_fields.date_app)
                 field_count = field_count + 1
             except Exception as assertionError:
-                logging.error("Patent %d, date app: %s is not valid" %
-                             (i+1, self.date_app))
+                logging.error("Patent %d, date app: %s is not valid" 
+                              % (i+1, self.date_app))
 
             if parsed_fields.date_grant:
                 try:
-                    self.assertTrue((parsed_fields.date_grant[0:4] <= max_years) and
-                                    (parsed_fields.date_grant[4:6] <= max_months) and
-                                    (parsed_fields.date_grant[6:8] <= max_days))
+                    self.assertTrue((parsed_fields.date_grant[0:4] <= max_years)
+                                     and (parsed_fields.date_grant[4:6] <= max_months) 
+                                     and (parsed_fields.date_grant[6:8] <= max_days))
                     field_count = field_count + 1
                 except Exception as assertionError:
-                    logging.error("Patent %d, date grant format: %s is not valid" %
-                                 (i+1, self.date_grant))
+                    logging.error("Patent %d, date grant format: %s is not valid" 
+                                  % (i+1, self.date_grant))
 
             if parsed_fields.date_app:
                 try:
-                    self.assertTrue((parsed_fields.date_app[0:4] <= max_years) and
-                                (parsed_fields.date_app[4:6] <= max_months) and
-                                (parsed_fields.date_app[6:8] <= max_days))
+                    self.assertTrue((parsed_fields.date_app[0:4] <= max_years) 
+                                     and (parsed_fields.date_app[4:6] <= max_months) 
+                                     and (parsed_fields.date_app[6:8] <= max_days))
                     field_count = field_count + 1
                 except Exception as assertionError:
-                    logging.error("Patent %d, date app format: %s is not valid" %
-                                 (i+1, self.date_grant))
+                    logging.error("Patent %d, date app format: %s is not valid" 
+                                  % (i+1, self.date_grant))
 
             if (field_count is 9):
                 patent_count = patent_count + 1
@@ -183,43 +187,89 @@ class TestXMLPatent(unittest.TestCase):
 
             # Starting search for xml tags , <tag>field</tag>
             country_match = re.search(r"[<]document-id[>].*?[<]country[>]"+parsed_fields.country+
-                                      "[<][/]country[>].*?[<][/]document-id[>]",
-                                      original_xml_string, re.I + re.S + re.X)
+                                       "[<][/]country[>].*?[<][/]document-id[>]",
+                                       original_xml_string, re.I + re.S + re.X)
             kind_match = re.search(r"[<]document-id[>].*?[<]kind[>]"+parsed_fields.kind+
-                                   "[<][/]kind[>].*?[<][/]document-id[>]",
-                                   original_xml_string, re.I + re.S + re.X)
+                                    "[<][/]kind[>].*?[<][/]document-id[>]",
+                                    original_xml_string, re.I + re.S + re.X)
             pat_type_match = re.search(r"appl-type=\""+parsed_fields.pat_type+"\"",
-                                          original_xml_string, re.I + re.S + re.X)
+                                         original_xml_string, re.I + re.S + re.X)
+            inv_title_match = re.search(r"parsed_fields.invention_title"+
+                                         "[<][/]invention-title[>]",
+                                         original_xml_string, re.I + re.S + re.X)
+
+            try:
+                #self.assertTrue(inv_title_match)
+                field_count = field_count + 1
+            except Exception as assertionError:
+                logging.error("Patent %d, xml presence not detected of field: %s" 
+                              % (i+1, parsed_fields.invention_title))
+
             try:
                 self.assertTrue(country_match)
                 field_count = field_count + 1
             except Exception as assertionError:
-                logging.error("Patent %d, xml presence not detected of field: %s" %
-                             (i+1, parsed_fields.country))
+                logging.error("Patent %d, xml presence not detected of field: %s" 
+                              % (i+1, parsed_fields.country))
 
             try:
                 self.assertTrue(kind_match)
                 field_count = field_count + 1
             except Exception as assertionError:
-                logging.error("Patent %d, xml presence not detected of field: %s" %
-                             (i+1, parsed_fields.kind))
+                logging.error("Patent %d, xml presence not detected of field: %s" 
+                              % (i+1, parsed_fields.kind))
 
             if parsed_fields.pat_type:
                 try:
                     self.assertTrue(pat_type_match)
                     field_count = field_count + 1
                 except Exception as assertionError:
-                    logging.error("Patent %d, xml presence not detected of field: %s" %
-                                 (i+1, parsed_fields.pat_type))
-            else:
+                    logging.error("Patent %d, xml presence not detected of field: %s" 
+                                  % (i+1, parsed_fields.pat_type))
+            if not parsed_fields.pat_type:
                 try:
                     self.assertTrue(not pat_type_match)
                     field_count = field_count + 1
                 except Exception as assertionError:
-                    logging.error("Patent %d, xml presence detected of field: %s" %
-                                 (i+1, parsed_fields.pat_type))
+                    logging.error("Patent %d, xml presence detected of field: %s" 
+                                  % (i+1, parsed_fields.pat_type))
 
-            if (field_count is 3):
+            
+
+            # Now going through lists (asg, cit, rel, inv, law)
+
+            # Citation List
+
+            for (cited_by, country, doc_number, date, kind, name, reference) in parsed_fields.cit_list:
+                # print "cited by...", cited_by
+                # print "country...", country
+                # print "doc-number...", doc_number
+                # print "date...", date
+                # print "kind...", kind
+                # print "name...", name
+                country_string = "[<]country[>]"+country+"[<][/]country[>]"
+                doc_string = "[<]doc-number[>]"+doc_number+"[<][/]doc-number[>]"
+                kind_string = "[<]kind[>]"+kind+"[<][/]kind[>]"
+                name_string = "[<]name[>]"+name+"[<][/]name[>]"
+                date_string = "[<]date[>]"+date+"[<][/]date[>]"
+
+                if date < "17900731" and date: # Null check
+                    logging.error("Date %s, referenced before first patent, possible problem!!" 
+                                  % (date))
+
+                cit_match = re.search(country_string+".*?"+doc_string+".*?"+date_string,
+                                          original_xml_string, re.I + re.S + re.X)
+
+                self.assertTrue(cit_match or (cited_by and not country and not doc_number
+                                and not date and not kind and not name) or not reference)
+
+                #logging.error("Patent %d, xml presence detected of field: %s" 
+                #% (i+1, parsed_fields.pat_type))
+                                       
+
+                
+
+            if (field_count is 4): 
                 patent_count = patent_count + 1
             if debug:
                 print " - Testing Patent: %d ..... Passed!" % (i+1)
