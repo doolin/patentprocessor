@@ -66,7 +66,7 @@ class TestXMLPatent(unittest.TestCase):
             try:
                 xml_patent = XMLPatent(file_to_open)
                 # print "asg list is...", xml_patent.asg_list
-                print "rel list is...", xml_patent.rel_list
+                print "law list is...", xml_patent.law_list
                 patent_count = patent_count + 1
             except Exception as exPatError:
                 logging.error("Construction Error at patent %d, filename %s" 
@@ -238,7 +238,46 @@ class TestXMLPatent(unittest.TestCase):
                     logging.error("Patent %s, xml presence detected of field: %s" 
                                   % (xml_tuple[0], parsed_fields.pat_type))
 
-            # Now going through lists (asg, cit, rel, inv, law)\
+            # Now going through lists (asg, cit, rel, inv, law)
+
+            
+
+            # Law list
+
+            for (last_name, first_name, country, orgname) in parsed_fields.law_list:
+
+                 if last_name:
+                        last_name_match = re.search(last_name_string, original_xml_string, re.I + re.S + re.X)
+                        try:
+                            self.assertTrue(last_name_match)
+                        except Exception as assertionError:
+                            logging.error("File:%s, last_name field %s exists in law, but last_name tags do not!"
+                                          % (xml_tuple[0], last_name))
+
+                 if first_name:
+                        first_name_match = re.search(first_name_string, original_xml_string, re.I + re.S + re.X)
+                        try:
+                            self.assertTrue(first_name_match)
+                        except Exception as assertionError:
+                            logging.error("File:%s, first_name field %s exists in law, but first_name tags do not!"
+                                          % (xml_tuple[0], first_name))
+
+                 if country:
+                        country_match = re.search(country_string, original_xml_string, re.I + re.S + re.X)
+                        try:
+                            self.assertTrue(country_match)
+                        except Exception as assertionError:
+                            logging.error("File:%s, country field %s exists in law, but country tags do not!"
+                                          % (xml_tuple[0], country))
+
+                 if orgname:
+                        orgname_match = re.search(orgname_string, original_xml_string, re.I + re.S + re.X)
+                        try:
+                            self.assertTrue(orgname_match)
+                        except Exception as assertionError:
+                            logging.error("File:%s, orgname field %s exists in law, but orgname tags do not!"
+                                          % (xml_tuple[0], orgname))
+                
 
             # Rel list
 
