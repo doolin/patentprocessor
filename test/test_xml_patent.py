@@ -66,7 +66,7 @@ class TestXMLPatent(unittest.TestCase):
             try:
                 xml_patent = XMLPatent(file_to_open)
                 # print "asg list is...", xml_patent.asg_list
-                print "law list is...", xml_patent.law_list
+                # print "law list is...", xml_patent.law_list
                 patent_count = patent_count + 1
             except Exception as exPatError:
                 logging.error("Construction Error at patent %d, filename %s" 
@@ -240,11 +240,14 @@ class TestXMLPatent(unittest.TestCase):
 
             # Now going through lists (asg, cit, rel, inv, law)
 
-            
-
             # Law list
 
             for (last_name, first_name, country, orgname) in parsed_fields.law_list:
+
+                 last_name_string = "[<]last-name[>](.*?)[<][/]last-name[>]"
+                 first_name_string = "[<]first-name[>](.*?)[<][/]first-name[>]"
+                 country_string = "[<]country[>](.*?)[<][/]country[>]"
+                 orgname_string = "[<]orgname[>](.*?)[<][/]orgname[>]"
 
                  if last_name:
                         last_name_match = re.search(last_name_string, original_xml_string, re.I + re.S + re.X)
@@ -349,10 +352,8 @@ class TestXMLPatent(unittest.TestCase):
                         except Exception as assertionError:
                             logging.error("File:%s, postcode field %s exists in asg, but postcode tags do not!"
                                           % (xml_tuple[0], postcode))
-       
-
-
-            # Citation List
+      
+            # Cit List
 
             for (cited_by, country, doc_number, date, kind, name, reference) in parsed_fields.cit_list:
                 # print "cited by...", cited_by
