@@ -56,6 +56,8 @@ class TestXMLPatent(unittest.TestCase):
         logging.info("Testing Construction of %d Patents!" % (len(xml_files)))
         patent_count = 0
         for i, xml in enumerate(xml_files):
+            if debug:
+                print " - Testing Patent: %s ..... Passed!" % (xml)
             try:
                 file_to_open = open(folder + xml, 'U')
             except Exception as fileError:
@@ -71,8 +73,7 @@ class TestXMLPatent(unittest.TestCase):
                              % (i+1, xml))
             # Storing tuple (original XML file, parsed XML) for later, finer block testing
             parsed_xml.append((xml, xml_patent))
-            if debug:
-                print " - Testing Patent: %d ..... Passed!" % (i+1)
+            
         logging.info("%d Patents have passed construction!", patent_count)
         if patent_count is len(xml_files):
             logging.info("All patents passed construction!")
@@ -237,7 +238,21 @@ class TestXMLPatent(unittest.TestCase):
                     logging.error("Patent %s, xml presence detected of field: %s" 
                                   % (xml_tuple[0], parsed_fields.pat_type))
 
-            # Now going through lists (asg, cit, rel, inv, law)
+            # Now going through lists (asg, cit, rel, inv, law)\
+
+            # Rel list
+
+            for entry in parsed_fields.rel_list: # Have to do as block, differing sizes in rel_list.
+
+                related_tag = entry[0] # Can be continuation-in-part, continuation, division, reissue
+                if related_tag:
+                    related_tag_search = re.search(related_tag, original_xml_string, re.I + re.S + re.X)
+                    try:
+                        self.assertTrue(related_tag_search)
+                    except Exception as assertionError:
+                        logging.error("File:%s, related field %s exists in rel, but %s tags do not!"
+                                      % (xml_tuple[0], related_tag, related_tag))
+                    
 
             # Asg List 
 
