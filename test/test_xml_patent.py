@@ -57,7 +57,7 @@ class TestXMLPatent(unittest.TestCase):
         patent_count = 0
         for i, xml in enumerate(xml_files):
             if debug:
-                print " - Testing Patent: %s ..... Passed!" % (xml)
+                print " - Testing Patent: %s" % (xml)
             try:
                 file_to_open = open(folder + xml, 'U')
             except Exception as fileError:
@@ -65,8 +65,6 @@ class TestXMLPatent(unittest.TestCase):
                              % (i+1, xml))
             try:
                 xml_patent = XMLPatent(file_to_open)
-                # print "asg list is...", xml_patent.asg_list
-                # print "law list is...", xml_patent.law_list
                 patent_count = patent_count + 1
             except Exception as exPatError:
                 logging.error("Construction Error at patent %d, filename %s" 
@@ -173,7 +171,7 @@ class TestXMLPatent(unittest.TestCase):
                 patent_count = patent_count + 1
 
             if debug:
-                print " - Testing Patent: %s ..... Passed!" % (xml_tuple[0])
+                print " - Testing Patent: %s" % (xml_tuple[0])
 
         if patent_count is len(xml_files):
             logging.info("All patents passed field testing")
@@ -207,21 +205,21 @@ class TestXMLPatent(unittest.TestCase):
                     field_count = field_count + 1
                 except Exception as assertionError:
                     logging.error("Patent %s, xml presence not detected of field: %s" 
-                                  % (xml_tuple[0], parsed_fields.invention_title))
+                                   % (xml_tuple[0], parsed_fields.invention_title))
 
             try:
                 self.assertTrue(country_match)
                 field_count = field_count + 1
             except Exception as assertionError:
                 logging.error("Patent %s, xml presence not detected of field: %s" 
-                              % (xml_tuple[0], parsed_fields.country))
+                               % (xml_tuple[0], parsed_fields.country))
 
             try:
                 self.assertTrue(kind_match)
                 field_count = field_count + 1
             except Exception as assertionError:
                 logging.error("Patent %s, xml presence not detected of field: %s" 
-                              % (xml_tuple[0], parsed_fields.kind))
+                               % (xml_tuple[0], parsed_fields.kind))
 
             if parsed_fields.pat_type:
                 try:
@@ -229,14 +227,14 @@ class TestXMLPatent(unittest.TestCase):
                     field_count = field_count + 1
                 except Exception as assertionError:
                     logging.error("Patent %s, xml presence not detected of field: %s" 
-                                  % (xml_tuple[0], parsed_fields.pat_type))
+                                   % (xml_tuple[0], parsed_fields.pat_type))
             else:
                 try:
                     self.assertTrue(not pat_type_match)
                     field_count = field_count + 1
                 except Exception as assertionError:
                     logging.error("Patent %s, xml presence detected of field: %s" 
-                                  % (xml_tuple[0], parsed_fields.pat_type))
+                                   % (xml_tuple[0], parsed_fields.pat_type))
 
             # Now going through lists (asg, cit, rel, inv, law)
 
@@ -249,12 +247,12 @@ class TestXMLPatent(unittest.TestCase):
  
                 if a1 is 0: # Assignees            
   
-                    org_string = "[<]orgname[>](.*?)[<][/]orgname[>]"
-                    role_string = "[<]role[>](.*?)[<][/]role[>]"
-                    city_string = "[<]city[>](.*?)[<][/]city[>]"
-                    state_string = "[<]state[>](.*?)[<][/]state[>]"
-                    country_string = "[<]country[>](.*?)[<][/]country[>]"
-                    postcode_string = "[<]postcode[>](.*?)[<][/]postcode[>]"
+                    org_string = "[<]assignee[>](.*?)[<]orgname[>](.*?)[<][/]orgname[>](.*?)[<][/]assignee[>]"
+                    role_string = "[<]assignee[>](.*?)[<]role[>]"+role+"[<][/]role[>](.*?)[<][/]assignee[>]"
+                    city_string = "[<]assignee[>](.*?)[<]city[>](.*?)[<][/]city[>](.*?)[<][/]assignee[>]"
+                    state_string = "[<]assignee[>](.*?)[<]state[>]"+state+"[<][/]state[>](.*?)[<][/]assignee[>]"
+                    country_string = "[<]assignee[>](.*?)[<]country[>]"+country+"[<][/]country[>](.*?)[<][/]assignee[>]"
+                    postcode_string = "[<]assignee[>](.*?)[<]postcode[>]"+postcode+"[<][/]postcode[>](.*?)[<][/]assignee[>]"
 
                     if orgname:
                         org_match = re.search(org_string, original_xml_string, 
@@ -316,24 +314,33 @@ class TestXMLPatent(unittest.TestCase):
 
             for (cited_by, country, doc_number,
                  date, kind, name, reference) in parsed_fields.cit_list:
-                # print "cited by...", cited_by
-                # print "country...", country
-                # print "doc-number...", doc_number
-                # print "date...", date
-                # print "kind...", kind
-                # print "name...", name
 
-                country_string = "[<]country[>](.*?)[<][/]country[>]"
-                doc_string = "[<]doc-number[>](.*?)[<][/]doc-number[>]"
-                kind_string = "[<]kind[>](.*?)[<][/]kind[>]"
-                name_string = "[<]name[>](.*?)[<][/]name[>]"
-                date_string = "[<]date[>](.*?)[<][/]date[>]"
+                """
+                print "cited by...", cited_by
+                print "country...", country
+                print "doc-number...", doc_number
+                print "date...", date
+                print "kind...", kind
+                print "name...", name
+                """
+                country_string = "[<]references-cited[>](.*?)[<]country[>]"+country+"[<][/]country[>](.*?)[<][/]references-cited[>]"
+                doc_string = "[<]references-cited[>](.*?)[<]doc-number[>]"+doc_number+"[<][/]doc-number[>](.*?)[<][/]references-cited[>]"
+                kind_string = "[<]references-cited[>](.*?)[<]kind[>]"+kind+"[<][/]kind[>](.*?)[<][/]references-cited[>]"
+                name_string = "[<]references-cited[>](.*?)[<]name[>](.*?)[<][/]name[>](.*?)[<][/]references-cited[>]" # needs more work
+                date_string = "[<]references-cited[>](.*?)[<]date[>]"+date+"[<][/]date[>](.*?)[<][/]references-cited[>]"
 
                 if date < "17900731" and date: # Null-check
                     logging.error("""Date %s in citation list, 
                                      referenced before first patent, possible problem!!""" 
                                      % (date))
-
+                if date:
+                    try:
+                        self.assertTrue(parsed_fields.date_app[0:4] <= max_years
+                                        and parsed_fields.date_app[4:6] <= max_months
+                                        and parsed_fields.date_app[6:8] <= max_days)
+                    except Exception as assertionError:
+                        logging.error("File:%s, date field %s is invalid!"
+                                       % (xml_tuple[0], parsed_fields.date_app))
                 if country:
                         postcode_match = re.search(country_string, original_xml_string,
                                                    re.I + re.S + re.X)
@@ -394,10 +401,10 @@ class TestXMLPatent(unittest.TestCase):
 
             for (last_name, first_name, country, orgname) in parsed_fields.law_list:
 
-                 last_name_string = "[<]last-name[>](.*?)[<][/]last-name[>]"
-                 first_name_string = "[<]first-name[>](.*?)[<][/]first-name[>]"
-                 country_string = "[<]country[>](.*?)[<][/]country[>]"
-                 orgname_string = "[<]orgname[>](.*?)[<][/]orgname[>]"
+                 last_name_string = "[<]parties[>](.*?)[<]last-name[>]"+last_name+"[<][/]last-name[>](.*?)[<][/]parties[>]"
+                 first_name_string = "[<]parties[>](.*?)[<]first-name[>](.*?)[<][/]first-name[>](.*?)[<][/]parties[>]"
+                 country_string = "[<]parties[>](.*?)[<]country[>](.*?)[<][/]country[>](.*?)[<][/]parties[>]"
+                 orgname_string = "[<]parties[>](.*?)[<]orgname[>](.*?)[<][/]orgname[>](.*?)[<][/]parties[>]"
 
                  if last_name:
                         last_name_match = re.search(last_name_string, original_xml_string,
@@ -442,7 +449,7 @@ class TestXMLPatent(unittest.TestCase):
             if (field_count is 4): 
                 patent_count = patent_count + 1
             if debug:
-                print " - Testing Patent: %s ..... Passed!" %  (xml_tuple[0])
+                print " - Testing Patent: %s" %  (xml_tuple[0])
         if (patent_count is len(xml_files)):
             logging.info("All tests passed xml presence tests!")
 
