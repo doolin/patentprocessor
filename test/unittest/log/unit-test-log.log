@@ -1,6 +1,17 @@
-INFO:root:Testing Construction of 20 Patents!
-INFO:root:20 Patents have passed construction!
+INFO:root:Testing Construction of 40 Patents!
+INFO:root:40 Patents have passed construction!
 INFO:root:All patents passed construction!
-INFO:root:Testing Fields of 20 Patents!
-INFO:root:Testing XML of 20 Patents!
+INFO:root:Testing Fields of 40 Patents!
+INFO:root:All patents passed field testing
+INFO:root:Testing XML of 40 Patents!
+ERROR:root:File:09_patent_test6.xml, last_name field Wiegell, Esq exists in law,
+                                             but last_name tags do not!
+ERROR:root:File:10_patent_test1.xml, last_name field Laurentano, Esq. exists in law,
+                                             but last_name tags do not!
+ERROR:root:File:10_patent_test2.xml, last_name field Laurentano, Esq. exists in law,
+                                             but last_name tags do not!
+ERROR:root:File:11_patent_test5.xml, last_name field Apolzon, Esq. exists in law,
+                                             but last_name tags do not!
+ERROR:root:File:12_patent_test8.xml, last_name field Goldschmidt, Jr. exists in law,
+                                             but last_name tags do not!
 INFO:root:All tests passed xml presence tests!
