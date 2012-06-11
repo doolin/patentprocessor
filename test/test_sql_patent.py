@@ -1,22 +1,24 @@
-#!/usr/bin/env python
-
 import unittest
+import sys
 import imp
-from yaml import load, dump
+import os
+import datetime
+import re
+import logging
 
-from  sql_patent import SQLPatent
+dir = os.path.dirname(__file__)
+folder = os.path.join(dir, 'unittest/')
+log_file = os.path.join(dir, 'unittest/log/unit-test-log.log')
+xml_files = [x for x in os.listdir(folder)
+             if re.match(r".*?patent.*?xml", x) != None]
 
-class TestSQLPatent(unittest.TestCase):
+# Logging setup
+logging.basicConfig(filename=log_file, level=logging.DEBUG)
+
+class testSQLPatent(unittest.TestCase):
 
     def setUp(self):
-        self.foo = 'bar'
-
-    def test_dummy(self):
-        assert(1 == 1)
-
-    def test_sql_patent(self):
-        sqlpatent = SQLPatent()
-        assert(sqlpatent)
+        # Basic sanity check
 
 
 
