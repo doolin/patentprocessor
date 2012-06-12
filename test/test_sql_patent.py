@@ -76,10 +76,6 @@ class TestXMLPatent(unittest.TestCase):
                              % (i+1, xml))
             # Storing tuple (original XML file, parsed XML) for finer block testing
             parsed_xml.append(xml_patent)
-            
-        logging.info("%d Patents have passed construction!", patent_count)
-        if patent_count is len(xml_files):
-            logging.info("All patents passed construction!")
 
     def test_patent_SQL_tblBuild_asg(self):
         parsed_xml = []
@@ -88,7 +84,41 @@ class TestXMLPatent(unittest.TestCase):
         list_of_tables = []
         testSQL = SQLPatent()
         new_table = testSQL.tblBuild(parsed_xml, "assignee")
-        print "new table is...", new_table
+        print "new table is...", new_table, len(new_table)
+        for xml in parsed_xml:
+            asg_list = xml.asg_list[0]
+            print "asg list is...", asg_list
+            for table_entry in new_table:
+                self.assertTrue(len(table_entry) == 9)
+                self.assertTrue(table_entry[0] == xml.patent)
+                self.assertTrue(table_entry[1] == asg_list[2])  
+                self.assertTrue(table_entry[2] == asg_list[1]) 
+                self.assertTrue(table_entry[3] == asg_list[4]) 
+                self.assertTrue(table_entry[4] == asg_list[5])
+                self.assertTrue(table_entry[5] == asg_list[6])
+                self.assertTrue(table_entry[6] == asg_list[7])
+                self.assertTrue(table_entry[7] == asg_list[8])
+
+    def test_patent_SQL_tblBuild_cit(self):
+        parsed_xml = []
+        for xml in xml_files:
+            parsed_xml.append(XMLPatent(open(folder + xml, 'U')))
+        list_of_tables = []
+        testSQL = SQLPatent()
+        new_table = testSQL.tblBuild(parsed_xml, "citation")
+        for xml in parsed_xml:
+            cit_list = [y for y in xml.cit_list if y[1]!=""]
+            for table_entry in new_table:
+                self.assertTrue(len(table_entry) == 8)
+                self.assertTrue(table_entry[0] == xml.patent)
+                print "te[1] is:", table_entry[1], "while cit_list[3]", cit_list[3]
+                self.assertTrue(table_entry[1] == cit_list[3])  
+                self.assertTrue(table_entry[2] == cit_list[5]) 
+                self.assertTrue(table_entry[3] == cit_list[4]) 
+                self.assertTrue(table_entry[4] == cit_list[1])
+                self.assertTrue(table_entry[5] == cit_list[2])
+                self.assertTrue(table_entry[6] == cit_list[0])
+        
 
     def tearDown(self):
         #anything needed to be torn down should be added here, pass for now
