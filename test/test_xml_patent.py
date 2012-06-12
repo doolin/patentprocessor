@@ -200,7 +200,11 @@ class TestXMLPatent(unittest.TestCase):
                                          original_xml_string, re.I + re.S + re.X)
 
             if parsed_fields.invention_title: # Still needs work
+<<<<<<< HEAD
                 try:
+=======
+                     try:
+>>>>>>> b2f8f2057c85aad35d3d227b0ce2b890705b09c5
                     self.assertTrue(inv_title_match)
                     field_count = field_count + 1
                 except Exception as assertionError:
@@ -327,7 +331,11 @@ class TestXMLPatent(unittest.TestCase):
                 doc_string = "[<]references-cited[>](.*?)[<]doc-number[>]"+doc_number+"[<][/]doc-number[>](.*?)[<][/]references-cited[>]"
                 kind_string = "[<]references-cited[>](.*?)[<]kind[>]"+kind+"[<][/]kind[>](.*?)[<][/]references-cited[>]"
                 name_string = "[<]references-cited[>](.*?)[<]name[>](.*?)[<][/]name[>](.*?)[<][/]references-cited[>]" # needs more work
+<<<<<<< HEAD
                 date_string = "[<]references-cited[>](.*?)[<]date[>](.*?)[<][/]date[>](.*?)[<][/]references-cited[>]"
+=======
+                date_string = "[<]references-cited[>](.*?)[<]date[>]"+date+"[<][/]date[>](.*?)[<][/]references-cited[>]"
+>>>>>>> b2f8f2057c85aad35d3d227b0ce2b890705b09c5
 
                 if date < "17900731" and date: # Null-check
                     logging.error("""Date %s in citation list, 
