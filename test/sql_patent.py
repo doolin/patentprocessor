@@ -214,7 +214,11 @@ class SQLPatent:
 
         for x in patents:
 
+            print "trying patent", x
+            print "patent's asg", x.asg_list
+
             if tbl=="assignee":
+                print "reached assignee in SQLpatent"
                 for i,y in enumerate(x.asg_list):
                     if y[0]==0:
                         q.extend([[x.patent, y[2], y[1], y[4], y[5], y[6], y[7], y[8], i]])

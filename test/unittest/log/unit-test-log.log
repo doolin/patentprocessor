@@ -1,7 +1,2 @@
 INFO:root:Testing Construction of 1 Patents!
-INFO:root:1 Patents have passed construction!
-INFO:root:All patents passed construction!
-INFO:root:Testing Fields of 1 Patents!
-INFO:root:All patents passed field testing
-INFO:root:Testing XML of 1 Patents!
-INFO:root:All tests passed xml presence tests!
+INFO:root:0 Patents have passed construction!
