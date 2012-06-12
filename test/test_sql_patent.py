@@ -168,6 +168,28 @@ class TestXMLPatent(unittest.TestCase):
                 self.assertTrue(table_entry[6] == inv_list[5])
                 self.assertTrue(table_entry[7] == inv_list[6])
                 self.assertTrue(table_entry[8] == inv_list[8])
+
+    def test_patent_SQL_tblBuild_pat(self):
+        parsed_xml = []
+        for xml in xml_files:
+            parsed_xml.append(XMLPatent(open(folder + xml, 'U')))
+        list_of_tables = []
+        testSQL = SQLPatent()
+        new_table = testSQL.tblBuild(parsed_xml, "patent")
+        for i, table_entry in enumerate(new_table):
+            for xml in parsed_xml:
+                self.assertTrue(len(table_entry) == 10 or not table_entry)
+                self.assertTrue(table_entry[0] == xml.patent)
+                self.assertTrue(table_entry[1] == xml.kind)
+                self.assertTrue(table_entry[2] == xml.clm_num)
+                self.assertTrue(table_entry[3] == xml.code_app)
+                self.assertTrue(table_entry[4] == xml.patent_app)
+                self.assertTrue(table_entry[5] == xml.date_grant)
+                self.assertTrue(table_entry[6] == xml.date_grant[:4])
+                self.assertTrue(table_entry[7] == xml.date_app)
+                self.assertTrue(table_entry[8] == xml.date_app[:4])
+                self.assertTrue(table_entry[9] == xml.pat_type)
+
             
             
         
