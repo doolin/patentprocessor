@@ -81,7 +81,7 @@ class TestXMLPatent(unittest.TestCase):
         for table_entry in new_table:
             for xml in parsed_xml:
                 asg_list = xml.asg_list[0]
-                self.assertTrue(len(table_entry) == 9)
+                self.assertTrue(len(table_entry) == 9 or not table_entry)
                 self.assertTrue(table_entry[0] == xml.patent)
                 self.assertTrue(table_entry[1] == asg_list[2])  
                 self.assertTrue(table_entry[2] == asg_list[1]) 
@@ -102,7 +102,7 @@ class TestXMLPatent(unittest.TestCase):
         for i, table_entry in enumerate(new_table):
             for xml in parsed_xml:
                 asg_list = xml.asg_list[i]
-                self.assertTrue(len(table_entry) == 9)
+                self.assertTrue(len(table_entry) == 9 or not table_entry)
                 self.assertTrue(table_entry[0] == xml.patent)
                 self.assertTrue(table_entry[1] == asg_list[2])  
                 self.assertTrue(table_entry[2] == asg_list[1]) 
@@ -122,7 +122,7 @@ class TestXMLPatent(unittest.TestCase):
         for i, table_entry in enumerate(new_table):
             for xml in parsed_xml:
                 cit_list = xml.cit_list[i]
-                self.assertTrue(len(table_entry) == 8)
+                self.assertTrue(len(table_entry) == 8 or not table_entry)
                 self.assertTrue(table_entry[0] == xml.patent)
                 # print "table entry[2]:", table_entry[2]
                 # print "cit_list[5]", cit_list[5]
@@ -142,11 +142,32 @@ class TestXMLPatent(unittest.TestCase):
         for i, table_entry in enumerate(new_table):
             for xml in parsed_xml:
                 class_list = xml.classes[i]
-                self.assertTrue(len(table_entry) == 4)
+                self.assertTrue(len(table_entry) == 4 or not table_entry)
                 self.assertTrue(table_entry[0] == xml.patent)
                 self.assertTrue(table_entry[1] == (i==0)*1)
                 self.assertTrue(table_entry[2] == class_list[0])
                 self.assertTrue(table_entry[3] == class_list[1])
+
+    def test_patent_SQL_tblBuild_inv(self):
+        parsed_xml = []
+        for xml in xml_files:
+            parsed_xml.append(XMLPatent(open(folder + xml, 'U')))
+        list_of_tables = []
+        testSQL = SQLPatent()
+        new_table = testSQL.tblBuild(parsed_xml, "inventor")
+        for i, table_entry in enumerate(new_table):
+            for xml in parsed_xml:
+                inv_list = xml.inv_list[i]
+                self.assertTrue(len(table_entry) == 10 or not table_entry)
+                self.assertTrue(table_entry[0] == xml.patent)
+                self.assertTrue(table_entry[1] == inv_list[1])
+                self.assertTrue(table_entry[2] == inv_list[0])
+                self.assertTrue(table_entry[3] == inv_list[2])
+                self.assertTrue(table_entry[4] == inv_list[3])
+                self.assertTrue(table_entry[5] == inv_list[4])
+                self.assertTrue(table_entry[6] == inv_list[5])
+                self.assertTrue(table_entry[7] == inv_list[6])
+                self.assertTrue(table_entry[8] == inv_list[8])
             
             
         
