@@ -76,22 +76,6 @@ class TestXMLPatent(unittest.TestCase):
                              % (i+1, xml))
             parsed_xml.append(xml_patent)
 
-    def test_patent_SQL_tblBuild_asg(self):
-        new_table = testSQL.tblBuild(parsed_xml, "assignee")
-        # print "new table is...", new_table, len(new_table)
-        for table_entry in new_table:
-            for xml in parsed_xml:
-                asg_list = xml.asg_list[0]
-                self.assertTrue(len(table_entry) == 9 or not table_entry)
-                self.assertTrue(table_entry[0] == xml.patent)
-                self.assertTrue(table_entry[1] == asg_list[2])  
-                self.assertTrue(table_entry[2] == asg_list[1]) 
-                self.assertTrue(table_entry[3] == asg_list[4]) 
-                self.assertTrue(table_entry[4] == asg_list[5])
-                self.assertTrue(table_entry[5] == asg_list[6])
-                self.assertTrue(table_entry[6] == asg_list[7])
-                self.assertTrue(table_entry[7] == asg_list[8])
-
     def test_patent_SQL_tblBuild_asg2(self):
         new_table = testSQL.tblBuild(parsed_xml, "assignee")
         # print "new table is...", new_table, len(new_table)
