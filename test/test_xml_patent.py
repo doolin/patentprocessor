@@ -61,17 +61,17 @@ class TestXMLPatent(unittest.TestCase):
             try:
                 file_to_open = open(folder + xml, 'U')
             except Exception as fileError:
-                logging.error("Error opening patent %d, filename: %s" 
+                logging.error("Error opening patent %d, filename: %s"
                              % (i+1, xml))
             try:
                 xml_patent = XMLPatent(file_to_open)
                 patent_count = patent_count + 1
             except Exception as exPatError:
-                logging.error("Construction Error at patent %d, filename %s" 
+                logging.error("Construction Error at patent %d, filename %s"
                              % (i+1, xml))
             # Storing tuple (original XML file, parsed XML) for finer block testing
             parsed_xml.append((xml, xml_patent))
-            
+
         logging.info("%d Patents have passed construction!", patent_count)
         if patent_count is len(xml_files):
             logging.info("All patents passed construction!")
@@ -79,14 +79,14 @@ class TestXMLPatent(unittest.TestCase):
     def test_patent_fields(self): # Medium-level test, parsed XML fields tests
         if debug:
             print "\n     Testing Logic and Format of Patent Fields\n"
-        logging.info("Testing Fields of %d Patents!" 
+        logging.info("Testing Fields of %d Patents!"
                     % (len(xml_files)))
         patent_count = 0
         for i, xml_tuple in enumerate(parsed_xml):
             parsed_fields = xml_tuple[1]
             field_count = 0
             try:
-                self.assertTrue(parsed_fields.pat_type.isalnum() 
+                self.assertTrue(parsed_fields.pat_type.isalnum()
                                 or not parsed_fields.pat_type)
                 field_count = field_count + 1
             except Exception as assertionError:
@@ -94,77 +94,77 @@ class TestXMLPatent(unittest.TestCase):
                               % (xml_tuple[0], parsed_fields.pat_type))
 
             try:
-                self.assertTrue(parsed_fields.patent.isalnum() 
+                self.assertTrue(parsed_fields.patent.isalnum()
                                 or not parsed_fields.patent.isalnum())
                 field_count = field_count + 1
             except Exception as assertionError:
-                logging.error("Patent %s, patent doc number: %s is not valid" 
+                logging.error("Patent %s, patent doc number: %s is not valid"
                               % (xml_tuple[0], parsed_fields.patent))
 
             try:
-                self.assertTrue(parsed_fields.country.isalnum() 
+                self.assertTrue(parsed_fields.country.isalnum()
                                 or not parsed_fields.country)
                 field_count = field_count + 1
             except Exception as assertionError:
-                logging.error("Patent %s, country: %s is not valid" 
+                logging.error("Patent %s, country: %s is not valid"
                               % (xml_tuple[0], parsed_fields.country))
 
             try:
-                self.assertTrue(parsed_fields.country_app.isalnum() 
+                self.assertTrue(parsed_fields.country_app.isalnum()
                                 or not parsed_fields.country_app)
                 field_count = field_count + 1
             except Exception as assertionError:
-                logging.error("Patent %s, country: %s is not valid" 
+                logging.error("Patent %s, country: %s is not valid"
                               % (xml_tuple[0], parsed_fields.country_app))
 
             try:
-                self.assertTrue(parsed_fields.kind.isalnum() 
+                self.assertTrue(parsed_fields.kind.isalnum()
                                 or not parsed_fields.kind)
                 field_count = field_count + 1
             except Exception as assertionError:
-                logging.error("Patent %s, kind: %s is not valid" 
+                logging.error("Patent %s, kind: %s is not valid"
                               % (xml_tuple[0], parsed_fields.kind))
 
             # Dates must be in following format: yyyy/mm/dd
 
             try:
-                self.assertTrue((parsed_fields.date_grant.isdigit() 
-                                 and len(parsed_fields.date_grant) is 8) 
+                self.assertTrue((parsed_fields.date_grant.isdigit()
+                                 and len(parsed_fields.date_grant) is 8)
                                  or not parsed_fields.date_grant)
                 field_count = field_count + 1
             except Exception as assertionError:
-                logging.error("Patent %s, date grant: %s is not valid" 
+                logging.error("Patent %s, date grant: %s is not valid"
                               % (xml_tuple[0], parsed_fields.date_grant))
 
             try:
-                self.assertTrue((parsed_fields.date_app.isdigit() 
-                                 and len(parsed_fields.date_app) is 8) 
+                self.assertTrue((parsed_fields.date_app.isdigit()
+                                 and len(parsed_fields.date_app) is 8)
                                  or not parsed_fields.date_app)
                 field_count = field_count + 1
             except Exception as assertionError:
-                logging.error("Patent %s, date app: %s is not valid" 
+                logging.error("Patent %s, date app: %s is not valid"
                               % (xml_tuple[0], parsed_fields.date_app))
 
             if parsed_fields.date_grant:
                 try:
                     self.assertTrue((parsed_fields.date_grant[0:4] <= max_years)
-                                     and (parsed_fields.date_grant[4:6] <= max_months) 
+                                     and (parsed_fields.date_grant[4:6] <= max_months)
                                      and (parsed_fields.date_grant[6:8] <= max_days)
                                      and (parsed_fields.date_grant >= first_patent))
                     field_count = field_count + 1
                 except Exception as assertionError:
-                    logging.error("Patent %s, date grant field: %s is not valid" 
+                    logging.error("Patent %s, date grant field: %s is not valid"
                                   % (xml_tuple[0], parsed_fields.date_grant))
 
             if parsed_fields.date_app:
                 try:
-                    self.assertTrue((parsed_fields.date_app[0:4] <= max_years) 
-                                     and (parsed_fields.date_app[4:6] <= max_months) 
+                    self.assertTrue((parsed_fields.date_app[0:4] <= max_years)
+                                     and (parsed_fields.date_app[4:6] <= max_months)
                                      and (parsed_fields.date_app[6:8] <= max_days)
                                      and (parsed_fields.date_app >= first_patent))
                     field_count = field_count + 1
                 except Exception as assertionError:
-                    logging.error("Patent %s, date app field: %s is not valid" 
+                    logging.error("Patent %s, date app field: %s is not valid"
                                   % (xml_tuple[0], parsed_fields.date_grant))
 
             if (field_count is 9):
@@ -200,29 +200,25 @@ class TestXMLPatent(unittest.TestCase):
                                          original_xml_string, re.I + re.S + re.X)
 
             if parsed_fields.invention_title: # Still needs work
-<<<<<<< HEAD
                 try:
-=======
-                     try:
->>>>>>> b2f8f2057c85aad35d3d227b0ce2b890705b09c5
                     self.assertTrue(inv_title_match)
                     field_count = field_count + 1
                 except Exception as assertionError:
-                    logging.error("Patent %s, xml presence not detected of field: %s" 
+                    logging.error("Patent %s, xml presence not detected of field: %s"
                                    % (xml_tuple[0], parsed_fields.invention_title))
 
             try:
                 self.assertTrue(country_match)
                 field_count = field_count + 1
             except Exception as assertionError:
-                logging.error("Patent %s, xml presence not detected of field: %s" 
+                logging.error("Patent %s, xml presence not detected of field: %s"
                                % (xml_tuple[0], parsed_fields.country))
 
             try:
                 self.assertTrue(kind_match)
                 field_count = field_count + 1
             except Exception as assertionError:
-                logging.error("Patent %s, xml presence not detected of field: %s" 
+                logging.error("Patent %s, xml presence not detected of field: %s"
                                % (xml_tuple[0], parsed_fields.kind))
 
             if parsed_fields.pat_type:
@@ -230,27 +226,27 @@ class TestXMLPatent(unittest.TestCase):
                     self.assertTrue(pat_type_match)
                     field_count = field_count + 1
                 except Exception as assertionError:
-                    logging.error("Patent %s, xml presence not detected of field: %s" 
+                    logging.error("Patent %s, xml presence not detected of field: %s"
                                    % (xml_tuple[0], parsed_fields.pat_type))
             else:
                 try:
                     self.assertTrue(not pat_type_match)
                     field_count = field_count + 1
                 except Exception as assertionError:
-                    logging.error("Patent %s, xml presence detected of field: %s" 
+                    logging.error("Patent %s, xml presence detected of field: %s"
                                    % (xml_tuple[0], parsed_fields.pat_type))
 
             # Now going through lists (asg, cit, rel, inv, law)
 
-            # Asg List 
+            # Asg List
 
-            for (a1, orgname, role, address, city, state, 
+            for (a1, orgname, role, address, city, state,
                  country, postcode, nationality, residence) in parsed_fields.asg_list:
-              
+
                 # Note: a1 in XMLPatent() is used to denote orgname from first/last-name
- 
-                if a1 is 0: # Assignees            
-  
+
+                if a1 is 0: # Assignees
+
                     org_string = "[<]assignee[>](.*?)[<]orgname[>](.*?)[<][/]orgname[>](.*?)[<][/]assignee[>]"
                     role_string = "[<]assignee[>](.*?)[<]role[>]"+role+"[<][/]role[>](.*?)[<][/]assignee[>]"
                     city_string = "[<]assignee[>](.*?)[<]city[>](.*?)[<][/]city[>](.*?)[<][/]assignee[>]"
@@ -259,7 +255,7 @@ class TestXMLPatent(unittest.TestCase):
                     postcode_string = "[<]assignee[>](.*?)[<]postcode[>]"+postcode+"[<][/]postcode[>](.*?)[<][/]assignee[>]"
 
                     if orgname:
-                        org_match = re.search(org_string, original_xml_string, 
+                        org_match = re.search(org_string, original_xml_string,
                                               re.I + re.S + re.X)
                         try:
                             self.assertTrue(org_match)
@@ -292,7 +288,7 @@ class TestXMLPatent(unittest.TestCase):
                         try:
                             self.assertTrue(state_match)
                         except Exception as assertionError:
-                            logging.error("""File:%s, state field %s exists in asg, 
+                            logging.error("""File:%s, state field %s exists in asg,
                                              but state tags do not!"""
                                              % (xml_tuple[0], state))
                     if country:
@@ -301,7 +297,7 @@ class TestXMLPatent(unittest.TestCase):
                         try:
                             self.assertTrue(country_match)
                         except Exception as assertionError:
-                            logging.error("""File:%s, country field %s exists in asg, 
+                            logging.error("""File:%s, country field %s exists in asg,
                                              but country tags do not!"""
                                              % (xml_tuple[0], country))
                     if postcode:
@@ -313,7 +309,7 @@ class TestXMLPatent(unittest.TestCase):
                             logging.error("""File:%s, postcode field %s exists in asg,
                                              but postcode tags do not!"""
                                              % (xml_tuple[0], postcode))
-      
+
             # Cit List
 
             for (cited_by, country, doc_number,
@@ -331,15 +327,12 @@ class TestXMLPatent(unittest.TestCase):
                 doc_string = "[<]references-cited[>](.*?)[<]doc-number[>]"+doc_number+"[<][/]doc-number[>](.*?)[<][/]references-cited[>]"
                 kind_string = "[<]references-cited[>](.*?)[<]kind[>]"+kind+"[<][/]kind[>](.*?)[<][/]references-cited[>]"
                 name_string = "[<]references-cited[>](.*?)[<]name[>](.*?)[<][/]name[>](.*?)[<][/]references-cited[>]" # needs more work
-<<<<<<< HEAD
                 date_string = "[<]references-cited[>](.*?)[<]date[>](.*?)[<][/]date[>](.*?)[<][/]references-cited[>]"
-=======
                 date_string = "[<]references-cited[>](.*?)[<]date[>]"+date+"[<][/]date[>](.*?)[<][/]references-cited[>]"
->>>>>>> b2f8f2057c85aad35d3d227b0ce2b890705b09c5
 
                 if date < "17900731" and date: # Null-check
-                    logging.error("""Date %s in citation list, 
-                                     referenced before first patent, possible problem!!""" 
+                    logging.error("""Date %s in citation list,
+                                     referenced before first patent, possible problem!!"""
                                      % (date))
                 if date:
                     try:
@@ -350,50 +343,50 @@ class TestXMLPatent(unittest.TestCase):
                         logging.error("File:%s, date field %s is invalid!"
                                        % (xml_tuple[0], parsed_fields.date_app))
                 if country:
-                        postcode_match = re.search(country_string, original_xml_string,
-                                                   re.I + re.S + re.X)
-                        try:
-                            self.assertTrue(country_match)
-                        except Exception as assertionError:
-                            logging.error("""File:%s, country field %s exists in cit list,
-                                             but country tags do not!"""
-                                             % (xml_tuple[0], country))
-                if doc_number:
-                        doc_number_match = re.search(doc_string, original_xml_string,
-                                                     re.I + re.S + re.X)
-                        try:
-                            self.assertTrue(doc_number)
-                        except Exception as assertionError:
-                            logging.error("""File:%s, doc_number field %s exists in cit list,
-                                             but doc_number tags do not!"""
-                                             % (xml_tuple[0], doc_number))
-                if date:
-                        date_match = re.search(date_string, original_xml_string,
+                    postcode_match = re.search(country_string, original_xml_string,
                                                re.I + re.S + re.X)
-                        try:
-                            self.assertTrue(date_match)
-                        except Exception as assertionError:
-                            logging.error("""File:%s, date field %s exists in cit list,
-                                             but date tags do not!"""
-                                             % (xml_tuple[0], date))
+                    try:
+                        self.assertTrue(country_match)
+                    except Exception as assertionError:
+                        logging.error("""File:%s, country field %s exists in cit list,
+                                         but country tags do not!"""
+                                         % (xml_tuple[0], country))
+                if doc_number:
+                    doc_number_match = re.search(doc_string, original_xml_string,
+                                                 re.I + re.S + re.X)
+                    try:
+                        self.assertTrue(doc_number)
+                    except Exception as assertionError:
+                        logging.error("""File:%s, doc_number field %s exists in cit list,
+                                         but doc_number tags do not!"""
+                                         % (xml_tuple[0], doc_number))
+                if date:
+                    date_match = re.search(date_string, original_xml_string,
+                                           re.I + re.S + re.X)
+                    try:
+                        self.assertTrue(date_match)
+                    except Exception as assertionError:
+                        logging.error("""File:%s, date field %s exists in cit list,
+                                         but date tags do not!"""
+                                         % (xml_tuple[0], date))
 
                 if name:
-                        name_match = re.search(name_string, original_xml_string,
-                                               re.I + re.S + re.X)
-                        try:
-                            self.assertTrue(name_match)
-                        except Exception as assertionError:
-                            logging.error("""File:%s, name field %s exists in cit list,
-                                             but name tags do not!"""
-                                             % (xml_tuple[0], name))     
+                    name_match = re.search(name_string, original_xml_string,
+                                           re.I + re.S + re.X)
+                    try:
+                        self.assertTrue(name_match)
+                    except Exception as assertionError:
+                        logging.error("""File:%s, name field %s exists in cit list,
+                                         but name tags do not!"""
+                                         % (xml_tuple[0], name))
 
             # Rel list
 
-            for entry in parsed_fields.rel_list: 
+            for entry in parsed_fields.rel_list:
 
                 # Tags = {continuation-in-part, continuation, division, reissue}
 
-                related_tag = entry[0] 
+                related_tag = entry[0]
 
                 if related_tag:
                     related_tag_search = re.search(related_tag, original_xml_string,
@@ -409,52 +402,52 @@ class TestXMLPatent(unittest.TestCase):
 
             for (last_name, first_name, country, orgname) in parsed_fields.law_list:
 
-                 last_name_string = "[<]parties[>](.*?)[<]last-name[>]"+last_name+"[<][/]last-name[>](.*?)[<][/]parties[>]"
-                 first_name_string = "[<]parties[>](.*?)[<]first-name[>](.*?)[<][/]first-name[>](.*?)[<][/]parties[>]"
-                 country_string = "[<]parties[>](.*?)[<]country[>](.*?)[<][/]country[>](.*?)[<][/]parties[>]"
-                 orgname_string = "[<]parties[>](.*?)[<]orgname[>](.*?)[<][/]orgname[>](.*?)[<][/]parties[>]"
+                last_name_string = "[<]parties[>](.*?)[<]last-name[>]"+last_name+"[<][/]last-name[>](.*?)[<][/]parties[>]"
+                first_name_string = "[<]parties[>](.*?)[<]first-name[>](.*?)[<][/]first-name[>](.*?)[<][/]parties[>]"
+                country_string = "[<]parties[>](.*?)[<]country[>](.*?)[<][/]country[>](.*?)[<][/]parties[>]"
+                orgname_string = "[<]parties[>](.*?)[<]orgname[>](.*?)[<][/]orgname[>](.*?)[<][/]parties[>]"
 
-                 if last_name:
-                        last_name_match = re.search(last_name_string, original_xml_string,
-                                                    re.I + re.S + re.X)
-                        try:
-                            self.assertTrue(last_name_match)
-                        except Exception as assertionError:
-                            logging.error("""File:%s, last_name field %s exists in law,
-                                             but last_name tags do not!"""
-                                             % (xml_tuple[0], last_name))
+                if last_name:
+                    last_name_match = re.search(last_name_string, original_xml_string,
+                                                re.I + re.S + re.X)
+                    try:
+                        self.assertTrue(last_name_match)
+                    except Exception as assertionError:
+                        logging.error("""File:%s, last_name field %s exists in law,
+                                         but last_name tags do not!"""
+                                         % (xml_tuple[0], last_name))
 
-                 if first_name:
-                        first_name_match = re.search(first_name_string, original_xml_string,
-                                                     re.I + re.S + re.X)
-                        try:
-                            self.assertTrue(first_name_match)
-                        except Exception as assertionError:
-                            logging.error("""File:%s, first_name field %s exists in law,
-                                             but first_name tags do not!"""
-                                             % (xml_tuple[0], first_name))
-
-                 if country:
-                        country_match = re.search(country_string, original_xml_string,
+                if first_name:
+                    first_name_match = re.search(first_name_string, original_xml_string,
                                                  re.I + re.S + re.X)
-                        try:
-                            self.assertTrue(country_match)
-                        except Exception as assertionError:
-                            logging.error("""File:%s, country field %s exists in law,
-                                             but country tags do not!"""
-                                             % (xml_tuple[0], country))
+                    try:
+                        self.assertTrue(first_name_match)
+                    except Exception as assertionError:
+                        logging.error("""File:%s, first_name field %s exists in law,
+                                         but first_name tags do not!"""
+                                         % (xml_tuple[0], first_name))
 
-                 if orgname:
-                        orgname_match = re.search(orgname_string, original_xml_string,
-                                                  re.I + re.S + re.X)
-                        try:
-                            self.assertTrue(orgname_match)
-                        except Exception as assertionError:
-                            logging.error("""File:%s, orgname field %s exists in law,
-                                             but orgname tags do not!"""
-                                             % (xml_tuple[0], orgname))
+                if country:
+                    country_match = re.search(country_string, original_xml_string,
+                                             re.I + re.S + re.X)
+                    try:
+                        self.assertTrue(country_match)
+                    except Exception as assertionError:
+                        logging.error("""File:%s, country field %s exists in law,
+                                         but country tags do not!"""
+                                         % (xml_tuple[0], country))
 
-            if (field_count is 4): 
+                if orgname:
+                    orgname_match = re.search(orgname_string, original_xml_string,
+                                              re.I + re.S + re.X)
+                    try:
+                        self.assertTrue(orgname_match)
+                    except Exception as assertionError:
+                        logging.error("""File:%s, orgname field %s exists in law,
+                                         but orgname tags do not!"""
+                                         % (xml_tuple[0], orgname))
+
+            if (field_count is 4):
                 patent_count = patent_count + 1
             if debug:
                 print " - Testing Patent: %s" %  (xml_tuple[0])

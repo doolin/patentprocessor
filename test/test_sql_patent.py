@@ -47,10 +47,10 @@ logging.basicConfig(filename=log_file, level=logging.DEBUG)
 
 """
 Each individual test in unit-testing
-should be able to short, independent, to the point. 
+should be able to short, independent, to the point.
 """
 
-class TestXMLPatent(unittest.TestCase):
+class TestSQLPatent(unittest.TestCase):
 
     def setUp(self):
         # Basic sanity check
@@ -69,26 +69,25 @@ class TestXMLPatent(unittest.TestCase):
             try:
                 file_to_open = open(folder + xml, 'U')
             except Exception as fileError:
-                logging.error("Error opening patent %d, filename: %s" 
+                logging.error("Error opening patent %d, filename: %s"
                              % (i+1, xml))
             try:
                 xml_patent = XMLPatent(file_to_open)
             except Exception as exPatError:
-                logging.error("Construction Error at patent %d, filename %s" 
+                logging.error("Construction Error at patent %d, filename %s"
                              % (i+1, xml))
             parsed_xml.append(xml_patent)
 
     def test_patent_SQL_tblBuild_asg2(self):
         new_table = testSQL.tblBuild(parsed_xml, "assignee")
-        # print "new table is...", new_table, len(new_table)
         for i, table_entry in enumerate(new_table):
             for xml in parsed_xml:
                 asg_list = xml.asg_list[i]
                 self.assertTrue(len(table_entry) == 9 or not table_entry)
                 self.assertTrue(table_entry[0] == xml.patent)
-                self.assertTrue(table_entry[1] == asg_list[2])  
-                self.assertTrue(table_entry[2] == asg_list[1]) 
-                self.assertTrue(table_entry[3] == asg_list[4]) 
+                self.assertTrue(table_entry[1] == asg_list[2])
+                self.assertTrue(table_entry[2] == asg_list[1])
+                self.assertTrue(table_entry[3] == asg_list[4])
                 self.assertTrue(table_entry[4] == asg_list[5])
                 self.assertTrue(table_entry[5] == asg_list[6])
                 self.assertTrue(table_entry[6] == asg_list[7])
@@ -103,8 +102,8 @@ class TestXMLPatent(unittest.TestCase):
                 self.assertTrue(table_entry[0] == xml.patent)
                 # print "table entry[2]:", table_entry[2]
                 # print "cit_list[5]", cit_list[5]
-                self.assertTrue(table_entry[2] == cit_list[5]) 
-                self.assertTrue(table_entry[3] == cit_list[4]) 
+                self.assertTrue(table_entry[2] == cit_list[5])
+                self.assertTrue(table_entry[3] == cit_list[4])
                 self.assertTrue(table_entry[4] == cit_list[1])
                 self.assertTrue(table_entry[5] == cit_list[2])
                 self.assertTrue(table_entry[6] == cit_list[0])
@@ -200,16 +199,12 @@ class TestXMLPatent(unittest.TestCase):
                 else:
                     self.assertTrue(not table_entry[6])
                     self.assertTrue(not table_entry[7])
-                    
+
     def test_patent_SQL_tblBuild_null(self):
         new_table = testSQL.tblBuild(parsed_xml, "nullcheck")
         for i, table_entry in enumerate(new_table):
             self.assertTrue(not table_entry)
-                    
-
-    
-
-
+            
     def tearDown(self):
         #anything needed to be torn down should be added here, pass for now
         pass
