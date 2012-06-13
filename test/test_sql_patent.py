@@ -27,7 +27,7 @@ first_patent = "17900731"
 
 dir = os.path.dirname(__file__)
 folder = os.path.join(dir, 'unittest/')
-log_file = os.path.join(dir, 'unittest/log/unit-test-log.log')
+log_file = os.path.join(dir, 'unittest/log/sql-test-log.log')
 xml_files = [x for x in os.listdir(folder)
              if re.match(r".*?patent.*?xml", x) != None]
 
@@ -149,6 +149,29 @@ class TestXMLPatent(unittest.TestCase):
                 self.assertTrue(table_entry[7] == xml.date_app)
                 self.assertTrue(table_entry[8] == xml.date_app[:4])
                 self.assertTrue(table_entry[9] == xml.pat_type)
+
+    def test_patent_SQL_tblBuild_patdesc(self):
+        new_table = testSQL.tblBuild(parsed_xml, "patdesc")
+        for i, table_entry in enumerate(new_table):
+            for xml in parsed_xml:
+                self.assertTrue(len(table_entry) == 3 or not table_entry)
+                self.assertTrue(table_entry[0] == xml.patent)
+                self.assertTrue(table_entry[1] == xml.abstract)
+                self.assertTrue(table_entry[2] == xml.invention_title)
+
+    def test_patent_SQL_tblBuild_patdesc(self):
+        new_table = testSQL.tblBuild(parsed_xml, "lawyer")
+        for i, table_entry in enumerate(new_table):
+            for xml in parsed_xml:
+                law_list = xml.law_list[i]
+                self.assertTrue(len(table_entry) == 6 or not table_entry)
+                self.assertTrue(table_entry[0] == xml.patent)
+                self.assertTrue(table_entry[1] == law_list[1])
+                self.assertTrue(table_entry[2] == law_list[0])
+                self.assertTrue(table_entry[3] == law_list[2])
+                self.assertTrue(table_entry[4] == law_list[3])
+
+    
 
 
     def tearDown(self):
