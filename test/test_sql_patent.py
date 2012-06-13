@@ -178,7 +178,27 @@ class TestXMLPatent(unittest.TestCase):
                 cit_list = [y for y in xml.cit_list if y[1]==""][i]
                 self.assertTrue(len(table_entry) == 3 or not table_entry)
                 self.assertTrue(table_entry[0] == xml.patent)
-                self.assertTrue(table_entry[1] == cit_list[-1]) 
+                self.assertTrue(table_entry[1] == cit_list[-1])
+
+    def test_patent_SQL_tblBuild_usreldoc(self):
+        new_table = testSQL.tblBuild(parsed_xml, "usreldoc")
+        for i, table_entry in enumerate(new_table):
+            for xml in parsed_xml:
+                rel_list = [y for y in xml.rel_list if y[1]==""][i]
+                self.assertTrue(len(table_entry) == 7 or not table_entry)
+                self.assertTrue(table_entry[0] == xml.patent)
+                self.assertTrue(table_entry[1] == rel_list[0])
+                self.assertTrue(table_entry[2] == rel_list[1])
+                self.assertTrue(table_entry[3] == rel_list[3])
+                self.assertTrue(table_entry[4] == rel_list[2])
+                self.assertTrue(table_entry[5] == rel_list[4])
+                if rel_list[1] == 1:
+                    self.assertTrue(table_entry[6] == rel_list[5])
+                    self.assertTrue(table_entry[7] == rel_list[6])
+                else:
+                    self.assertTrue(not table_entry[6])
+                    self.assertTrue(not table_entry[7])
+                    
 
     
 
