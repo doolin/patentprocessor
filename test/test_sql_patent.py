@@ -19,6 +19,7 @@ tables = ["assignee", "citation", "class", "inventor",
 debug = False
 xml_files = []
 parsed_xml = []
+parsed_xml = []
 max_years = "2012"
 max_months = "12"
 max_days = "31"
@@ -30,6 +31,11 @@ log_file = os.path.join(dir, 'unittest/log/unit-test-log.log')
 xml_files = [x for x in os.listdir(folder)
              if re.match(r".*?patent.*?xml", x) != None]
 
+for xml in xml_files:
+    parsed_xml.append(XMLPatent(open(folder + xml, 'U')))
+    list_of_tables = []
+    testSQL = SQLPatent()
+
 # Logging setup
 logging.basicConfig(filename=log_file, level=logging.DEBUG)
 
@@ -38,7 +44,8 @@ logging.basicConfig(filename=log_file, level=logging.DEBUG)
 
 
 """
-Each individual test in unit-testing should be able to run individually. 
+Each individual test in unit-testing
+should be able to short, independent, to the point. 
 """
 
 class TestXMLPatent(unittest.TestCase):
@@ -49,7 +56,7 @@ class TestXMLPatent(unittest.TestCase):
 
     def test_patent_XML_construction(self):
         # High-level test, testing legacy code construction,
-        # if doesn't construct obviously won't pass other tests, fail-fast mentality
+        # Need XML To parse before it gets to SQLPatent
         if debug:
             print "\n     Testing Well-formedness and Construction\n"
         logging.info("Testing Construction of %d Patents!" % (len(xml_files)))
@@ -67,15 +74,9 @@ class TestXMLPatent(unittest.TestCase):
             except Exception as exPatError:
                 logging.error("Construction Error at patent %d, filename %s" 
                              % (i+1, xml))
-            # Storing tuple (original XML file, parsed XML) for finer block testing
             parsed_xml.append(xml_patent)
 
     def test_patent_SQL_tblBuild_asg(self):
-        parsed_xml = []
-        for xml in xml_files:
-            parsed_xml.append(XMLPatent(open(folder + xml, 'U')))
-        list_of_tables = []
-        testSQL = SQLPatent()
         new_table = testSQL.tblBuild(parsed_xml, "assignee")
         # print "new table is...", new_table, len(new_table)
         for table_entry in new_table:
@@ -92,11 +93,6 @@ class TestXMLPatent(unittest.TestCase):
                 self.assertTrue(table_entry[7] == asg_list[8])
 
     def test_patent_SQL_tblBuild_asg2(self):
-        parsed_xml = []
-        for xml in xml_files:
-            parsed_xml.append(XMLPatent(open(folder + xml, 'U')))
-        list_of_tables = []
-        testSQL = SQLPatent()
         new_table = testSQL.tblBuild(parsed_xml, "assignee")
         # print "new table is...", new_table, len(new_table)
         for i, table_entry in enumerate(new_table):
@@ -113,11 +109,6 @@ class TestXMLPatent(unittest.TestCase):
                 self.assertTrue(table_entry[7] == asg_list[8])
 
     def test_patent_SQL_tblBuild_cit(self):
-        parsed_xml = []
-        for xml in xml_files:
-            parsed_xml.append(XMLPatent(open(folder + xml, 'U')))
-        list_of_tables = []
-        testSQL = SQLPatent()
         new_table = testSQL.tblBuild(parsed_xml, "citation")
         for i, table_entry in enumerate(new_table):
             for xml in parsed_xml:
@@ -133,11 +124,6 @@ class TestXMLPatent(unittest.TestCase):
                 self.assertTrue(table_entry[6] == cit_list[0])
 
     def test_patent_SQL_tblBuild_class(self):
-        parsed_xml = []
-        for xml in xml_files:
-            parsed_xml.append(XMLPatent(open(folder + xml, 'U')))
-        list_of_tables = []
-        testSQL = SQLPatent()
         new_table = testSQL.tblBuild(parsed_xml, "class")
         for i, table_entry in enumerate(new_table):
             for xml in parsed_xml:
@@ -149,11 +135,6 @@ class TestXMLPatent(unittest.TestCase):
                 self.assertTrue(table_entry[3] == class_list[1])
 
     def test_patent_SQL_tblBuild_inv(self):
-        parsed_xml = []
-        for xml in xml_files:
-            parsed_xml.append(XMLPatent(open(folder + xml, 'U')))
-        list_of_tables = []
-        testSQL = SQLPatent()
         new_table = testSQL.tblBuild(parsed_xml, "inventor")
         for i, table_entry in enumerate(new_table):
             for xml in parsed_xml:
@@ -170,11 +151,6 @@ class TestXMLPatent(unittest.TestCase):
                 self.assertTrue(table_entry[8] == inv_list[8])
 
     def test_patent_SQL_tblBuild_pat(self):
-        parsed_xml = []
-        for xml in xml_files:
-            parsed_xml.append(XMLPatent(open(folder + xml, 'U')))
-        list_of_tables = []
-        testSQL = SQLPatent()
         new_table = testSQL.tblBuild(parsed_xml, "patent")
         for i, table_entry in enumerate(new_table):
             for xml in parsed_xml:
@@ -190,12 +166,6 @@ class TestXMLPatent(unittest.TestCase):
                 self.assertTrue(table_entry[8] == xml.date_app[:4])
                 self.assertTrue(table_entry[9] == xml.pat_type)
 
-            
-            
-        
-        
-        
-        
 
     def tearDown(self):
         #anything needed to be torn down should be added here, pass for now
