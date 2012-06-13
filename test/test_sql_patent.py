@@ -31,10 +31,12 @@ log_file = os.path.join(dir, 'unittest/log/sql-test-log.log')
 xml_files = [x for x in os.listdir(folder)
              if re.match(r".*?patent.*?xml", x) != None]
 
+# Parsing XML to be used in SQLPatent()
+
 for xml in xml_files:
     parsed_xml.append(XMLPatent(open(folder + xml, 'U')))
-    list_of_tables = []
-    testSQL = SQLPatent()
+
+testSQL = SQLPatent()
 
 # Logging setup
 logging.basicConfig(filename=log_file, level=logging.DEBUG)
