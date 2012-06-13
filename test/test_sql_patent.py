@@ -199,6 +199,11 @@ class TestXMLPatent(unittest.TestCase):
                     self.assertTrue(not table_entry[6])
                     self.assertTrue(not table_entry[7])
                     
+    def test_patent_SQL_tblBuild_null(self):
+        new_table = testSQL.tblBuild(parsed_xml, "nullcheck")
+        for i, table_entry in enumerate(new_table):
+            self.assertTrue(not table_entry)
+                    
 
     
 
