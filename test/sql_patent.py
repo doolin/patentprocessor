@@ -241,7 +241,6 @@ class SQLPatent:
                 q.extend([[x.patent, x.abstract, x.invention_title]])
 
             elif tbl=="lawyer":
-                print "reached lawyer"
                 for i,y in enumerate(x.law_list):
                     q.extend([[x.patent, y[1], y[0], y[2], y[3], i]])
 
