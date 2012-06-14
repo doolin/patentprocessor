@@ -19,9 +19,10 @@ max_years = "2012"
 max_months = "12"
 max_days = "31"
 first_patent = "17900731"
-valid_kind_types = ["A1", "A2", "A9", "Bn", "B1", "B2", "Cn",
-                    "E1", "H1", "I1", "I2", "I3", "I4", "I5",
-                    "NP", "P1", "P2", "P3", "P4", "P4", "P9", "S1"]
+valid_kind_types = ["A1", "A2", "A9", "B1", "B2", "B3", "B4", "B5",
+                    "B6", "B7", "B8", "B9", "Cn", "E1", "H1", "I1",
+                    "I2", "I3", "I4", "I5", "NP", "P1", "P2", "P3",
+                    "P4", "P4", "P9", "S1"]
 # Directory of test files and logs
 dir = os.path.dirname(__file__)
 folder = os.path.join(dir, 'unittest/')
