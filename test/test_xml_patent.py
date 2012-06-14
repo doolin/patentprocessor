@@ -90,7 +90,7 @@ class TestXMLPatent(unittest.TestCase):
         for i, xml_tuple in enumerate(parsed_xml):
             parsed_fields = xml_tuple[1]
             try:
-                print "patent:", parsed_fields.patent, "is...:", parsed_fields.patent.isalnum()
+                # print "patent:", parsed_fields.patent, "is...:", parsed_fields.patent.isalnum()
                 self.assertTrue(parsed_fields.patent.isalnum()
                                 or not parsed_fields.patent.isalnum())
             except Exception as assertionError:
@@ -227,25 +227,10 @@ class TestXMLPatent(unittest.TestCase):
                     logging.error("Patent %s, xml presence detected of field: %s"
                                    % (xml_tuple[0], parsed_fields.pat_type))
 
-    
-         
-        
-
-        
-        
-            
-
-    def test_patent_validity(self): # Low-level test, testing tag presence in XML
-        logging.info("Testing XML of %d Patents!" % (len(xml_files)))
-        if debug:
-            print "\n     Testing XML Presence of Patent Fields\n"
-
-            
+    def test_asg_xml(self):
         for i, xml_tuple in enumerate(parsed_xml): # xml_tuple = (xml_file, XMLpatent(xml))
             original_xml_string = open(folder + xml_tuple[0]).read() # rstrip('\t\n\r')
             parsed_fields = xml_tuple[1]
-            
-
             # Now going through lists (asg, cit, rel, inv, law)
 
             # Asg List
@@ -320,8 +305,11 @@ class TestXMLPatent(unittest.TestCase):
                                              but postcode tags do not!"""
                                              % (xml_tuple[0], postcode))
 
+    def test_cit_xml(self):
+        for i, xml_tuple in enumerate(parsed_xml): # xml_tuple = (xml_file, XMLpatent(xml))
+            original_xml_string = open(folder + xml_tuple[0]).read() # rstrip('\t\n\r')
+            parsed_fields = xml_tuple[1]
             # Cit List
-
             for (cited_by, country, doc_number,
                  date, kind, name, reference) in parsed_fields.cit_list:
 
@@ -390,7 +378,10 @@ class TestXMLPatent(unittest.TestCase):
                                          but name tags do not!"""
                                          % (xml_tuple[0], name))
 
-            # Rel list
+    def test_rel_list(self):
+        for i, xml_tuple in enumerate(parsed_xml): # xml_tuple = (xml_file, XMLpatent(xml))
+            original_xml_string = open(folder + xml_tuple[0]).read() # rstrip('\t\n\r')
+            parsed_fields = xml_tuple[1]
 
             for entry in parsed_fields.rel_list:
 
@@ -408,6 +399,11 @@ class TestXMLPatent(unittest.TestCase):
                                          but %s tags do not!"""
                                          % (xml_tuple[0], related_tag, related_tag))
 
+    def test_law_xml(self):
+        for i, xml_tuple in enumerate(parsed_xml): # xml_tuple = (xml_file, XMLpatent(xml))
+            original_xml_string = open(folder + xml_tuple[0]).read() # rstrip('\t\n\r')
+            parsed_fields = xml_tuple[1]
+        
             # Law list
 
             for (last_name, first_name, country, orgname) in parsed_fields.law_list:
@@ -456,10 +452,6 @@ class TestXMLPatent(unittest.TestCase):
                         logging.error("""File:%s, orgname field %s exists in law,
                                          but orgname tags do not!"""
                                          % (xml_tuple[0], orgname))
-
-            if debug:
-                print " - Testing Patent: %s" %  (xml_tuple[0])
-
 
     def tearDown(self):
         #anything needed to be torn down should be added here, pass for now
