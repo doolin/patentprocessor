@@ -24,7 +24,7 @@ dir = os.path.dirname(__file__)
 folder = os.path.join(dir, 'unittest/')
 log_file = os.path.join(dir, 'unittest/log/unit-test-log.log')
 xml_files = [x for x in os.listdir(folder)
-             if re.match(r".*?patent.*?xml", x) != None]
+             if re.match(r"patent.*?xml", x) != None]
 
 # Logging setup
 logging.basicConfig(filename=log_file, level=logging.DEBUG)
@@ -76,46 +76,50 @@ class TestXMLPatent(unittest.TestCase):
         if patent_count is len(xml_files):
             logging.info("All patents passed construction!")
 
-    def test_patent_fields(self): # Medium-level test, parsed XML fields tests
-        if debug:
-            print "\n     Testing Logic and Format of Patent Fields\n"
-        logging.info("Testing Fields of %d Patents!"
-                    % (len(xml_files)))
-        patent_count = 0
+    def test_pat_type(self):
         for i, xml_tuple in enumerate(parsed_xml):
             parsed_fields = xml_tuple[1]
-            field_count = 0
             try:
                 self.assertTrue(parsed_fields.pat_type.isalnum()
                                 or not parsed_fields.pat_type)
-                field_count = field_count + 1
             except Exception as assertionError:
                 logging.error("Patent %s, pattern type: %s is not valid"
                               % (xml_tuple[0], parsed_fields.pat_type))
 
+    def test_patent_number(self):
+        for i, xml_tuple in enumerate(parsed_xml):
+            parsed_fields = xml_tuple[1]
             try:
+                print "patent:", parsed_fields.patent, "is...:", parsed_fields.patent.isalnum()
                 self.assertTrue(parsed_fields.patent.isalnum()
                                 or not parsed_fields.patent.isalnum())
-                field_count = field_count + 1
             except Exception as assertionError:
                 logging.error("Patent %s, patent doc number: %s is not valid"
                               % (xml_tuple[0], parsed_fields.patent))
 
+    def test_country(self):
+        for i, xml_tuple in enumerate(parsed_xml):
+            parsed_fields = xml_tuple[1]
             try:
                 self.assertTrue(parsed_fields.country.isalnum()
                                 or not parsed_fields.country)
-                field_count = field_count + 1
             except Exception as assertionError:
                 logging.error("Patent %s, country: %s is not valid"
                               % (xml_tuple[0], parsed_fields.country))
 
+    def test_country_app(self):
+         for i, xml_tuple in enumerate(parsed_xml):
+            parsed_fields = xml_tuple[1]
             try:
                 self.assertTrue(parsed_fields.country_app.isalnum()
                                 or not parsed_fields.country_app)
-                field_count = field_count + 1
             except Exception as assertionError:
                 logging.error("Patent %s, country: %s is not valid"
                               % (xml_tuple[0], parsed_fields.country_app))
+
+    def test_kind(self):
+        for i, xml_tuple in enumerate(parsed_xml):
+            parsed_fields = xml_tuple[1]
 
             try:
                 self.assertTrue(parsed_fields.kind.isalnum()
@@ -125,116 +129,122 @@ class TestXMLPatent(unittest.TestCase):
                 logging.error("Patent %s, kind: %s is not valid"
                               % (xml_tuple[0], parsed_fields.kind))
 
-            # Dates must be in following format: yyyy/mm/dd
-
+    def test_date_grant(self):
+        for i, xml_tuple in enumerate(parsed_xml):
+            parsed_fields = xml_tuple[1]
             try:
                 self.assertTrue((parsed_fields.date_grant.isdigit()
                                  and len(parsed_fields.date_grant) is 8)
                                  or not parsed_fields.date_grant)
-                field_count = field_count + 1
             except Exception as assertionError:
                 logging.error("Patent %s, date grant: %s is not valid"
                               % (xml_tuple[0], parsed_fields.date_grant))
-
-            try:
-                self.assertTrue((parsed_fields.date_app.isdigit()
-                                 and len(parsed_fields.date_app) is 8)
-                                 or not parsed_fields.date_app)
-                field_count = field_count + 1
-            except Exception as assertionError:
-                logging.error("Patent %s, date app: %s is not valid"
-                              % (xml_tuple[0], parsed_fields.date_app))
-
             if parsed_fields.date_grant:
                 try:
                     self.assertTrue((parsed_fields.date_grant[0:4] <= max_years)
                                      and (parsed_fields.date_grant[4:6] <= max_months)
                                      and (parsed_fields.date_grant[6:8] <= max_days)
                                      and (parsed_fields.date_grant >= first_patent))
-                    field_count = field_count + 1
                 except Exception as assertionError:
                     logging.error("Patent %s, date grant field: %s is not valid"
                                   % (xml_tuple[0], parsed_fields.date_grant))
 
+    def test_date_app(self):
+        for i, xml_tuple in enumerate(parsed_xml):
+            parsed_fields = xml_tuple[1]
+
+            try:
+                self.assertTrue((parsed_fields.date_app.isdigit()
+                                 and len(parsed_fields.date_app) is 8)
+                                 or not parsed_fields.date_app)
+            except Exception as assertionError:
+                logging.error("Patent %s, date app: %s is not valid"
+                              % (xml_tuple[0], parsed_fields.date_app))      
             if parsed_fields.date_app:
                 try:
                     self.assertTrue((parsed_fields.date_app[0:4] <= max_years)
                                      and (parsed_fields.date_app[4:6] <= max_months)
                                      and (parsed_fields.date_app[6:8] <= max_days)
                                      and (parsed_fields.date_app >= first_patent))
-                    field_count = field_count + 1
+
                 except Exception as assertionError:
                     logging.error("Patent %s, date app field: %s is not valid"
                                   % (xml_tuple[0], parsed_fields.date_grant))
-
-            if (field_count is 9):
-                patent_count = patent_count + 1
-
-            if debug:
-                print " - Testing Patent: %s" % (xml_tuple[0])
-
-        if patent_count is len(xml_files):
-            logging.info("All patents passed field testing")
-
-    def test_patent_validity(self): # Low-level test, testing tag presence in XML
-        logging.info("Testing XML of %d Patents!" % (len(xml_files)))
-        if debug:
-            print "\n     Testing XML Presence of Patent Fields\n"
-        patent_count = 0
+    def test_country_xml(self):
         for i, xml_tuple in enumerate(parsed_xml): # xml_tuple = (xml_file, XMLpatent(xml))
-            field_count = 0
             original_xml_string = open(folder + xml_tuple[0]).read() # rstrip('\t\n\r')
             parsed_fields = xml_tuple[1]
-
-            # Search for xml tags , <tag>field</tag>, if field exists, tags must also
-
             country_match = re.search(r"[<]document-id[>].*?[<]country[>]"+parsed_fields.country+
                                        "[<][/]country[>].*?[<][/]document-id[>]",
                                        original_xml_string, re.I + re.S + re.X)
+            try:
+                self.assertTrue(country_match)
+            except Exception as assertionError:
+                logging.error("Patent %s, xml presence not detected of field: %s"
+                               % (xml_tuple[0], parsed_fields.country))
+    def test_kind_xml(self):
+        for i, xml_tuple in enumerate(parsed_xml): # xml_tuple = (xml_file, XMLpatent(xml))
+            original_xml_string = open(folder + xml_tuple[0]).read() # rstrip('\t\n\r')
+            parsed_fields = xml_tuple[1]
             kind_match = re.search(r"[<]document-id[>].*?[<]kind[>]"+parsed_fields.kind+
                                     "[<][/]kind[>].*?[<][/]document-id[>]",
                                     original_xml_string, re.I + re.S + re.X)
-            pat_type_match = re.search(r"appl-type=\""+parsed_fields.pat_type+"\"",
-                                         original_xml_string, re.I + re.S + re.X)
-            inv_title_match = re.search(r"[<][/]invention-title[>]",
-                                         original_xml_string, re.I + re.S + re.X)
-
-            if parsed_fields.invention_title: # Still needs work
-                try:
-                    self.assertTrue(inv_title_match)
-                    field_count = field_count + 1
-                except Exception as assertionError:
-                    logging.error("Patent %s, xml presence not detected of field: %s"
-                                   % (xml_tuple[0], parsed_fields.invention_title))
-
             try:
                 self.assertTrue(country_match)
-                field_count = field_count + 1
             except Exception as assertionError:
                 logging.error("Patent %s, xml presence not detected of field: %s"
                                % (xml_tuple[0], parsed_fields.country))
 
-            try:
-                self.assertTrue(kind_match)
-                field_count = field_count + 1
-            except Exception as assertionError:
-                logging.error("Patent %s, xml presence not detected of field: %s"
-                               % (xml_tuple[0], parsed_fields.kind))
+    def test_inv_xml(self):
+        for i, xml_tuple in enumerate(parsed_xml): # xml_tuple = (xml_file, XMLpatent(xml))
+            original_xml_string = open(folder + xml_tuple[0]).read() # rstrip('\t\n\r')
+            parsed_fields = xml_tuple[1]
+            inv_title_match = re.search(r"[<][/]invention-title[>]",
+                                          original_xml_string, re.I + re.S + re.X)
+            if parsed_fields.invention_title: # Still needs work
+                try:
+                    self.assertTrue(inv_title_match)
+                except Exception as assertionError:
+                    logging.error("Patent %s, xml presence not detected of field: %s"
+                                   % (xml_tuple[0], parsed_fields.invention_title))
 
+    def test_pat_xml(self):
+        for i, xml_tuple in enumerate(parsed_xml): # xml_tuple = (xml_file, XMLpatent(xml))
+            original_xml_string = open(folder + xml_tuple[0]).read() # rstrip('\t\n\r')
+            parsed_fields = xml_tuple[1]
+            pat_type_match = re.search(r"appl-type=\""+parsed_fields.pat_type+"\"",
+                                         original_xml_string, re.I + re.S + re.X)
             if parsed_fields.pat_type:
                 try:
                     self.assertTrue(pat_type_match)
-                    field_count = field_count + 1
                 except Exception as assertionError:
                     logging.error("Patent %s, xml presence not detected of field: %s"
                                    % (xml_tuple[0], parsed_fields.pat_type))
             else:
                 try:
                     self.assertTrue(not pat_type_match)
-                    field_count = field_count + 1
                 except Exception as assertionError:
                     logging.error("Patent %s, xml presence detected of field: %s"
                                    % (xml_tuple[0], parsed_fields.pat_type))
+
+    
+         
+        
+
+        
+        
+            
+
+    def test_patent_validity(self): # Low-level test, testing tag presence in XML
+        logging.info("Testing XML of %d Patents!" % (len(xml_files)))
+        if debug:
+            print "\n     Testing XML Presence of Patent Fields\n"
+
+            
+        for i, xml_tuple in enumerate(parsed_xml): # xml_tuple = (xml_file, XMLpatent(xml))
+            original_xml_string = open(folder + xml_tuple[0]).read() # rstrip('\t\n\r')
+            parsed_fields = xml_tuple[1]
+            
 
             # Now going through lists (asg, cit, rel, inv, law)
 
@@ -447,12 +457,8 @@ class TestXMLPatent(unittest.TestCase):
                                          but orgname tags do not!"""
                                          % (xml_tuple[0], orgname))
 
-            if (field_count is 4):
-                patent_count = patent_count + 1
             if debug:
                 print " - Testing Patent: %s" %  (xml_tuple[0])
-        if (patent_count is len(xml_files)):
-            logging.info("All tests passed xml presence tests!")
 
 
     def tearDown(self):
