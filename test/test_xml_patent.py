@@ -152,7 +152,10 @@ class TestXMLPatent(unittest.TestCase):
     def test_date_app(self):
         for i, xml_tuple in enumerate(parsed_xml):
             parsed_fields = xml_tuple[1]
+<<<<<<< HEAD
 
+=======
+>>>>>>> 8119219c192b66938459f65343e7fdbcb3cd1835
             try:
                 self.assertTrue((parsed_fields.date_app.isdigit()
                                  and len(parsed_fields.date_app) is 8)
