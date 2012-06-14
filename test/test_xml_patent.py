@@ -20,9 +20,10 @@ max_months = "12"
 max_days = "31"
 first_patent = "17900731"
 
+# Directory of test files and logs
 dir = os.path.dirname(__file__)
 folder = os.path.join(dir, 'unittest/')
-log_file = os.path.join(dir, 'unittest/log/unit-test-log.log')
+log_file = os.path.join(dir, 'unittest/log/unit-test.log')
 xml_files = [x for x in os.listdir(folder)
              if re.match(r"patent.*?xml", x) != None]
 
@@ -90,7 +91,6 @@ class TestXMLPatent(unittest.TestCase):
         for i, xml_tuple in enumerate(parsed_xml):
             parsed_fields = xml_tuple[1]
             try:
-                # print "patent:", parsed_fields.patent, "is...:", parsed_fields.patent.isalnum()
                 self.assertTrue(parsed_fields.patent.isalnum()
                                 or not parsed_fields.patent.isalnum())
             except Exception as assertionError:
@@ -171,7 +171,7 @@ class TestXMLPatent(unittest.TestCase):
                     logging.error("Patent %s, date app field: %s is not valid"
                                   % (xml_tuple[0], parsed_fields.date_grant))
     def test_country_xml(self):
-        for i, xml_tuple in enumerate(parsed_xml): # xml_tuple = (xml_file, XMLpatent(xml))
+        for i, xml_tuple in enumerate(parsed_xml):
             original_xml_string = open(folder + xml_tuple[0]).read() # rstrip('\t\n\r')
             parsed_fields = xml_tuple[1]
             country_match = re.search(r"[<]document-id[>].*?[<]country[>]"+parsed_fields.country+
@@ -196,7 +196,7 @@ class TestXMLPatent(unittest.TestCase):
                                % (xml_tuple[0], parsed_fields.country))
 
     def test_inv_xml(self):
-        for i, xml_tuple in enumerate(parsed_xml): # xml_tuple = (xml_file, XMLpatent(xml))
+        for i, xml_tuple in enumerate(parsed_xml):
             original_xml_string = open(folder + xml_tuple[0]).read() # rstrip('\t\n\r')
             parsed_fields = xml_tuple[1]
             inv_title_match = re.search(r"[<][/]invention-title[>]",
@@ -209,7 +209,7 @@ class TestXMLPatent(unittest.TestCase):
                                    % (xml_tuple[0], parsed_fields.invention_title))
 
     def test_pat_xml(self):
-        for i, xml_tuple in enumerate(parsed_xml): # xml_tuple = (xml_file, XMLpatent(xml))
+        for i, xml_tuple in enumerate(parsed_xml): 
             original_xml_string = open(folder + xml_tuple[0]).read() # rstrip('\t\n\r')
             parsed_fields = xml_tuple[1]
             pat_type_match = re.search(r"appl-type=\""+parsed_fields.pat_type+"\"",
@@ -312,15 +312,7 @@ class TestXMLPatent(unittest.TestCase):
             # Cit List
             for (cited_by, country, doc_number,
                  date, kind, name, reference) in parsed_fields.cit_list:
-
-                """
-                print "cited by...", cited_by
-                print "country...", country
-                print "doc-number...", doc_number
-                print "date...", date
-                print "kind...", kind
-                print "name...", name
-                """
+                
                 country_string = "[<]references-cited[>](.*?)[<]country[>]"+country+"[<][/]country[>](.*?)[<][/]references-cited[>]"
                 doc_string = "[<]references-cited[>](.*?)[<]doc-number[>]"+doc_number+"[<][/]doc-number[>](.*?)[<][/]references-cited[>]"
                 kind_string = "[<]references-cited[>](.*?)[<]kind[>]"+kind+"[<][/]kind[>](.*?)[<][/]references-cited[>]"
