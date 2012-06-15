@@ -61,7 +61,8 @@ some fields have HTML 4.0 "Special Entities" (For example, some fields may be en
 "&#38;" is a HTML4.0 Special Entity that renders a "&" that needs to be dealt with in the field checking).
 Possible solution here called "Beautiful Soup": http://www.crummy.com/software/BeautifulSoup/
 
-  In Test_SQL_Patent.py, need to finish testing the other methods other than tblBuild(), implement logging
+  In Test_SQL_Patent.py, need to finish testing the other methods other than tblBuild(), implement logging. Create a
+mock patent and run searches against it to test it. 
   
   Continue documentation for edge cases (start tag, end tag, extra or missing fields) 
   
