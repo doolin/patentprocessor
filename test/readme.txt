@@ -64,4 +64,9 @@ Possible solution here called "Beautiful Soup": http://www.crummy.com/software/B
 Current edge cases:
 1. Dna-related sequences, start tag: <?xml ...>, ending tag: </sequence-cwu>
 
+
+Comments: There may be many more edge cases. If one exists, follow these steps to get to work correctly. 
+1. Set up regex to grab them from the xml file
+2. Set up XMLPatent.py to make sure that the right fields are being stored
+
   
