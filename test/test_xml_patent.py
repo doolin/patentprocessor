@@ -23,12 +23,13 @@ valid_kind_types = ["A1", "A2", "A9", "B1", "B2", "B3", "B4", "B5",
                     "B6", "B7", "B8", "B9", "Cn", "E1", "H1", "I1",
                     "I2", "I3", "I4", "I5", "NP", "P1", "P2", "P3",
                     "P4", "P4", "P9", "S1"]
+
 # Directory of test files and logs
 dir = os.path.dirname(__file__)
 folder = os.path.join(dir, 'unittest/')
-log_file = os.path.join(dir, 'unittest/log/unit-test-log.log')
+log_file = os.path.join(dir, 'unittest/log/xml-unit-test.log')
 xml_files = [x for x in os.listdir(folder)
-             if re.match(r".*?patent.*?xml", x) != None]
+             if re.match(r".*?patent.*?xml", x) != None] # Match fixtures
 
 
 # Logging setup
@@ -53,6 +54,8 @@ class TestXMLPatent(unittest.TestCase):
     def setUp(self):
         # Basic sanity check
         self.assertTrue(xml_files)
+
+    # High-level test
 
     def test_construction(self):
         # High-level test, testing legacy code construction,
@@ -82,6 +85,8 @@ class TestXMLPatent(unittest.TestCase):
         logging.info("%d Patents have passed construction!", patent_count)
         if patent_count is len(xml_files):
             logging.info("All patents passed construction!")
+
+    # Medium-level tests
 
     def test_type(self):
         for i, xml_tuple in enumerate(parsed_xml):
@@ -178,6 +183,8 @@ class TestXMLPatent(unittest.TestCase):
                 except Exception as assertionError:
                     logging.error("Patent %s, date app field: %s is not valid"
                                   % (xml_tuple[0], parsed_fields.date_grant))
+    # Low-level tests
+    
     def test_country_xml(self):
         for i, xml_tuple in enumerate(parsed_xml):
             original_xml_string = open(folder + xml_tuple[0]).read() # rstrip('\t\n\r')

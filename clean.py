@@ -5,7 +5,11 @@ sys.path.append( './lib/' )
 
 import SQLite
 import datetime
+# ascit was refactored from senAdd in favor of ascit in fwork.
+# They differ by 1 line. Leave this comment until covered
+# by unit test.
 from senAdd import *
+from fwork import *
 import locFunc
 import orgClean
 
