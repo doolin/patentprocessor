@@ -124,16 +124,22 @@ with con:
             fin_cur.execute("""INSERT INTO Final VALUES (?,?,?,?,?,?,?,?,?,
                             ?,?,?,?,?,?,?,?,?,?,?,?,?)""",
                             tuple(value_to_insert))
-            for final_doc in final_docs_split:
-                con_cur.execute("SELECT * FROM invpat WHERE (Patent = \"%s\");" % final_doc)
-                fetched_value = con_cur.fetchone()  # Get match
-                value_to_insert = list(fetched_value)
-                value_to_insert.append(num)
-                value_to_insert.append(final_docs)
-                fin_cur.execute("""INSERT INTO Final VALUES (?,?,?,?,?,?,?,?,?,
+            if len(final_docs_split) > 1:
+                for final_doc in final_docs_split:
+                    rel_patent_number = final_doc.split("-")[0]
+                    # print rel_patent_number 
+                    con_cur.execute("SELECT * FROM invpat WHERE patent like \"%s\";" % rel_patent_number)
+                    fetched_value = con_cur.fetchone()  # Get match
+                    # print fetched_value
+                    if fetched_value:
+                        print "not skipping rel pat"
+                        value_to_insert = list(fetched_value)
+                        value_to_insert.append(num)
+                        value_to_insert.append(final_docs)
+                        fin_cur.execute("""INSERT INTO Final VALUES (?,?,?,?,?,?,?,?,?,
 
-                                ?,?,?,?,?,?,?,?,?,?,?,?,?)""",
-                                tuple(value_to_insert))
+                                        ?,?,?,?,?,?,?,?,?,?,?,?,?)""",
+                                        tuple(value_to_insert))
         else:
             errors = errors + 1
             logging.error("Did not find a match for Invnum %s" % inv_num)
