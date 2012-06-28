@@ -13,8 +13,8 @@ opened_file = open(txt_file, 'U')
 log_file = 't2db.log'
 
 # Set Up SQL Connections
-con = sql.connect('invpat.sqlite3') # Database to connect to
-fin = sql.connect('final_Invnum.sqlite3')  # Database to write to
+con = sql.connect('invpat_final_from_DVN.sqlite3') # Database to connect to
+fin = sql.connect('final.sqlite3')  # Database to write to
 
 # Logging
 logging.basicConfig(filename=log_file, level=logging.DEBUG)
@@ -57,6 +57,34 @@ with fin:
     #            );
     #            """)
 
+    # Schema for invpat_final
+    fin_cur.execute("""       
+                CREATE TABLE Final(
+                Firstname TEXT,
+                Lastname TEXT,
+                Street TEXT,
+                City TEXT,
+                State TEXT,
+                Country TEXT,
+                Zipcode TEXT,
+                Lat REAL,
+                Lon,
+                InvSeq INT,
+                Patent TEXT,
+                GYear INT,
+                AppYearStr TEXT,
+                AppDateStr TEXT,
+                Assignee TEXT,
+                AsgNum INT,
+                Class TEXT,
+                Invnum,
+                lower,
+                upper,
+                Finalnum INT,
+                Reldocs TEXT
+                );
+                """)
+
 
 # Match out of con, append, and join operation into fin
 with con:
@@ -92,7 +120,7 @@ with con:
             value_to_insert.append(num)
             value_to_insert.append(final_docs)
             fin_cur.execute("""INSERT INTO Final VALUES (?,?,?,?,?,?,?,?,?,
-                            ?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)""",
+                            ?,?,?,?,?,?,?,?,?,?,?,?,?)""",
                             tuple(value_to_insert))
         else:
             errors = errors + 1
