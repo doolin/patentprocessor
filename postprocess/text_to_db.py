@@ -25,35 +25,39 @@ open(log_file, "w")
 with fin:
     fin_cur = fin.cursor()
     fin_cur.execute("DROP TABLE IF EXISTS Final;")
-    fin_cur.execute("""
-                CREATE TABLE Final(
-                Firstname TEXT,
-                Lastname TEXT,
-                Street TEXT,
-                City TEXT,
-                State TEXT,
-                Country TEXT,
-                Zipcode TEXT,
-                Lat REAL,
-                Lng REAL,
-                InvSeq INT,
-                Patent TEXT,
-                AppYear INT,
-                GYear INT,
-                AppDate TEXT,
-                Assignee TEXT,
-                AsgNum INT,
-                Class TEXT,
-                Invnum TEXT,
-                Invnum_N TEXT,
-                Invnum_N_UC,
-                Density REAL,
-                Precision REAL,
-                Recall REAL,
-                Finalnum INT,
-                Reldocs TEXT
-                );
-                """)
+
+    # Schema for invpat
+    #fin_cur.execute("""       
+    #            CREATE TABLE Final(
+    #            Firstname TEXT,
+    #            Lastname TEXT,
+    #            Street TEXT,
+    #            City TEXT,
+    #            State TEXT,
+    #            Country TEXT,
+    #            Zipcode TEXT,
+    #            Lat REAL,
+    #            Lng REAL,
+    #            InvSeq INT,
+    #            Patent TEXT,
+    #            AppYear INT,
+    #            GYear INT,
+    #            AppDate TEXT,
+    #            Assignee TEXT,
+    #            AsgNum INT,
+    #            Class TEXT,
+    #            Invnum TEXT,
+    #            Invnum_N TEXT,
+    #            Invnum_N_UC,
+    #            Density REAL,
+    #            Precision REAL,
+    #            Recall REAL,
+    #            Finalnum INT,
+    #            Reldocs TEXT
+    #            );
+    #            """)
+
+
 # Match out of con, append, and join operation into fin
 with con:
     con_cur = con.cursor()
