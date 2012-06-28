@@ -61,7 +61,7 @@ with con:
     count = 0
     success = 0
     errors = 0
-    con_cur.execute("CREATE INDEX index_invnum ON invpat (Invnum)");
+    # con_cur.execute("CREATE INDEX index_invnum ON invpat (Invnum)");
     while True:
         line_read = opened_file.readline()
         if not line_read:
