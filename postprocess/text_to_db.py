@@ -93,7 +93,7 @@ with con:
     count = 0
     success = 0
     errors = 0
-    # con_cur.execute("CREATE INDEX index_invnum ON invpat (Invnum)");
+    # con_cur.execute("CREATE INDEX index_patent ON invpat (Patent)");
     while True:
         line_read = opened_file.readline()
         if not line_read:
@@ -101,8 +101,8 @@ with con:
         
         # Inv_Num ### Number ### Record-ID
         
-
         count = count + 1
+        # print "count is...", count
         text_line = line_read.rstrip(',\n').split("###")
         inv_num = text_line[0]
         num = int(text_line[1]) # Convert str to int to be consistent. 
@@ -125,21 +125,24 @@ with con:
                             ?,?,?,?,?,?,?,?,?,?,?,?,?)""",
                             tuple(value_to_insert))
             if len(final_docs_split) > 1:
-                for final_doc in final_docs_split:
-                    rel_patent_number = final_doc.split("-")[0]
-                    # print rel_patent_number 
-                    con_cur.execute("SELECT * FROM invpat WHERE patent like \"%s\";" % rel_patent_number)
-                    fetched_value = con_cur.fetchone()  # Get match
-                    # print fetched_value
-                    if fetched_value:
-                        print "not skipping rel pat"
-                        value_to_insert = list(fetched_value)
-                        value_to_insert.append(num)
-                        value_to_insert.append(final_docs)
-                        fin_cur.execute("""INSERT INTO Final VALUES (?,?,?,?,?,?,?,?,?,
+                for i, final_doc in enumerate(final_docs_split):
+                    if i > 0:
+                        rel_patent_number = final_doc.split("-")[0]
+                        # print rel_patent_number 
+                        con_cur.execute("SELECT * FROM invpat WHERE Patent = \"%s\";" % rel_patent_number)
+                        fetched_value = con_cur.fetchone()  # Get match
+                        # print fetched_value
+                        if fetched_value:
+                            # print "not skipping rel pat"
+                            value_to_insert = list(fetched_value)
+                            value_to_insert.append(num)
+                            value_to_insert.append(final_docs)
+                            fin_cur.execute("""INSERT INTO Final VALUES (?,?,?,?,?,?,?,?,?,
 
-                                        ?,?,?,?,?,?,?,?,?,?,?,?,?)""",
-                                        tuple(value_to_insert))
+                                            ?,?,?,?,?,?,?,?,?,?,?,?,?)""",
+                                            tuple(value_to_insert))
+                        else:
+                            logging.error("Did not find a match for rel pat %s for invnum %s" % (rel_patent_number, inv_num))
         else:
             errors = errors + 1
             logging.error("Did not find a match for Invnum %s" % inv_num)
