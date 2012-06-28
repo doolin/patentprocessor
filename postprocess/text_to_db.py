@@ -93,6 +93,8 @@ with con:
     count = 0
     success = 0
     errors = 0
+    relpats = 0
+    relpaterrors = 0
     # con_cur.execute("CREATE INDEX index_patent ON invpat (Patent)");
     while True:
         line_read = opened_file.readline()
@@ -133,6 +135,7 @@ with con:
                         fetched_value = con_cur.fetchone()  # Get match
                         # print fetched_value
                         if fetched_value:
+                            relpats = relpats + 1
                             # print "not skipping rel pat"
                             value_to_insert = list(fetched_value)
                             value_to_insert.append(num)
@@ -142,13 +145,16 @@ with con:
                                             ?,?,?,?,?,?,?,?,?,?,?,?,?)""",
                                             tuple(value_to_insert))
                         else:
+                            relpaterrors = relpaterrors + 1
                             logging.error("Did not find a match for rel pat %s for invnum %s" % (rel_patent_number, inv_num))
         else:
             errors = errors + 1
             logging.error("Did not find a match for Invnum %s" % inv_num)
 
-logging.info("Successfully did %d querys" % success)
-logging.info("Failed %d querys" % errors)
+logging.info("Successfully did %d invnums" % success)
+logging.info("Failed %d invnums" % errors)
+logging.info("Successfully did %d relpats" % relpats)
+logging.info("Failed %d relpats" % relpaterrors)
 logging.info("Total %d querys" % count)
 fin.commit()
 
