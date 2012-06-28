@@ -8,13 +8,13 @@ import logging
 # Use command-line args to pass in file names
 
 # Files
-txt_file = 'final.txt'
+txt_file = 'final100.txt'
 opened_file = open(txt_file, 'U')
 log_file = 't2db.log'
 
 # Set Up SQL Connections
 con = sql.connect('invpat_final_from_DVN.sqlite3') # Database to connect to
-fin = sql.connect('final.sqlite3')  # Database to write to
+fin = sql.connect('final_test.sqlite3')  # Database to write to
 
 # Logging
 logging.basicConfig(filename=log_file, level=logging.DEBUG)
@@ -100,12 +100,14 @@ with con:
             break
         
         # Inv_Num ### Number ### Record-ID
+        
 
         count = count + 1
         text_line = line_read.rstrip(',\n').split("###")
         inv_num = text_line[0]
         num = int(text_line[1]) # Convert str to int to be consistent. 
         final_docs = text_line[2]
+        final_docs_split = final_docs.split(',')
         # print inv_num, "###", num, "###", final_docs
         con_cur.execute("SELECT * FROM invpat WHERE (Invnum = \"%s\");" % inv_num)
         
@@ -122,6 +124,8 @@ with con:
             fin_cur.execute("""INSERT INTO Final VALUES (?,?,?,?,?,?,?,?,?,
                             ?,?,?,?,?,?,?,?,?,?,?,?,?)""",
                             tuple(value_to_insert))
+            for final_doc in final_docs_split:
+                con_cur.execute("SELECT * FROM invpat WHERE (Invnum = \"%s\");" % inv_num)
         else:
             errors = errors + 1
             logging.error("Did not find a match for Invnum %s" % inv_num)
