@@ -63,7 +63,6 @@ with con:
     errors = 0
     con_cur.execute("CREATE INDEX index_invnum ON invpat (Invnum)");
     while True:
-        # print "at invnum num =", count
         line_read = opened_file.readline()
         if not line_read:
             break
@@ -88,13 +87,10 @@ with con:
             value_to_insert = list(fetched_value)
             value_to_insert.append(num)
             value_to_insert.append(final_docs)
-            # print value_to_insert
-            # print "length of match", len(value_to_insert)
             fin_cur.execute("""INSERT INTO Final VALUES (?,?,?,?,?,?,?,?,?,
                             ?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)""",
                             tuple(value_to_insert))
         else:
-            # print "FAILED at", inv_num
             errors = errors + 1
             logging.error("Did not find a match for Invnum %s" % inv_num)
 
