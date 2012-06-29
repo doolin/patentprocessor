@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 import unittest
 import sys
 import imp
@@ -22,7 +24,7 @@ first_patent = "17900731"
 
 dir = os.path.dirname(__file__)
 folder = os.path.join(dir, 'unittest/')
-log_file = os.path.join(dir, 'unittest/log/unit-test-log.log')
+log_file = os.path.join(dir, 'unittest/unit-test.log')
 xml_files = [x for x in os.listdir(folder)
              if re.match(r".*?patent.*?xml", x) != None]
 
