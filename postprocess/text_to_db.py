@@ -8,13 +8,13 @@ import logging
 # Use command-line args to pass in file names
 
 # Files
-txt_file = 'final100.txt'
+txt_file = 'final.txt'
 opened_file = open(txt_file, 'U')
 log_file = 't2db.log'
 
 # Set Up SQL Connections
 con = sql.connect('invpat_final_from_DVN.sqlite3') # Database to connect to
-fin = sql.connect('final_test.sqlite3')  # Database to write to
+fin = sql.connect('final_test1.sqlite3')  # Database to write to
 
 # Logging
 logging.basicConfig(filename=log_file, level=logging.DEBUG)
@@ -27,7 +27,7 @@ with fin:
     fin_cur.execute("DROP TABLE IF EXISTS Final;")
 
     # Schema for invpat
-    #fin_cur.execute("""       
+    # fin_cur.execute("""       
     #            CREATE TABLE Final(
     #            Firstname TEXT,
     #            Lastname TEXT,
@@ -95,6 +95,8 @@ with con:
     errors = 0
     relpats = 0
     relpaterrors = 0
+    inv_closed_list = []
+    pat_closed_list = []
     # con_cur.execute("CREATE INDEX index_patent ON invpat (Patent)");
     while True:
         line_read = opened_file.readline()
@@ -102,9 +104,9 @@ with con:
             break
         
         # Inv_Num ### Number ### Record-ID
-        
         count = count + 1
-        # print "count is...", count
+        if count%10000 == 0:
+            print "Starting patent", count
         text_line = line_read.rstrip(',\n').split("###")
         inv_num = text_line[0]
         num = int(text_line[1]) # Convert str to int to be consistent. 
@@ -112,6 +114,7 @@ with con:
         final_docs_split = final_docs.split(',')
         # print inv_num, "###", num, "###", final_docs
         con_cur.execute("SELECT * FROM invpat WHERE (Invnum = \"%s\");" % inv_num)
+        inv_closed_list.append(inv_num)
         
         # con_cur.execute("SELECT * FROM invpat WHERE (Lastname
         # = \"FLEMING\" and Firstname = \"LEE\");") # Sanity Check
@@ -119,24 +122,28 @@ with con:
         fetched_value = con_cur.fetchone()  # Get match
 
         if fetched_value:
-            success = success + 1
-            value_to_insert = list(fetched_value)
-            value_to_insert.append(num)
-            value_to_insert.append(final_docs)
-            fin_cur.execute("""INSERT INTO Final VALUES (?,?,?,?,?,?,?,?,?,
-                            ?,?,?,?,?,?,?,?,?,?,?,?,?)""",
-                            tuple(value_to_insert))
+            if inv_num not in inv_closed_list:
+                success = success + 1
+                value_to_insert = list(fetched_value)
+                value_to_insert.append(num)
+                value_to_insert.append(final_docs)
+                fin_cur.execute("""INSERT INTO Final VALUES (?,?,?,?,?,?,?,?,?,
+                                ?,?,?,?,?,?,?,?,?,?,?,?,?)""",
+                                tuple(value_to_insert))
+
             if len(final_docs_split) > 1:
-                for i, final_doc in enumerate(final_docs_split):
-                    if i > 0:
+                for final_doc in final_docs_split:
+                    if final_doc not in pat_closed_list:
                         rel_patent_number = final_doc.split("-")[0]
                         # print rel_patent_number 
-                        con_cur.execute("SELECT * FROM invpat WHERE Patent = \"%s\";" % rel_patent_number)
+                        con_cur.execute("SELECT * FROM invpat WHERE Patent = \"%s\";"
+                                        % rel_patent_number)
+                        pat_closed_list.append(rel_patent_number)
                         fetched_value = con_cur.fetchone()  # Get match
                         # print fetched_value
+
                         if fetched_value:
                             relpats = relpats + 1
-                            # print "not skipping rel pat"
                             value_to_insert = list(fetched_value)
                             value_to_insert.append(num)
                             value_to_insert.append(final_docs)
@@ -146,15 +153,17 @@ with con:
                                             tuple(value_to_insert))
                         else:
                             relpaterrors = relpaterrors + 1
-                            logging.error("Did not find a match for rel pat %s for invnum %s" % (rel_patent_number, inv_num))
+                            logging.error("Did not find a match for rel pat %s for invnum %s"
+                                           % (rel_patent_number, inv_num))
         else:
             errors = errors + 1
-            logging.error("Did not find a match for Invnum %s" % inv_num)
+            logging.error("Did not find a match for Invnum %s"
+                          % inv_num)
 
 logging.info("Successfully did %d invnums" % success)
-logging.info("Failed %d invnums" % errors)
 logging.info("Successfully did %d relpats" % relpats)
-logging.info("Failed %d relpats" % relpaterrors)
+logging.info("Failed %d invnums" % errors)
+logging.info("Failed %d related patentss" % relpaterrors)
 logging.info("Total %d querys" % count)
 fin.commit()
 
