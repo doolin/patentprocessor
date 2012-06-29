@@ -76,8 +76,16 @@ class TestAscit(unittest.TestCase):
         assert('10' == ascit('1.0', strict=True))
 
     def test_remove_spaces(self):
-        print ascit('foo bar')
-        #assert('FOOBAR' == ascit('foo bar'))
+        #print ascit('foo bar')
+        assert('FOOBAR' == ascit('foo bar'))
+
+    def test_remove_braces(self):
+        #print ascit('{foo bar}', strict=True)
+        assert('' == ascit('{foo bar}', strict=True))
+
+    def test_remove_parentheses(self):
+        #print ascit('{foo bar}', strict=True)
+        assert('' == ascit('(foo bar)', strict=True))
 
 if __name__ == '__main__':
     unittest.main()
