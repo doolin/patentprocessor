@@ -95,8 +95,6 @@ with con:
     errors = 0
     relpats = 0
     relpaterrors = 0
-    inv_closed_list = set()
-    pat_closed_list = set()
 
     # con_cur.execute("CREATE INDEX index_patent ON invpat (Patent)");
     while True:
@@ -127,37 +125,34 @@ with con:
         fetched_value = con_cur.fetchone()  # Get match
 
         if fetched_value:
-            if inv_num not in inv_closed_list:
-                success = success + 1
-                value_to_insert = list(fetched_value)
-                value_to_insert.append(num)
-                value_to_insert.append(final_docs)
-                fin_cur.execute("""INSERT INTO Final VALUES (?,?,?,?,?,?,?,?,?,
+            success = success + 1
+            value_to_insert = list(fetched_value)
+            value_to_insert.append(num)
+            value_to_insert.append(final_docs)
+            fin_cur.execute("""INSERT INTO Final VALUES (?,?,?,?,?,?,?,?,?,
                                 ?,?,?,?,?,?,?,?,?,?,?,?,?)""",
                                 tuple(value_to_insert))
 
             for final_doc in final_docs_split:
-                if final_doc not in pat_closed_list:
-                    rel_patent_number = final_doc.split("-")[0]
-                    # print rel_patent_number 
-                    con_cur.execute("SELECT * FROM invpat WHERE Patent = \"%s\";"
-                                    % rel_patent_number)
-                    pat_closed_list.add(final_doc)
-                    fetched_value = con_cur.fetchone()  # Get match
-                    # print fetched_value
-
-                    if fetched_value:
-                        relpats = relpats + 1
-                        value_to_insert = list(fetched_value)
-                        value_to_insert.append(num)
-                        value_to_insert.append(final_docs)
-                        fin_cur.execute("""INSERT INTO Final VALUES (?,?,?,?,?,?,?,?,?,
-                                        ?,?,?,?,?,?,?,?,?,?,?,?,?)""",
-                                        tuple(value_to_insert))
-                    else:
-                        relpaterrors = relpaterrors + 1
-                        logging.error("Did not find a match for rel pat %s for invnum %s"
-                                       % (rel_patent_number, inv_num))
+                rel_patent_number = final_doc.split("-")[0]
+                # print rel_patent_number 
+                con_cur.execute("SELECT * FROM invpat WHERE Patent = \"%s\";"
+                                % rel_patent_number)
+                pat_closed_list.add(final_doc)
+                fetched_value = con_cur.fetchone()  # Get match
+                # print fetched_value
+                if fetched_value
+                    relpats = relpats + 1
+                    value_to_insert = list(fetched_value)
+                    value_to_insert.append(num)
+                    value_to_insert.append(final_docs)
+                    fin_cur.execute("""INSERT INTO Final VALUES (?,?,?,?,?,?,?,?,?,
+                                       ?,?,?,?,?,?,?,?,?,?,?,?,?)""",
+                                       tuple(value_to_insert))
+                else:
+                    relpaterrors = relpaterrors + 1
+                    logging.error("Did not find a match for rel pat %s for invnum %s"
+                                   % (rel_patent_number, inv_num))
         else:
             errors = errors + 1
             logging.error("Did not find a match for Invnum %s"
