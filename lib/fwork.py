@@ -114,7 +114,7 @@ def remspace(x):
     return re.sub(r" ", "", x)
 
 
-def ascit(x, strict=True):
+def ascit(x, strict=True, remove_plus=False):
     x = x.upper()
     #Solves that {UMLAUT OVER (A)}
     x = re.sub(r"[{].*?[(].*?[)].*?[}]", lambda(x):re.findall("[(](.*?)[)]", x.group())[0], x)
@@ -131,7 +131,8 @@ def ascit(x, strict=True):
 
     # This line was in the version of this function which was in the
     # senAdd file, but which wasn't used.
-    #x = re.sub(r"  +", " ", x)
+    # if remove_plus:
+    #     x = re.sub(r"  +", " ", x)
 
     #remove duplicates
     x = re.sub(r"[ ,|-]{2,}", lambda(x):re.findall(r"[ ,|-]", x.group())[0], x)
