@@ -4,6 +4,24 @@ def dbAdd(db):
     """
     return db!=None and "%s." % db or ""
 
+def MySQL_cfg(cfg=None, title=None):
+    import os, getpass
+    if title!=None:
+        print title
+    if cfg==None:
+        cfg = {}
+    if "host" not in cfg:
+        cfg["host"] = raw_input("host: ")
+    if "user" not in cfg:
+        cfg["user"] = raw_input("user: ")
+    if "passwd" not in cfg:
+        cfg["passwd"] = getpass.getpass("passwd: ")
+    if "db" not in cfg:
+        cfg["db"] = raw_input("db: ")
+    #os.system('clear')
+    return cfg
+
+
 class SQLite:
     """
     The following extends sqlite3, a commonly used library for the Patent Team
@@ -33,7 +51,7 @@ class SQLite:
             PRAGMA cache_size=2000000;
             PRAGMA synchronous=OFF;
             PRAGMA temp_store=2;
-            """)
+            """) #"""
     def getTbl(self, table=None):
         if table==None:
             return self.tbl
@@ -86,7 +104,7 @@ class SQLite:
         """
         self.c.execute("vacuum")
         self.commit()
-    def csvInput(self, fname):
+    def csvInput(self, fname, retData=True):
         def decode(lst):
             import unicodedata
             try:
@@ -95,6 +113,7 @@ class SQLite:
                 print lst
                 return lst
         import csv
+        # this seems not totally efficient.. can probably create a buffer version
         f = open(fname, "rb")
         t = [decode(x) for x in csv.reader(f)]
         f.close()
@@ -104,13 +123,11 @@ class SQLite:
         Returns a list of table names that exist within the database.
         If lookup is specified, does that table exist within the list of tables?
         """
-        #retList = [x[0].lower() for x in self.c.execute("SELECT tbl_name FROM %ssqlite_master WHERE type='table' ORDER BY tbl_name" % dbAdd(db))]
         retList = [x[0].lower() for x in self.c.execute("SELECT tbl_name FROM %ssqlite_master WHERE type='table' ORDER BY tbl_name" % dbAdd(db))]
-
         if lookup==None:
             return retList
         else:
-            return lookup in retList
+            return lookup.lower() in retList
     def indexes(self, lookup=None, db=None, search=None):
         """
         Returns a list of index names that exist within the database
@@ -118,8 +135,7 @@ class SQLite:
         If search is specified, returns a list of indices that match the criteria
         """
         import re
-        #retList = [x[0].lower() for x in self.c.execute("SELECT name FROM %ssqlite_master WHERE type='index' ORDER BY name" % dbAdd(db))]
-        retList = [x[0].lower() for x in self.c.execute("SELECT name FROM sqlite_master WHERE type='index' ORDER BY name" )]
+        retList = [x[0].lower() for x in self.c.execute("SELECT name FROM %ssqlite_master WHERE type='index' ORDER BY name" % dbAdd(db))]
 
         if search!=None: #returns a range of numbers related to the search term
             nums = [(lambda x:len(x)>0 and int(x[0]) or 1)(re.findall('[0-9]+', x)) for x in retList if x.find(search)>=0]
@@ -146,7 +162,26 @@ class SQLite:
         else:
             print datetime.datetime.now()
             return 0
-    def addSQL(self, data, db=None, table=None, header=False, field=True, insert=""):
+    def fetch(self, table=None, field=None, limit=None, random=False, fetch=True):
+        """
+        This replicates the common function where you return an array of values
+        associated with a SQLite table
+        """
+        import re
+        table = self.getTbl(table)
+        field = (field==None) and "*" or ", ".join(field)
+        more = "%s %s" % (random and "ORDER BY random()" or " ",
+                          (limit==None) and " " or ("LIMIT %s" % limit))
+            
+        query = "SELECT {field} FROM {table} {more}".format(field=field, table=table, more=more)
+        query = re.sub("  +", " ", query).strip()
+        if fetch:
+            return self.c.execute(query).fetchall()
+        else:
+            return self.c.execute(query)
+        
+        
+    def addSQL(self, data, db=None, table=None, header=False, field=True, allVars=False, insert=""):
         """
         This serves three functions depending the type of data (flat CSV, pure data, existing table)
         If data is a link to a database -- load the data into CSV
@@ -159,6 +194,7 @@ class SQLite:
            - Insert data
 
         Field=True, defaults that field names must match 1-1
+        allVars => Make all variables VARCHARS (IGNORE BUILDING TYPE)
         """
         import types, os
         table = self.getTbl(table)
@@ -168,29 +204,34 @@ class SQLite:
 
         if strBool and os.path.exists(data):
             data = self.csvInput(data)
+            isFile = True
         if insert!="":
             insert = "OR %s" % insert
 
-        if strBool and self.tables(db=db, lookup=data):
-            if self.tables(db=db, lookup=table):
-                self.replicate(tableTo=table, table=data, db=db)
-            if field:
-                fieldTo = set(self.columns(table=table, output=False, lower=True))
-                fieldFr = set(self.columns(table=data, db=db, output=False, lower=True))
-                colList = ", ".join(list(fieldTo & fieldFr))
-                self.c.execute("INSERT %s INTO %s (%s) SELECT %s FROM %s%s" % (insert, table, colList, colList, dbAdd(db), data))
-            else:
-                self.c.execute("INSERT %s INTO %s SELECT * FROM %s%s" % (insert, table, dbAdd(db), data))
+        if not isFile:
+            if strBool and self.tables(db=db, lookup=data):
+                if self.tables(db=db, lookup=table):
+                    self.replicate(tableTo=table, table=data, db=db)
+                if field:
+                    fieldTo = set(self.columns(table=table, output=False, lower=True))
+                    fieldFr = set(self.columns(table=data, db=db, output=False, lower=True))
+                    colList = ", ".join(list(fieldTo & fieldFr))
+                    self.c.execute("INSERT %s INTO %s (%s) SELECT %s FROM %s%s" % (insert, table, colList, colList, dbAdd(db), data))
+                else:
+                    self.c.execute("INSERT %s INTO %s SELECT * FROM %s%s" % (insert, table, dbAdd(db), data))
 
         #if file exists, use quickSQL..        
         elif self.tables(db=db, lookup=table):
             #self.quickSQL(data, table=table, header=header)
             self.c.executemany("INSERT %s INTO %s VALUES (%s)" % (insert, table, ", ".join(["?"]*len(data[0]))), data[int(header):])
         else:
-            self.quickSQL(data, table=table, header=header)
+            self.quickSQL(data, table=table, header=header, allVars=allVars)
             #need to make this so the variables are more flexible
         self.conn.commit()
-    def quickSQL(self, data, table=None, override=False, header=False, typescan=50, typeList=[]):
+    def quickSQL(self, data, table=None, override=False, header=False, allVars=False, typescan=50, typeList=[]):
+        """
+            allVars => Make all variables VARCHARS (IGNORE BUILDING TYPE)
+        """
         import re, types
         table = self.getTbl(table)
         if override:
@@ -220,9 +261,15 @@ class SQLite:
                             else: least = 0; break
                     cType = {0:"VARCHAR", 1:"INTEGER", 2:"REAL"}[max(least-ints, 0)]
                 if header:
-                    tList.append("%s %s" % (headLst[i], cType))
+                    if allVars:
+                        tList.append("%s" % (headLst[i],))
+                    else:                    
+                        tList.append("%s %s" % (headLst[i], cType))
                 else:
-                    tList.append("v%d %s" % (i, cType))
+                    if allVars:
+                        tList.append("v%d" % (i,))
+                    else:                    
+                        tList.append("v%d %s" % (i, cType))
             else:
                 tList.extend([y for y in typeList if y.upper().find("%s " % data[0][i].upper())==0])
 
@@ -249,17 +296,22 @@ class SQLite:
         self.c.executescript("""
             DROP TABLE IF EXISTS %s_backup;
             ALTER TABLE %s RENAME TO %s_backup;
-            """ % (table, table, table))
+            """ % (table, table, table)) #"""
         self.c.execute("CREATE TABLE %s (%s)" % (table, ", ".join([" ".join([x[1], x[2]]) for x in self.c.execute("PRAGMA TABLE_INFO(%s_backup)" % table) if x[1].lower() not in [y.lower() for y in keys]])))
         self.replicate(tableTo=table, table="%s_backup" % table)
         self.c.execute("INSERT INTO %s SELECT %s FROM %s_backup" % (table, cols, table))
         self.c.execute("DROP TABLE %s_backup" % (table))
-    def add(self, key, typ, table=None):
+
+    def add(self, key, typ="", table=None):
+        import types
         table = self.getTbl(table)
-        try:
-            self.c.execute("ALTER TABLE %s ADD COLUMN %s %s" % (table, key, typ))
-        except:
-            x=0
+        if type(key) != types.ListType:
+            key = [key]
+        for k in key:
+            try:
+                self.c.execute("ALTER TABLE %s ADD COLUMN %s %s" % (table, k, typ))
+            except:
+                pass
     
     def delete(self, table=None): #delete table
         table = self.getTbl(table)
@@ -281,7 +333,7 @@ class SQLite:
         sqls = self.c.execute("""
           SELECT  sql, name, type
             FROM  %ssqlite_master
-           WHERE  tbl_name='%s';""" % (dbAdd(db), table)).fetchall()
+           WHERE  tbl_name='%s';""" % (dbAdd(db), table)).fetchall() #"""
 
         idxC = 0
         idxA = self.baseIndex()
@@ -323,13 +375,21 @@ class SQLite:
         else:
             return idxLst[0]
         
-    def index(self, keys, index=None, table=None, db=None, unique=False):
+    def index(self, keys, index=None, table=None, db=None, unique=False, combo=False):
         """
         Hey Amy!  Look, documentation
         Index is for index name
 
         Indicates if Index is created with Index name or None
         """
+
+        import itertools
+
+        if combo:
+            for x in xrange(len(keys)):
+                for k in itertools.combinations(keys, x+1):
+                    self.index(k, index, table, db, unique)
+        
         import re
         table = self.getTbl(table)
         if index==None: 
@@ -338,13 +398,14 @@ class SQLite:
 
         #only create indexes if its necessary!  (it doens't already exist)
         idxA = self.baseIndex()
-        #idxSQL = "CREATE %sINDEX %s%s ON %s (%s)" % (unique and "UNIQUE " or "", dbAdd(db), index, table, ",".join(keys))
-        # Prevent failure on duplicate index
-        idxSQL = "CREATE %sINDEX IF NOT EXISTS %s%s ON %s (%s)" % (unique and "UNIQUE " or "", dbAdd(db), index, table, ",".join(keys))
-        if self.baseIndex(idx=idxSQL, db=db) not in idxA:
-            self.c.execute(idxSQL)
-            return "%s%s" % (dbAdd(db), index)
-        else:
+        idxSQL = "CREATE %sINDEX %s%s ON %s (%s)" % (unique and "UNIQUE " or "", dbAdd(db), index, table, ",".join(keys))
+        try:
+            if self.baseIndex(idx=idxSQL, db=db) not in idxA:
+                self.c.execute(idxSQL)
+                return "%s%s" % (dbAdd(db), index)
+            else:
+                return None
+        except:
             return None
 
     #----- MERGE -----#
@@ -388,16 +449,10 @@ class SQLite:
         self.c.executescript("""
             DROP TABLE IF EXISTS TblA;
             DROP TABLE IF EXISTS TblB;
-            """)
-        self.c.executescript("""CREATE TEMPORARY TABLE TblA AS SELECT %s FROM %s GROUP BY %s;""" % (huggleMe(on), table, huggleMe(on)))
-        print "tableFrom ", tableFrom
-        print huggleMe(key, idx=1), huggleMe(on, idx=1)
-        print self.tables()
-        print ("CREATE TEMPORARY TABLE TblB AS SELECT %s, %s FROM %s%s GROUP BY %s;" % 
-                             (huggleMe(key, idx=1), huggleMe(on, idx=1), dbAdd(db), tableFrom, huggleMe(on, idx=1)))
-        self.c.executescript("""CREATE TEMPORARY TABLE TblB AS SELECT %s, %s FROM %s%s GROUP BY %s;""" % 
-                             (huggleMe(key, idx=1), huggleMe(on, idx=1), dbAdd(db), tableFrom, huggleMe(on, idx=1)))
-
+            CREATE TEMPORARY TABLE TblA AS SELECT %s FROM %s GROUP BY %s;
+            CREATE TEMPORARY TABLE TblB AS SELECT %s, %s FROM %s%s GROUP BY %s;
+            """ % (huggleMe(on), table, huggleMe(on),
+                   huggleMe(key, idx=1), huggleMe(on, idx=1), dbAdd(db), tableFrom, huggleMe(on, idx=1)))
         self.index(keys=[x[0] for x in on], table="TblA", index='idx_temp_TblA')
         self.index(keys=[x[1] for x in on], table="TblB", index='idx_temp_TblB')
         
@@ -437,7 +492,7 @@ class SQLite:
         writer = None
         f.close()
 
-    def mysql_output(self, cfg={'host':'localhost', 'passwd':'root', 'user':'root', 'db':'RD'}, textList=[], intList=[], varList=[], tableTo=None, table=None, full=True):
+    def mysql_output(self, cfg={'host':'localhost', 'db':'RD'}, textList=[], intList=[], varList=[], tableTo=None, table=None, full=True):
         """
         Output table into MySQL database.
         Auto converts fields TEXT, VARCHAR, and [Blank] to VARCHAR(255)
@@ -455,8 +510,9 @@ class SQLite:
         if varList!=[]:
             varList = zip(*varList)
             varList[0] = [x.lower() for x in varList[0]]
+        cfg = MySQL_cfg(cfg)
         
-        import MySQLdb, re, types, unicodedata
+        import MySQLdb, re, types, unicodedata, sys, datetime
         table = self.getTbl(table)
         if tableTo == None:
             tableTo = table
@@ -501,17 +557,36 @@ class SQLite:
                     mc.execute(idx)
                 except:
                     y=0
+                    print "Error:", idx
 
         if full:
-            vals = [x for x in self.c.execute("SELECT * FROM %s" % table)]
-            for i,val in enumerate(vals):
-                #this is done to normalize the data
+            self.c.execute("SELECT * FROM %s" % table)
+            t0 = datetime.datetime.now()
+            i = 0
+            while True:
+                i = i + 1
+                val = self.c.fetchone()
+                if not val:
+                    break
+                
                 insert = [(type(x)==types.UnicodeType or type(x)==types.StringType) and
                           unicodedata.normalize('NFKD', unicode(x)).encode('ascii', 'ignore') or x for x in val]
                 try:
                     mc.execute("INSERT IGNORE INTO %s VALUES (%s)" % (tableTo, ", ".join(["%s"]*len(cols))), insert)
                 except:
-                    print i+1,val
+                    print i,val
+                sys.stdout.write("{clear}  - {x} {time}".format(clear="\b"*30, x=i, time=datetime.datetime.now()-t0))
+            print ""
+
+##            vals = [x for x in self.c.execute("SELECT * FROM %s" % table)]                
+##            for i,val in enumerate(vals):
+##                #this is done to normalize the data
+##                insert = [(type(x)==types.UnicodeType or type(x)==types.StringType) and
+##                          unicodedata.normalize('NFKD', unicode(x)).encode('ascii', 'ignore') or x for x in val]
+##                try:
+##                    mc.execute("INSERT IGNORE INTO %s VALUES (%s)" % (tableTo, ", ".join(["%s"]*len(cols))), insert)
+##                except:
+##                    print i+1,val
         
         mc.close()
         mconn.close()
@@ -522,9 +597,9 @@ class SQLite:
     # IGRAPH / VISUALIZATION RELATED FUNCTIONS, very very preliminary
 
     def igraph(self, where, table=None,
-                 vx="Invnum_N", ed="Patent", order="AppYearStr",
-                 va=", Lastname, Firstname, City, State, Country, Assignee, AsgNum",
-                 ea=", a.AppYearStr AS AppYear", eg=', a.AppYearStr'):
+                 vx="Invnum_N", ed="Patent", order="AppYear",
+                 va=", Lastname||', '||Firstname AS Name, City||'-'||State||'-'||Country AS Loc, Assignee, AsgNum",
+                 ea=", a.AppYear AS AppYear", eg=', a.AppYear'):
         import math, datetime, senGraph
         table = self.getTbl(table)
         tab = senGraph.senTab()
@@ -554,3 +629,4 @@ class SQLite:
         tab.elst = self.columns(table="ed0", output=False)[2:]
         s = senGraph.senGraph(tab, "vertex")
         return s        
+
