@@ -1,6 +1,9 @@
 #!/usr/bin/env python
 # vim: set fileencoding=utf-8 :
 
+# The `ascit` function is used during the cleaning phase as
+# an sqlite3 function.
+
 """
 Macos keycodes for common utf characters found in patents.
 
@@ -32,9 +35,13 @@ class TestAscit(unittest.TestCase):
     def test_toupper(self):
         assert('FOO' == ascit('foo'))
 
+    def test_remove_acute_verite(self):
+        #print ascit('verité').rstrip('\r\n')
+        assert('VERIT' == ascit('verité'))
+
     def test_remove_acute(self):
         #print 'ascit é' + ascit('é')
-        assert('E' == ascit('é'))
+        assert('' == ascit('é'))
 
     def test_remove_grave(self):
         assert('' == ascit('è'))
@@ -68,6 +75,9 @@ class TestAscit(unittest.TestCase):
     def test_remove_period(self):
         assert('10' == ascit('1.0', strict=True))
 
+    def test_remove_spaces(self):
+        print ascit('foo bar')
+        #assert('FOOBAR' == ascit('foo bar'))
 
 if __name__ == '__main__':
     unittest.main()
