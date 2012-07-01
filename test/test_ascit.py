@@ -26,6 +26,7 @@ import sys
 sys.path.append( '.' )
 sys.path.append( '../lib/' )
 from fwork import ascit
+from fwork import remspace
 
 class TestAscit(unittest.TestCase):
 
@@ -75,13 +76,29 @@ class TestAscit(unittest.TestCase):
     def test_remove_period(self):
         assert('10' == ascit('1.0', strict=True))
 
+    def test_remove_ampersand(self):
+        assert('FOOBAR' == ascit('foo@bar', strict=True))
+
+    def test_remove_punctuation(self):
+        assert('FOOBAR' == ascit('f+-=_oo@b!#$%^&*(){}ar', strict=True))
+
+    def test_remove_space_plus(self):
+        assert('' == ascit(' +', strict=True))
+
     def test_remove_spaces(self):
         #print ascit('foo bar')
         assert('FOOBAR' == ascit('foo bar'))
 
+    def test_remove_duplicates(self):
+        #print ascit('foo,- |||,,,- - --,, |,-,, bar')
+        assert('FOO BAR' == ascit('foo,- |||,,,- - --,, |,-,, bar'))
+
     def test_remove_braces(self):
         #print ascit('{foo bar}', strict=True)
         assert('' == ascit('{foo bar}', strict=True))
+
+    def test_remspace(self):
+        assert('foobar' == remspace('foo bar'))
 
     def test_remove_parentheses(self):
         #print ascit('{foo bar}', strict=True)

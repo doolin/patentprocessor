@@ -126,11 +126,12 @@ def ascit(x, strict=True, remove_plus=False):
         #remove periods, ampersand, etc
         ##x = re.sub(r"[!@#$%^&*.,(){}]", "", x)
         x = re.sub(r"[^A-Za-z0-9 ]", "", x)
-        # This version was in sedAdd.py
+        # This version was in sendAdd.py
         #x = re.sub(r"[^A-Za-z0-9 ]", " ", x)
 
     # This line was in the version of this function which was in the
     # senAdd file, but which wasn't used.
+    # Also, a few lines above, this shows being dealt with anyway.
     # if remove_plus:
     #     x = re.sub(r"  +", " ", x)
 

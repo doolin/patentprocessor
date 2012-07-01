@@ -21,9 +21,14 @@ import unicodedata
 # TODO:
 # Fix Parsing for fringe patents. 
 
+def get_class_list(xmlpat, xmldoc):
+    classes = [[x[:3].replace(' ',''), x[3:].replace(' ','')] for x in xmlpat.__tagNme__(xmldoc, ["classification-national", ["main-classification", "further-classification"]], idx=1, listType=True)]
+    #print classes
+    return classes
+
 class XMLPatent:
     def __init__(self, XMLString, debug=False):
-        
+
         xmldoc = minidom.parse(XMLString)
 
         appl_exist = xmldoc.getElementsByTagName("application-reference")
@@ -45,7 +50,6 @@ class XMLPatent:
         #agents_exist = xmldoc.getElementsByTagName("agents")
         #agent_exist = xmldoc.getElementsByTagName("agent")
 
-        
         self.country, self.patent, self.kind, self.date_grant = self.__tagNme__(xmldoc, ["publication-reference", ["country", "doc-number", "kind", "date"]])
 
         # Empty check
@@ -60,7 +64,8 @@ class XMLPatent:
 
         self.clm_num = self.__tagNme__(xmldoc, ["number-of-claims"])
 
-        self.classes = [[x[:3].replace(' ',''), x[3:].replace(' ','')] for x in self.__tagNme__(xmldoc, ["classification-national", ["main-classification", "further-classification"]], idx=1, listType=True)]
+        #self.classes = [[x[:3].replace(' ',''), x[3:].replace(' ','')] for x in self.__tagNme__(xmldoc, ["classification-national", ["main-classification", "further-classification"]], idx=1, listType=True)]
+        self.classes = get_class_list(self, xmldoc)
 
         self.abstract = self.__allHTML__(xmldoc, ["abstract", "p"])
 
