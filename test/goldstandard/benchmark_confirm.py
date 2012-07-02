@@ -58,6 +58,12 @@ with con:
 
         patents_matched_from_SQL = con_cur.fetchall()
         match_found = False
+        for patent_match in patents_matched_from_SQL:
+            print patent_match[0]
+            print patent_to_match
+            if patent_match[0] == patent_to_match:
+                match_found = True
+                success = success + 1
 
 
 
