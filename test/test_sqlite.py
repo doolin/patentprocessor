@@ -1,9 +1,11 @@
 #!/usr/bin/python
 
-import SQLite
 import unittest
 import os
 import sqlite3
+import sys
+sys.path.append( '../lib/' )
+import SQLite
 
 class TestSQLite(unittest.TestCase):
 
