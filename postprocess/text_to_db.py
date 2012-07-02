@@ -13,8 +13,16 @@ opened_file = open(txt_file, 'U')
 log_file = 't2db.log'
 
 # Set Up SQL Connections
-con = sql.connect('invpat_final_from_DVN.sqlite3') # Database to connect to
-fin = sql.connect('final_test1.sqlite3')  # Database to write to
+# Database to connect to
+
+# invpat_final_from_DVN taken from DVN Folder (disambiguated results)
+con = sql.connect('invpat_final_from_DVN.sqlite3') 
+
+# Database to write to, can be initially empty
+# First cold run, final_orig_invnum empty
+# After that, values overwritten
+
+fin = sql.connect('final_orig_invnum.sqlite3')
 
 # Logging
 logging.basicConfig(filename=log_file, level=logging.DEBUG)
@@ -24,6 +32,10 @@ open(log_file, "w")
 # Create Final table to be inserted into
 with fin:
     fin_cur = fin.cursor()
+
+    # Chose to drop table because it is easier to test, without having to
+    # copy over the invpat_final_from_DVN sqlite3 db everytime.
+
     fin_cur.execute("DROP TABLE IF EXISTS Final;")
 
     # Schema for invpat
@@ -77,7 +89,7 @@ with fin:
                 Assignee TEXT,
                 AsgNum INT,
                 Class TEXT,
-                Invnum,
+                Invnum PRIMARY KEY,
                 lower,
                 upper,
                 Finalnum INT,
@@ -90,34 +102,38 @@ with fin:
 with con:
     con_cur = con.cursor()
     logging.info("Beginning to query database")
+
+    # Variables used in Logging
     count = 0
     success = 0
     errors = 0
     relpats = 0
     relpaterrors = 0
 
-    # con_cur.execute("CREATE INDEX index_patent ON invpat (Patent)");
+    print "Starting to build final database...."
     while True:
-
+ 
         line_read = opened_file.readline()
         if not line_read:
             break
         
-        # Inv_Num ### Number ### Record-ID
+        # Inv_Num ### Number ### Inv_Num
+
         count = count + 1
+
         if (count % 10000 == 0):
             print "Starting patent", count
+        # print count
 
         text_line = line_read.rstrip(',\n').split("###")
         inv_num = text_line[0]
         num = int(text_line[1]) # Convert str to int to be consistent. 
-        final_docs = text_line[2]
-        final_docs_split = final_docs.split(',')
+        related_invs = text_line[2]
+        related_invs_split = related_invs.split(',')
 
-        # print inv_num, "###", num, "###", final_docs
+        # print inv_num, "###", num, "###", related_invs
 
         con_cur.execute("SELECT * FROM invpat WHERE (Invnum = \"%s\");" % inv_num)
-        inv_closed_list.add(inv_num)
         
         # con_cur.execute("SELECT * FROM invpat WHERE (Lastname
         # = \"FLEMING\" and Firstname = \"LEE\");") # Sanity Check
@@ -128,25 +144,27 @@ with con:
             success = success + 1
             value_to_insert = list(fetched_value)
             value_to_insert.append(num)
-            value_to_insert.append(final_docs)
-            fin_cur.execute("""INSERT INTO Final VALUES (?,?,?,?,?,?,?,?,?,
+            value_to_insert.append(related_invs)
+            fin_cur.execute("""INSERT OR IGNORE INTO Final VALUES (?,?,?,?,?,?,?,?,?,
                                 ?,?,?,?,?,?,?,?,?,?,?,?,?)""",
                                 tuple(value_to_insert))
 
-            for final_doc in final_docs_split:
-                rel_patent_number = final_doc.split("-")[0]
+            for related_inv in related_invs_split:
+                # rel_patent_number = related_inv.split("-")[0]
+                # rel_patent_number = related_inv.split("-")[0]
                 # print rel_patent_number 
-                con_cur.execute("SELECT * FROM invpat WHERE Patent = \"%s\";"
-                                % rel_patent_number)
-                pat_closed_list.add(final_doc)
+                con_cur.execute("SELECT * FROM invpat WHERE Invnum = \"%s\";"
+                                % related_inv)
                 fetched_value = con_cur.fetchone()  # Get match
+                
                 # print fetched_value
-                if fetched_value
+
+                if fetched_value:
                     relpats = relpats + 1
                     value_to_insert = list(fetched_value)
                     value_to_insert.append(num)
-                    value_to_insert.append(final_docs)
-                    fin_cur.execute("""INSERT INTO Final VALUES (?,?,?,?,?,?,?,?,?,
+                    value_to_insert.append(related_invs)
+                    fin_cur.execute("""INSERT OR IGNORE INTO Final VALUES (?,?,?,?,?,?,?,?,?,
                                        ?,?,?,?,?,?,?,?,?,?,?,?,?)""",
                                        tuple(value_to_insert))
                 else:
@@ -167,3 +185,4 @@ fin.commit()
 
     
                 
+
