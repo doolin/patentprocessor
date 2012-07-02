@@ -69,6 +69,9 @@ with con:
             logging.error("Did not find a match for %s, %s, %s" % (first_name, last_name, patent_to_match))
             errors = errors + 1
 
+logging.info("Total Patents: %d" % count)
+logging.info("Patents ran successfully: %d" % success)
+logging.info("Patents FAILED: %d" % errors)        
 
 
 
