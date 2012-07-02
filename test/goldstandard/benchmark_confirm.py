@@ -17,3 +17,14 @@ open(log_file, "w")
 
 # Set Up SQL Connections
 con = sql.connect('invnum_N_zardoz_with_invpat.sqlite3') 
+
+with con:
+
+    con_cur = con.cursor()
+    logging.info("Beginning to query database")
+    con_cur.execute("CREATE INDEX IF NOT EXISTS index_invnum ON invpat (Invnum)");
+    con_cur.execute("CREATE INDEX IF NOT EXISTS index_lastname ON invpat (Lastname)");
+    con_cur.execute("CREATE INDEX IF NOT EXISTS index_firstname ON invpat (Firstname)");
+    count = 0
+    errors = 0
+    success = 0
