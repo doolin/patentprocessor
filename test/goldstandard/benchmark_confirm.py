@@ -40,3 +40,31 @@ with con:
         count = count + 1
         if count%100 == 0:
             print "starting patent", count
+
+        split_lines = line_read.split(', ')
+
+        # Strip out weird characters/formatting
+        # Need to add leading "0" to Patent if not Design/Util/etc..
+
+        patent_to_match = split_lines[0].strip(' \t\n\r')
+        if len(patent_to_match) == 7:
+            patent_to_match = "0" + patent_to_match
+        last_name = split_lines[1].strip(' \t\n\r')
+        first_name = split_lines[2].strip(' \t\n\r')
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
