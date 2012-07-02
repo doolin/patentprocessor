@@ -19,6 +19,7 @@ Pull requests are welcome. Here are a few pointers which will make everything ea
     * 0 or 1 use of the new functionality in production.
     * Further uses of functionality should go in future commits.
 * Formatting updates, code cleanup and renaming should go into independent commits.
+* Submit only code which is covered by *working* unit tests.
 * Testing scripts, including unit tests, integration tests and functional tests go in the `test` directory.
 * Code which does work goes in the lib directory.
 * Code which provides a workflow (i.e., processing patents or building necessary
