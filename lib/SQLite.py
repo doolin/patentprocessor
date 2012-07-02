@@ -146,7 +146,7 @@ class SQLite:
         """
         self.c.execute(""" 
             SELECT {var} FROM {table} 
-             WHERE type='{type}' ORDER BY {var}
+             WHERE type='{type}' AND {var} IS NOT NULL ORDER BY {var}
             """.format(var=var, type=type,
               table=self._dbAdd(db=db, tbl="sqlite_master"))) #"""
         list = [x[0].lower() for x in self.c]
@@ -183,11 +183,11 @@ class SQLite:
         db, tbl = self._getSelf(field=["db", "tbl"], **kwargs)
 
         if idx==None:
-            self.c.execute("SELECT sql FROM {tbl} WHERE type='index'".\
+            self.c.execute("SELECT sql FROM {tbl} WHERE type='index' AND sql IS NOT NULL".\
                 format(tbl=self._dbAdd(db=db, tbl="sqlite_master")))
             sqls = self.c.fetchall()
         else:
-            self.c.execute("SELECT sql FROM {tbl} WHERE type='index' AND name='{idx}'".\
+            self.c.execute("SELECT sql FROM {tbl} WHERE type='index' AND name='{idx}' AND sql IS NOT NULL".\
                 format(tbl=self._dbAdd(db=db, tbl="sqlite_master"), idx=idx))
             sqls = self.c.fetchall()
             # if index name doesn't exist assume SQL statement
@@ -316,7 +316,7 @@ class SQLite:
         col = set(self.columns(lower=True, **kwargs)) - key
 
         #manipulate the table
-        self.c.execute("SELECT sql,type FROM {tbl} WHERE tbl_name='{where}'".\
+        self.c.execute("SELECT sql,type FROM {tbl} WHERE tbl_name='{where}' AND sql is not NULL".\
             format(tbl="sqlite_master", where=tbl))
         sqls = self.c.fetchall()
 
@@ -556,12 +556,12 @@ class SQLite:
             """.format(tblTo=tableTo,
                        table=self._dbAdd(tbl=tbl, db=db))) #"""
         self.c.execute(""" 
-            SELECT sql FROM {table} WHERE tbl_name='{where}' AND type='table'
+            SELECT sql FROM {table} WHERE tbl_name='{where}' AND type='table' AND sql IS NOT NULL
             """.format(table=self._dbAdd(db=db, tbl="sqlite_master"), 
                        where=tableTo)) #"""
         sqlTbl = self.c.fetchone()[0]
         self.c.execute(""" 
-            SELECT sql, name FROM {table} WHERE tbl_name='{where}' AND type!='table'
+            SELECT sql, name FROM {table} WHERE tbl_name='{where}' AND type!='table' AND sql IS NOT NULL
             """.format(table=self._dbAdd(db=db, tbl="sqlite_master"), 
                        where=tableTo)) #"""
         sqlOth = self.c.fetchall()
@@ -918,7 +918,7 @@ class SQLite:
             mc.execute(sql)
         except:
             y=0
-        indexes = [x[0] for x in self.c.execute("SELECT sql FROM sqlite_master WHERE type='index' and tbl_name='%s'" % table)]
+        indexes = [x[0] for x in self.c.execute("SELECT sql FROM sqlite_master WHERE type='index' AND tbl_name='%s' AND sql IS NOT NULL"  % table)]
 
         for idx in indexes:
             if idx!=None:

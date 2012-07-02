@@ -55,11 +55,6 @@ class uQvals:
         out = list(set(self.dList))
         return len(out)>1 and "|".join(out) or ""
 
-
-def tblExist(c, table):
-    return c.execute("SELECT count(*) FROM sqlite_master WHERE tbl_name='%s'" % table).fetchone()[0]>0
-
-
 def uniVert(data):
     def uni(data):
         try: return unicode(data, "utf-8")
