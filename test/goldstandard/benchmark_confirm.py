@@ -15,5 +15,5 @@ log_file = 'benchmark_results.log'
 logging.basicConfig(filename=log_file, level=logging.DEBUG)
 open(log_file, "w")
 
-
-
+# Set Up SQL Connections
+con = sql.connect('invnum_N_zardoz_with_invpat.sqlite3') 
