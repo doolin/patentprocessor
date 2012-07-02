@@ -52,6 +52,13 @@ with con:
         last_name = split_lines[1].strip(' \t\n\r')
         first_name = split_lines[2].strip(' \t\n\r')
 
+        # print patent_to_match, last_name, first_name
+
+        con_cur.execute("SELECT Patent FROM invpat WHERE (Lastname = \"%s\" and Firstname = \"%s\");" % (last_name, first_name))
+
+        patents_matched_from_SQL = con_cur.fetchall()
+        match_found = False
+
 
 
 
