@@ -28,3 +28,15 @@ with con:
     count = 0
     errors = 0
     success = 0
+
+    while True:
+        
+        line_read = opened_file.readline()
+        # print line_read
+        
+        if not line_read:
+            print "EXITING"
+            break
+        count = count + 1
+        if count%100 == 0:
+            print "starting patent", count
