@@ -65,6 +65,10 @@ with con:
                 match_found = True
                 success = success + 1
 
+        if not match_found:
+            logging.error("Did not find a match for %s, %s, %s" % (first_name, last_name, patent_to_match))
+            errors = errors + 1
+
 
 
 
