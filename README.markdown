@@ -18,6 +18,7 @@ Pull requests are welcome. Here are a few pointers which will make everything ea
     * Documentation (the "why") of the function/method in the appropriate location (platform dependent).
     * 0 or 1 use of the new functionality in production.
     * Further uses of functionality should go in future commits.
+* Formatting updates, code cleanup and renaming should go into independent commits.
 * Testing scripts, including unit tests, integration tests and functional tests go in the `test` directory.
 * Code which does work goes in the lib directory.
 * Code which provides a workflow (i.e., processing patents or building necessary
