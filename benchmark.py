@@ -5,6 +5,7 @@
 
 
 import sqlite3, sys, csv, datetime;
+sys.path.append("lib")
 from fwork import *;
 
 def bmVerify(results, filepath="", outdir = ""):
