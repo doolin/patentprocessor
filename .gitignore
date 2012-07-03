@@ -1,3 +1,4 @@
+tmp/
 *.log
 invpat*.csv
 *.pyc
