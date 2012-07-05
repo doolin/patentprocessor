@@ -25,4 +25,41 @@ def initialize_logging(log_file):
     success = 0
     errors = 0
 
+def make_final_table():
+    # Create Final table to be inserted into
+    with fin:
+        fin_cur = fin.cursor()
+        fin_cur.execute("DROP TABLE IF EXISTS invpat;")
+        # Schema for invpat
+        fin_cur.execute("""CREATE TABLE invpat(
+                           Firstname TEXT,
+                           Lastname TEXT,
+                	   Street TEXT,
+                	   City TEXT,
+                	   State TEXT,
+                	   Country TEXT,
+                	   Zipcode TEXT,
+                	   Latitude REAL,
+                	   Longitude REAL,
+                	   InvSeq INT,
+                	   Patent TEXT,
+                	   AppYear INT,
+                	   GYear INT,
+                	   AppDate TEXT,
+                	   Assignee TEXT,
+                	   AsgNum INT,
+                	   Class TEXT,
+                	   Invnum TEXT,
+                	   Invnum_N TEXT,
+                	   Invnum_N_UC,
+                	   Density REAL,
+                	   Precision REAL,
+                	   Recall REAL,
+                           Middlename TEXT,
+                	   Unique_Record_ID TEXT,
+                	   ApplyYear INT,
+                	   Coauthor TEXT
+                           );
+                        """)
+
 
