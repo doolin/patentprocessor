@@ -7,6 +7,7 @@
 
 
 import sqlite3, sys, csv, datetime;
+sys.path.append( './lib/' )
 sys.path.append("lib")
 from fwork import *;
 
