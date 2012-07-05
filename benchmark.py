@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 # TODO
 # Why are records over & underclumped? ie. Charles Linder 7475467, Nirmala Ramanujam 7570988, Edwin L. Thomas 7799416
 # Investigate "WEIRDNESS" output : Jaro-Winkler exception thrown on comparison between  and ROBERT BRUCE
@@ -27,10 +29,11 @@ def bmVerify(results, filepath="", outdir = ""):
         
         """
         for result in results:
-                uqB = "invnum_N"
+                uqB = "FOOBAR"
                 tblB = "invpat"
                 #fileS = "/home/ron/disambig/BM/DefTruth5.csv"
-                fileS = "/var/share/patentdata/benchmarks/DefTruth5.csv"
+                #fileS = "/var/share/patentdata/benchmarks/DefTruth5.csv"
+                fileS = "/var/share/patentdata/disambiguation/experiments/mercury/2/benchmark.csv"
                 fileB = filepath + "{result}.sqlite3".format(result=result)
                 output = outdir + "{result}_DT5.csv".format(result=result)
 
@@ -47,11 +50,16 @@ def bmVerify(results, filepath="", outdir = ""):
 
                 #MAKE THIS SO IT CAN ATTACH SQLITE3 FOR BENCHMARK
                 dataS = uniVert([x for x in csv.reader(open(fileS, "rb"))])
+
+		print dataS
+
                 #1 = Variables, 2 = Type, 3 = Format (If necessary), 4 = Matching Type
                 tList = ["%s %s" % (dataS[0][i], x) for i,x in enumerate(dataS[1]) if  x != ""]
 
                 dataS2 = [dataS[0]]
                 dataS2.extend(dataS[4:])
+
+                print dataS[2]
 
                 #Format if its necessary --> Basically for Patents..
                 for i,x in enumerate(dataS[2]):
@@ -68,8 +76,12 @@ def bmVerify(results, filepath="", outdir = ""):
 
                 #FIGURE OUT WHICH ONES HAVE EXACT/FUZZY
                 exact = [dataS[0][i] for i,x in enumerate(dataS[3]) if x.upper()[0]=="E"]
+		print exact
                 fuzzy = [dataS[0][i] for i,x in enumerate(dataS[3]) if x.upper()[0]=="F"]
+		print fuzzy
                 uqS =   [dataS[0][i] for i,x in enumerate(dataS[3]) if x.upper()[0]=="U"][0]
+
+
 
                 #CREATE INDEX, MERGE DATA BASED ON EXACTS
                 print "Creating indices... " + str(datetime.datetime.now())
@@ -148,7 +160,7 @@ def bmVerify(results, filepath="", outdir = ""):
                         SELECT  errD(a.ErrUQ, uqB) AS ErrUQ, b.*
                           FROM (SELECT uqS, freqUQ(uqB) as ErrUQ FROM dataM3 GROUP BY uqS) AS a
                     INNER JOIN  dataM3 AS b
-                            ON  a.uqS=b.uqS AND b.AppYearStr <= '2009' /*AND a.uqS not in (83, 85, 93)*/
+                            ON  a.uqS=b.uqS AND b.AppYear <= '2009' /*AND a.uqS not in (83, 85, 93)*/
                       ORDER BY  uqS, %s;
 
                     """ % (fBnme, uqB, exCom, exAnd, uqB, exCom))
@@ -161,8 +173,10 @@ def bmVerify(results, filepath="", outdir = ""):
                 writer.writerows(c.execute("SELECT * FROM dataM4").fetchall())
                 print "Printing results ..." + str(datetime.datetime.now())
                 rep = [list(x) for x in c.execute("SELECT ErrUQ, uqSUB FROM dataM4")]
+		print rep
                 orig = len([x for x in rep if x[1]!=None])
                 errm = sum([int(x[0]) for x in rep if x[0]!=None])
+		print errm
                 u = 1.0*errm/orig
                 o = 1-(float(orig)/len(rep))
                 recall = 1.0 - u
