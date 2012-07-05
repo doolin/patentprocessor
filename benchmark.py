@@ -7,11 +7,8 @@
 
 
 import sqlite3, sys, csv, datetime;
-<<<<<<< HEAD
 sys.path.append( './lib/' )
-=======
 sys.path.append("lib")
->>>>>>> 39c819113636d5908622990fdaf38898ce2912d4
 from fwork import *;
 
 def bmVerify(results, filepath="", outdir = ""):
