@@ -62,4 +62,13 @@ def make_final_table():
                            );
                         """)
 
+def reset_logging():
+    count = 0
+    success = 0
+    errors = 0
+
+def commit_changes():
+    with fin:
+        fin.commit()
+
 
