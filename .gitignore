@@ -1,3 +1,4 @@
+*.csv
 tmp/
 *.log
 invpat*.csv
