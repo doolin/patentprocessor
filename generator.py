@@ -3,19 +3,22 @@ import sys
 import os
 import logging
 
-
 # TODO: 
 # Need to verify correctness
 # Use command-line args to pass in file names
 # Make this better, refactor, test
 # Remove precision, density, recall
 
-def initialize_sql_databases():
+def initialize_con_database(con_db_name):
     # Set Up SQL Connections
     # Database to connect to
-    con = sql.connect('invpat.sqlite3')
+    con = sql.connect(con_db_name)
+    con_cur = con.cursor()
+
+def initialize_fin_database(fin_db_name):
     # Database to write to 
-    fin = sql.connect('mercury2.sqlite3') 
+    fin = sql.connect(fin_db_name) 
+    fin_cur = fin.cursor()
 
 def initialize_logging(log_file):
     # Logging
@@ -28,7 +31,7 @@ def initialize_logging(log_file):
 def make_final_table():
     # Create Final table to be inserted into
     with fin:
-        fin_cur = fin.cursor()
+        # fin_cur = fin.cursor()
         fin_cur.execute("DROP TABLE IF EXISTS invpat;")
         # Schema for invpat
         fin_cur.execute("""CREATE TABLE invpat(
