@@ -4,3 +4,8 @@ patentlist.txt
 benchmark_errors.txt
 grep_scrpt.sh
 nancy_list.txt
+berkeleyinventors1.csv
+goldstandard/berkeleyinventors2.csv
+test/goldstandard/csv/
+test/goldstandard/ikhlaq.csv
+
