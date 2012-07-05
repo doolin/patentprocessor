@@ -1,3 +1,4 @@
+ikhlaq.csv
 patentlist.txt
 .#bm-gs.py
 .goutputstream-5G9IGW
@@ -8,4 +9,4 @@ berkeleyinventors1.csv
 goldstandard/berkeleyinventors2.csv
 test/goldstandard/csv/
 test/goldstandard/ikhlaq.csv
-
+benchmark.sh
