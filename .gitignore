@@ -1,9 +1,6 @@
-<<<<<<< HEAD
 *~
-=======
 *.csv
 tmp/
->>>>>>> 39c819113636d5908622990fdaf38898ce2912d4
 *.log
 invpat*.csv
 *.pyc
@@ -12,6 +9,3 @@ data/
 fibo.py
 NBER_asg
 loctbl
-benchmark_confirm.py
-
-
