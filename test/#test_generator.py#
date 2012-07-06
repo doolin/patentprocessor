@@ -42,7 +42,7 @@ class TestGenerator(unittest.TestCase):
         query_string =  """SELECT Firstname, Lastname, Patent FROM TEST WHERE 
                         (Firstname = \"JOHN\" and Lastname = \"SMITH\"
                          and Patent = \"D01234567\");"""
-        test_con = sql.connect('test_db')
+        test_con = sql.connect('test_db') # Make this in memory :memory:
         test_con_cur = test_con.cursor()  
         test_con_cur.execute(""" DROP TABLE IF EXISTS TEST; """)
         test_con_cur.execute(""" CREATE TABLE TEST(

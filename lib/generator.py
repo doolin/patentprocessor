@@ -76,13 +76,6 @@ def commit_changes():
     with fin:
         fin.commit()
 
-def con_sql_match(first_name, last_name, patent_number):
-    with con:
-        con_cur.execute("""SELECT * FROM invpat WHERE 
-                          (Firstname = \"%s\" and Lastname = \"%s\"
-                           and Patent = \"%s\");""" % (first_name, last_name, patent_number))
-        return con_cur.fetchone()
-
 def process_line(line):
     return line
 
@@ -94,11 +87,23 @@ def process_csv(opened_file_name):
         return_list.append(process_line(row))
     return return_list
 
+# Started 1:54, Finished 2:15PM
 def build_query_string(first_name, last_name, patent_number):
     query_string = """SELECT * FROM invpat WHERE 
                         (Firstname = \"%s\" and Lastname = \"%s\"
                          and Patent = \"%s\");""" % (first_name, last_name, patent_number)
     return query_string
+
+# Started 2:30PM, Finished 3:15PM
+def con_sql_match(query_string, database):
+    con = sql.connect(database)
+    con_cur = con.cursor()
+    con_cur.execute(query_string)
+    return con_cur.fetchone()
+
+
+
+
 
 
     
