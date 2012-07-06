@@ -101,6 +101,13 @@ def con_sql_match(query_string, database):
     con_cur.execute(query_string)
     return con_cur.fetchone()
 
+def con_sql_match_all(query_string, database):
+    con = sql.connect(database)
+    con_cur = con.cursor()
+    con_cur.execute(query_string)
+    return con_cur.fetchall()
+
+
 
 
 
