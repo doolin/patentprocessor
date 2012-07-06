@@ -5,6 +5,7 @@ import os
 import sys
 import logging
 import unittest
+import csv
 
 sys.path.append( '.' )
 sys.path.append( '../lib/' )
@@ -20,10 +21,11 @@ class TestGenerator(unittest.TestCase):
     def setUp(self):
         print "setup"
 
-    def test_process_line(self):
-        # TODO: Document how white space and escaped quotes get handled
-        line = "1,foo,bar,01234567"
-        assert(["1","foo", "bar", "01234567"] == process_line(line))
+    def test_process_csv(self):
+        file_name = open("gen_sample.csv", "rb")
+        csv_reader = process_csv(file_name)
+        for i, row in enumerate(csv_reader):
+            assert([str(i),"foo", "bar", "01234567"] == row)
 
 if __name__ == '__main__':
     unittest.main()
