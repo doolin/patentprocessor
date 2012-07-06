@@ -94,6 +94,12 @@ def process_csv(opened_file_name):
         return_list.append(process_line(row))
     return return_list
 
+def build_query_string(first_name, last_name, patent_number):
+    query_string = """SELECT * FROM invpat WHERE 
+                        (Firstname = \"%s\" and Lastname = \"%s\"
+                         and Patent = \"%s\");""" % (first_name, last_name, patent_number)
+    return query_string
+
 
     
 
