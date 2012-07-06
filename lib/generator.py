@@ -90,38 +90,3 @@ def con_sql_match(first_name, last_name, patent_number):
         return con_cur.fetchone()
 
 
-
-
-
-
-
-
-# From Before
-
-
-with con:
-    con_cur = con.cursor()
-    logging.info("Beginning to query database")
-    count = 0
-    success = 0
-    errors = 0
-    con_cur.execute("SELECT * FROM invpat WHERE (Patent= \"05123095\" and Lastname = \"CULLER\" and Firstname = \"DAVID E\");")
-    match = con_cur.fetchone()
-    # print match
-    value = list(match)
-    first_name = value[0]
-    uniq_rec_id = value[17]
-    apply_year = value[11]
-    co_author = ""
-    #print "apply_year is", apply_year, "co_author", co_author
-    value.append(first_name)
-    value.append(uniq_rec_id)
-    value.append(apply_year)
-    value.append(co_author)
-    # print "final val is...", value
-    fin_cur.execute("""INSERT INTO invpat VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);""",
-                            tuple(value))
-
-
-
-
