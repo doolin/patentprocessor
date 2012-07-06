@@ -89,4 +89,7 @@ def con_sql_match(first_name, last_name, patent_number):
                            and Patent = \"%s\");""" % (first_name, last_name, patent_number))
         return con_cur.fetchone()
 
-
+def process_line(line):
+    sl = line.split(",")
+    #print sl
+    return sl
