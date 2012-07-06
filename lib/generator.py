@@ -2,6 +2,7 @@ import sqlite3 as sql
 import sys
 import os
 import logging
+import csv
 
 # TODO: 
 # Need to verify correctness
@@ -82,14 +83,17 @@ def con_sql_match(first_name, last_name, patent_number):
                            and Patent = \"%s\");""" % (first_name, last_name, patent_number))
         return con_cur.fetchone()
 
-def con_sql_match(first_name, last_name, patent_number):
-    with con:
-        con_cur.execute("""SELECT * FROM invpat WHERE 
-                          (Firstname = \"%s\" and Lastname = \"%s\"
-                           and Patent = \"%s\");""" % (first_name, last_name, patent_number))
-        return con_cur.fetchone()
-
 def process_line(line):
-    sl = line.split(",")
-    #print sl
-    return sl
+    return line
+
+# Started 1:30PM, Finished 1:49PM
+def process_csv(opened_file_name):
+    return_list = []
+    csv_reader = csv.reader(opened_file_name)
+    for row in csv_reader:
+        return_list.append(process_line(row))
+    return return_list
+
+
+    
+
