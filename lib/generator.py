@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 import sqlite3 as sql
 import sys
 import os
@@ -14,7 +16,7 @@ from optparse import OptionParser
 # Remove precision, density, recall
 
 def initialize_con_database(con_db_name):
-    # Set Up SQL Connections
+    # Set Up SQL Connectionss
     # Database to connect to
     con = sql.connect(con_db_name)
     con_cur = con.cursor()
@@ -32,10 +34,10 @@ def initialize_logging(log_file):
     success = 0
     errors = 0
 
-def make_final_table():
+def make_final_table(connection):
     # Create Final table to be inserted into
-    with fin:
-        # fin_cur = fin.cursor()
+    with connection:
+        fin_cur = connection.cursor()
         fin_cur.execute("DROP TABLE IF EXISTS invpat;")
         # Schema for invpat
         fin_cur.execute("""CREATE TABLE invpat(
@@ -89,6 +91,14 @@ def process_csv(opened_file_name):
 
 # Started 1:54, Finished 2:15PM
 def build_query_string(first_name, last_name, patent_number):
+    # Inconsistences!
+    if (type(first_name) is not str):
+        first_name = str(first_name)
+    if (type(last_name) is not str):
+        last_name = str(last_name)
+    if (type(patent_number) is not str):
+        patent_number = str(patent)
+
     query_string = """SELECT * FROM invpat WHERE 
                         (Firstname = \"%s\" and Lastname = \"%s\"
                          and Patent = \"%s\");""" % (first_name, last_name, patent_number)
@@ -152,9 +162,9 @@ if __name__ == '__main__':
 
     parser = OptionParser()
 
-    parser.add_option("-f", "--file", dest="infilename", default = "../../e2e/merc2.csv", help="CSV File Location", metavar="FILE")
-    parser.add_option("-i", "--input", dest="indb", default = "../../e2e/merc2.csv", help="Input Database Location", metavar="FILE")
-    parser.add_option("-o", "--output", dest="outdb", default = "merc2.sqlite3", help="Output Database Location", metavar="FILE")
+    parser.add_option("-f", "--file", dest="infilename", default = "../../../e2e/mercury13.csv", help="CSV File Location", metavar="FILE")
+    parser.add_option("-i", "--input", dest="indb", default = "../../../e2e/invpat.sqlite3", help="Input Database Location", metavar="FILE")
+    parser.add_option("-o", "--output", dest="outdb", default = "testgen.sqlite3", help="Output Database Location", metavar="FILE")
    
 
     (options, args) = parser.parse_args()
@@ -163,12 +173,33 @@ if __name__ == '__main__':
     in_db = options.indb
     out_db = options.outdb
     
-    print "\nStarting Generator.py    \n"
-    print "File Locations: "
+    print "\nStarting Generator.py    \n\n"
+    print "File Locations:\n "
     print "in_file: ", in_file
     print "in_database: ", in_db
     print "out_database: ", out_db
-    print "---------------------------------\n"
+    print "\n---------------------------------\n"
+
+    # Started 2:50PM 
+
+    # Begin main():
+
+    csv_list = process_csv(open(in_file))
+    initialize_logging('generator_errors.log')
+    make_final_table(sql.connect(out_db))
+    for csv in csv_list:
+        # fn = csv[0], ln = csv[1], p = csv[2]
+        query_string = build_query_string(csv[0],csv[1],csv[2])
+        sql_result = con_sql_match(query_string, in_db)
+        # Must drop before add
+        result_after_drop =  process_input_db_query_drop(sql_result)
+        result_after_add = process_input_db_query_add(result_after_drop)
+        insert_tuple_into_output_db(result_after_add, out_db)
+   
+        
+        
+    
+    
 
     
 
