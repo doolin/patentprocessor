@@ -121,7 +121,6 @@ class TestGenerator(unittest.TestCase):
         test_con = sql.connect('test2.db') # Make this in memory :memory:
         test_con_cur = test_con.cursor()  
         test_con_cur.execute(""" DROP TABLE IF EXISTS invpat; """)
-
         test_con_cur.execute("""CREATE TABLE invpat(
                            Firstname TEXT,
                            Lastname TEXT,
@@ -153,6 +152,9 @@ class TestGenerator(unittest.TestCase):
         test_con_cur.execute("""SELECT * from invpat;""")
         fin_result = test_con_cur.fetchone()
         assert(fin_result == test_tuple) # Pairwise test with input
+
+    def tearDown(self):
+        pass
 
     
 if __name__ == '__main__':
