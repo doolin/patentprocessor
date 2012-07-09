@@ -10,7 +10,9 @@ import sqlite3 as sql
 
 sys.path.append( '.' )
 sys.path.append( '../lib/' )
+
 from generator import *
+from optparse import OptionParser
 
 """
 TODO: Add documentation as needed.
@@ -118,7 +120,7 @@ class TestGenerator(unittest.TestCase):
                                "UNIQUE_RECORD_ID_TEST", "APPLYYEAR_TEST",
                                "COAUTHOR")
 
-        test_con = sql.connect('test2.db') # Make this in memory :memory:
+        test_con = sql.connect('test2.sqlite3') # Make this in memory :memory:
         test_con_cur = test_con.cursor()  
         test_con_cur.execute(""" DROP TABLE IF EXISTS invpat; """)
         test_con_cur.execute("""CREATE TABLE invpat(
@@ -148,7 +150,7 @@ class TestGenerator(unittest.TestCase):
                 	   Coauthor TEXT
                            );
                         """)
-        insert_tuple_into_output_db(test_tuple, 'test2.db')
+        insert_tuple_into_output_db(test_tuple, 'test2.sqlite3')
         test_con_cur.execute("""SELECT * from invpat;""")
         fin_result = test_con_cur.fetchone()
         assert(fin_result == test_tuple) # Pairwise test with input

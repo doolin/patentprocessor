@@ -4,6 +4,9 @@ import os
 import logging
 import csv
 
+from subprocess import call
+from optparse import OptionParser
+
 # TODO: 
 # Need to verify correctness
 # Use command-line args to pass in file names
@@ -137,6 +140,40 @@ def insert_tuple_into_output_db(insert_tuple, output_db):
     # print insert_tuple
     fin_cur.execute("""INSERT INTO invpat VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);""" , insert_tuple)
     fin.commit()
+
+
+if __name__ == '__main__':
+
+    # Started 2:15, Finished 2:41
+    # Do something here
+    # 1. Filename.txt (required)
+    # 2. Source db (optional)
+    # 3. Final db (optional)
+
+    parser = OptionParser()
+
+    parser.add_option("-f", "--file", dest="infilename", default = "../../e2e/merc2.csv", help="CSV File Location", metavar="FILE")
+    parser.add_option("-i", "--input", dest="indb", default = "../../e2e/merc2.csv", help="Input Database Location", metavar="FILE")
+    parser.add_option("-o", "--output", dest="outdb", default = "merc2.sqlite3", help="Output Database Location", metavar="FILE")
+   
+
+    (options, args) = parser.parse_args()
+
+    in_file = options.infilename
+    in_db = options.indb
+    out_db = options.outdb
+    
+    print "\nStarting Generator.py    \n"
+    print "File Locations: "
+    print "in_file: ", in_file
+    print "in_database: ", in_db
+    print "out_database: ", out_db
+    print "---------------------------------\n"
+
+    
+
+    
+        
     
     
 
