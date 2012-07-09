@@ -104,15 +104,27 @@ def con_sql_match_all(query_string, database):
     con_cur.execute(query_string)
     return con_cur.fetchall()
 
-# Started 11:26AM, Finished 
+# Started 11:26AM, Finished 11:48AM
 def process_input_db_query_drop(tuple_result):
     result_as_list = list(tuple_result)
     result_as_list.pop(20)
     result_as_list.pop(20)
     result_as_list.pop(20)
     return tuple(result_as_list)
-    
 
+# Started 11:50AM, Finished 12:26PM 
+def process_input_db_query_add(tuple_result):
+    result_as_list = list(tuple_result)
+    firstname_field = result_as_list[0]
+    invnum_field = result_as_list[17]
+    appyear_field = result_as_list[11]
+    coauthor_field = ""
+    result_as_list.append(firstname_field)
+    result_as_list.append(invnum_field)
+    result_as_list.append(appyear_field)
+    result_as_list.append(coauthor_field)
+    return tuple(result_as_list)
+    
 
 
 

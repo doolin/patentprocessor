@@ -60,7 +60,7 @@ class TestGenerator(unittest.TestCase):
                         (Firstname = \"JOHN\" and Lastname = \"NULL\"
                          and Patent = \"D01234567\");"""
         match = con_sql_match(query_string_dne, 'test_db')
-        assert(not match)
+        assert(not match) # There shouldn't be a match
 
     def test_process_input_db_query_drop(self):
         # Want to strip indices 20, 21, 22 = precision, recall, density
@@ -82,7 +82,29 @@ class TestGenerator(unittest.TestCase):
         assert("RECALL_TEST" not in processed_drop_result)
         assert("DENSITY_TEST" not in processed_drop_result)
 
-                 
-        
+    def test_process_input_db_query_add(self):
+        # Want to add indices 20, 21, 22, 23 = 
+        # Middlename, Unique_Record_ID, ApplyYear, Coauthor
+        sample_tuple_result = ("FIRSTNAME_TEST","LASTNAME_TEST",
+                               "STREET_TEST", "CITY_TEST", "STATE_TEST",
+                               "COUNTRY_TEST", "ZIP_TEST", "LAT_TEST",
+                               "LONG_TEST", "INVSEQ_TEST", "PATENT_TEST",
+                               "APPYEAR_TEST", "GYEAR_TEST", "APPDATE_TEST",
+                               "ASSIGNEE_TEST", "ASGNUM_TEST", "CLASS_TEST",
+                               "INVNUM_TEST", "INVNUM_N_TEST", 
+                               "INVNUM_UC_TEST")
+        assert(len(sample_tuple_result) == 20)
+        assert(type(sample_tuple_result) is tuple)
+        processed_add_result = process_input_db_query_add(sample_tuple_result)
+        assert(len(processed_add_result) == 24)  
+        assert(type(processed_add_result) is tuple)
+        assert(processed_add_result[0] == "FIRSTNAME_TEST" and
+               processed_add_result[20] == "FIRSTNAME_TEST")
+        assert(processed_add_result[17] == "INVNUM_TEST" and
+               processed_add_result[21] == "INVNUM_TEST")
+        assert(processed_add_result[11] == "APPYEAR_TEST" and
+               processed_add_result[22] == "APPYEAR_TEST")
+        assert(processed_add_result[23] == "") # for co-author
+    
 if __name__ == '__main__':
     unittest.main()
