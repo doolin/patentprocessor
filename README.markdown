@@ -32,3 +32,22 @@ Pull requests are welcome. Here are a few pointers which will make everything ea
 ## Processing patents
 
 `preprocess.sh` to get started.
+
+
+## Disambiguating
+
+## Postprocessing
+
+After disambiguating, the resulting unique inventors are listed by number in an output file
+(e.g., `final.txt`). This output file then processed to tie the inventor number to the
+inventor name in the input database. The program which performs this linking is in the
+`c++` disambiguation code. After the linking is done, verification proceeds.
+
+### Verification
+
+Verifying the results of the disambiguation is performed using the `benchmark.py` script,
+which compares the linked results database with a (specially formatted) CSV file containing
+a list of inventor-patent instances which have been verified by direct communication with
+each inventor.
+
+
