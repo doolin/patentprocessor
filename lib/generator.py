@@ -106,6 +106,7 @@ def con_sql_match_all(query_string, database):
 
 # Started 11:26AM, Finished 11:48AM
 def process_input_db_query_drop(tuple_result):
+    # Drop unneccessary fields
     result_as_list = list(tuple_result)
     result_as_list.pop(20)
     result_as_list.pop(20)
@@ -114,6 +115,7 @@ def process_input_db_query_drop(tuple_result):
 
 # Started 11:50AM, Finished 12:26PM 
 def process_input_db_query_add(tuple_result):
+    # Add necessary fields
     result_as_list = list(tuple_result)
     firstname_field = result_as_list[0]
     invnum_field = result_as_list[17]
@@ -124,6 +126,18 @@ def process_input_db_query_add(tuple_result):
     result_as_list.append(appyear_field)
     result_as_list.append(coauthor_field)
     return tuple(result_as_list)
+
+# Started 12:46PM, Finished 1:16PM
+def insert_tuple_into_output_db(insert_tuple, output_db):
+    fin = sql.connect(output_db)
+    fin_cur = fin.cursor()
+    # print "length of inserted tuple is...", len(insert_tuple)
+    #fin_cur.execute("""INSERT INTO invpat VALUES(?,?,?,?,?,?,?,?,?,?,
+    #                   ?,?,?,?,?,?,?,?,?,?,?,?);""", insert_tuple)
+    # print insert_tuple
+    fin_cur.execute("""INSERT INTO invpat VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);""" , insert_tuple)
+    fin.commit()
+    
     
 
 

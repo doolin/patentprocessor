@@ -42,7 +42,7 @@ class TestGenerator(unittest.TestCase):
         query_string =  """SELECT Firstname, Lastname, Patent FROM TEST WHERE 
                         (Firstname = \"JOHN\" and Lastname = \"SMITH\"
                          and Patent = \"D01234567\");"""
-        test_con = sql.connect('test_db') # Make this in memory :memory:
+        test_con = sql.connect('test.db') # Make this in memory :memory:
         test_con_cur = test_con.cursor()  
         test_con_cur.execute(""" DROP TABLE IF EXISTS TEST; """)
         test_con_cur.execute(""" CREATE TABLE TEST(
@@ -52,14 +52,14 @@ class TestGenerator(unittest.TestCase):
         test_con_cur.execute(""" INSERT INTO TEST 
                                  VALUES("JOHN", "SMITH", "D01234567"); """)
         test_con.commit()
-        match = con_sql_match(query_string, 'test_db')
+        match = con_sql_match(query_string, 'test.db')
         assert(match[0] == "JOHN") # Firstname
         assert(match[1] == "SMITH") # Lastname
         assert(match[2] == "D01234567") # Patent
         query_string_dne =  """SELECT Firstname, Lastname, Patent FROM TEST WHERE 
                         (Firstname = \"JOHN\" and Lastname = \"NULL\"
                          and Patent = \"D01234567\");"""
-        match = con_sql_match(query_string_dne, 'test_db')
+        match = con_sql_match(query_string_dne, 'test.db')
         assert(not match) # There shouldn't be a match
 
     def test_process_input_db_query_drop(self):
@@ -105,6 +105,55 @@ class TestGenerator(unittest.TestCase):
         assert(processed_add_result[11] == "APPYEAR_TEST" and
                processed_add_result[22] == "APPYEAR_TEST")
         assert(processed_add_result[23] == "") # for co-author
+
+    def test_insert_tuple_into_output_db(self):
+        test_tuple = ("FIRSTNAME_TEST","LASTNAME_TEST",
+                               "STREET_TEST", "CITY_TEST", "STATE_TEST",
+                               "COUNTRY_TEST", "ZIP_TEST", "LAT_TEST",
+                               "LONG_TEST", "INVSEQ_TEST", "PATENT_TEST",
+                               "APPYEAR_TEST", "GYEAR_TEST", "APPDATE_TEST",
+                               "ASSIGNEE_TEST", "ASGNUM_TEST", "CLASS_TEST",
+                               "INVNUM_TEST", "INVNUM_N_TEST", 
+                               "INVNUM_UC_TEST", "MIDDLENAME_TEST",
+                               "UNIQUE_RECORD_ID_TEST", "APPLYYEAR_TEST",
+                               "COAUTHOR")
+
+        test_con = sql.connect('test2.db') # Make this in memory :memory:
+        test_con_cur = test_con.cursor()  
+        test_con_cur.execute(""" DROP TABLE IF EXISTS invpat; """)
+
+        test_con_cur.execute("""CREATE TABLE invpat(
+                           Firstname TEXT,
+                           Lastname TEXT,
+                	   Street TEXT,
+                	   City TEXT,
+                	   State TEXT,
+                	   Country TEXT,
+                	   Zipcode TEXT,
+                	   Latitude REAL,
+                	   Longitude REAL,
+                	   InvSeq INT,
+                	   Patent TEXT,
+                	   AppYear INT,
+                	   GYear INT,
+                	   AppDate TEXT,
+                	   Assignee TEXT,
+                	   AsgNum INT,
+                	   Class TEXT,
+                	   Invnum TEXT,
+                	   Invnum_N TEXT,
+                	   Invnum_N_UC,
+                           Middlename TEXT,
+                	   Unique_Record_ID TEXT,
+                	   ApplyYear INT,
+                	   Coauthor TEXT
+                           );
+                        """)
+        insert_tuple_into_output_db(test_tuple, 'test2.db')
+        test_con_cur.execute("""SELECT * from invpat;""")
+        fin_result = test_con_cur.fetchone()
+        assert(fin_result == test_tuple) # Pairwise test with input
+
     
 if __name__ == '__main__':
     unittest.main()
