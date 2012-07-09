@@ -56,9 +56,6 @@ def make_final_table():
                 	   Invnum TEXT,
                 	   Invnum_N TEXT,
                 	   Invnum_N_UC,
-                	   Density REAL,
-                	   Precision REAL,
-                	   Recall REAL,
                            Middlename TEXT,
                 	   Unique_Record_ID TEXT,
                 	   ApplyYear INT,
@@ -106,6 +103,16 @@ def con_sql_match_all(query_string, database):
     con_cur = con.cursor()
     con_cur.execute(query_string)
     return con_cur.fetchall()
+
+# Started 11:26AM, Finished 
+def process_input_db_query_drop(tuple_result):
+    result_as_list = list(tuple_result)
+    result_as_list.pop(20)
+    result_as_list.pop(20)
+    result_as_list.pop(20)
+    return tuple(result_as_list)
+    
+
 
 
 
