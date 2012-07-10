@@ -30,11 +30,11 @@ def bmVerify(results, filepath="", outdir = ""):
         
         """
         for result in results:
-                uqB = "FOOBAR"
+                uqB = "unique_inventor_id"
                 tblB = "invpat"
                 #fileS = "/home/ron/disambig/BM/DefTruth5.csv"
                 #fileS = "/var/share/patentdata/benchmarks/DefTruth5.csv"
-                fileS = "/var/share/patentdata/disambiguation/experiments/mercury/2/benchmark.csv"
+                fileS = "/var/share/patentdata/disambiguation/experiments/mercury/13/benchmark.csv"
                 fileB = filepath + "{result}.sqlite3".format(result=result)
                 output = outdir + "{result}_DT5.csv".format(result=result)
 
