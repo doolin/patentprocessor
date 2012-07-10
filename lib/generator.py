@@ -67,32 +67,32 @@ def make_final_table(connection):
                 	   Coauthor TEXT
                            );
                         """)
-        fin.execute(""" CREATE INDEX IF NOT EXISTS idx_class on invpat(InvSeq) """)
-        fin.execute(""" CREATE INDEX IF NOT EXISTS idx_invnum on invpat(Invnum) """)
-        fin.execute(""" CREATE INDEX IF NOT EXISTS idx_invnumn on invpat(Invnum_N) """)
-        fin.execute(""" CREATE INDEX IF NOT EXISTS idx_invnumnuc on invpat(Invnum_N_UC) """)
-        fin.execute(""" CREATE INDEX IF NOT EXISTS idx_mid on invpat(Middlename) """)
-        fin.execute(""" CREATE INDEX IF NOT EXISTS idx_uri on invpat(Unique_Record_ID) """)
-        fin.execute(""" CREATE INDEX IF NOT EXISTS idx_apply on invpat(ApplyYear) """)
-        fin.execute(""" CREATE INDEX IF NOT EXISTS idx_coauthor on invpat(Coauthor) """)
+        fin_cur.execute(""" CREATE INDEX IF NOT EXISTS idx_class on invpat(InvSeq) """)
+        fin_cur.execute(""" CREATE INDEX IF NOT EXISTS idx_invnum on invpat(Invnum) """)
+        fin_cur.execute(""" CREATE INDEX IF NOT EXISTS idx_invnumn on invpat(Invnum_N) """)
+        fin_cur.execute(""" CREATE INDEX IF NOT EXISTS idx_invnumnuc on invpat(Invnum_N_UC) """)
+        fin_cur.execute(""" CREATE INDEX IF NOT EXISTS idx_mid on invpat(Middlename) """)
+        fin_cur.execute(""" CREATE INDEX IF NOT EXISTS idx_uri on invpat(Unique_Record_ID) """)
+        fin_cur.execute(""" CREATE INDEX IF NOT EXISTS idx_apply on invpat(ApplyYear) """)
+        fin_cur.execute(""" CREATE INDEX IF NOT EXISTS idx_coauthor on invpat(Coauthor) """)
 
-        fin.execute(""" CREATE INDEX IF NOT EXISTS idx_invs on invpat(InvSeq) """)
-        fin.execute(""" CREATE INDEX IF NOT EXISTS idx_pat on invpat(Patent) """)
-        fin.execute(""" CREATE INDEX IF NOT EXISTS idx_appy on invpat(AppYear) """)
-        fin.execute(""" CREATE INDEX IF NOT EXISTS idx_gyear on invpat(GYear) """)
-        fin.execute(""" CREATE INDEX IF NOT EXISTS idx_appdate on invpat(AppDate) """)
-        fin.execute(""" CREATE INDEX IF NOT EXISTS idx_ass on invpat(Assignee) """)
-        fin.execute(""" CREATE INDEX IF NOT EXISTS idx_asg on invpat(AsgNum) """)
+        fin_cur.execute(""" CREATE INDEX IF NOT EXISTS idx_invs on invpat(InvSeq) """)
+        fin_cur.execute(""" CREATE INDEX IF NOT EXISTS idx_pat on invpat(Patent) """)
+        fin_cur.execute(""" CREATE INDEX IF NOT EXISTS idx_appy on invpat(AppYear) """)
+        fin_cur.execute(""" CREATE INDEX IF NOT EXISTS idx_gyear on invpat(GYear) """)
+        fin_cur.execute(""" CREATE INDEX IF NOT EXISTS idx_appdate on invpat(AppDate) """)
+        fin_cur.execute(""" CREATE INDEX IF NOT EXISTS idx_ass on invpat(Assignee) """)
+        fin_cur.execute(""" CREATE INDEX IF NOT EXISTS idx_asg on invpat(AsgNum) """)
 
-        fin.execute(""" CREATE INDEX IF NOT EXISTS idx_fn on invpat(Firstname) """)
-        fin.execute(""" CREATE INDEX IF NOT EXISTS idx_ln on invpat(Lastname) """)
-        fin.execute(""" CREATE INDEX IF NOT EXISTS idx_str on invpat(Street) """)
-        fin.execute(""" CREATE INDEX IF NOT EXISTS idx_ci on invpat(City) """)
-        fin.execute(""" CREATE INDEX IF NOT EXISTS idx_state on invpat(State) """)
-        fin.execute(""" CREATE INDEX IF NOT EXISTS idx_ctry on invpat(Country) """)
-        fin.execute(""" CREATE INDEX IF NOT EXISTS idx_zip on invpat(Zipcode) """)
-        fin.execute(""" CREATE INDEX IF NOT EXISTS idx_lat on invpat(Latitude) """)
-        fin.execute(""" CREATE INDEX IF NOT EXISTS idx_long on invpat(Longitude) """)
+        fin_cur.execute(""" CREATE INDEX IF NOT EXISTS idx_fn on invpat(Firstname) """)
+        fin_cur.execute(""" CREATE INDEX IF NOT EXISTS idx_ln on invpat(Lastname) """)
+        fin_cur.execute(""" CREATE INDEX IF NOT EXISTS idx_str on invpat(Street) """)
+        fin_cur.execute(""" CREATE INDEX IF NOT EXISTS idx_ci on invpat(City) """)
+        fin_cur.execute(""" CREATE INDEX IF NOT EXISTS idx_state on invpat(State) """)
+        fin_cur.execute(""" CREATE INDEX IF NOT EXISTS idx_ctry on invpat(Country) """)
+        fin_cur.execute(""" CREATE INDEX IF NOT EXISTS idx_zip on invpat(Zipcode) """)
+        fin_cur.execute(""" CREATE INDEX IF NOT EXISTS idx_lat on invpat(Latitude) """)
+        fin_cur.execute(""" CREATE INDEX IF NOT EXISTS idx_long on invpat(Longitude) """)
 
 def reset_logging():
     open(log_file, "w")
@@ -205,11 +205,13 @@ if __name__ == '__main__':
     # Started 2:50PM, Finished 5:15PM
 
     # Begin main():
-
+    print "Opening File:", in_file
     csv_list = process_csv(open(in_file))
     initialize_logging('generator_errors.log')
+    print "Making Final Table..."
     make_final_table(sql.connect(out_db))
     count = 0
+    print "Starting Operation"
     for csv in csv_list:
         count = count + 1
         if count%10000 == 0:
