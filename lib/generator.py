@@ -180,7 +180,7 @@ if __name__ == '__main__':
     print "out_database: ", out_db
     print "\n---------------------------------\n"
 
-    # Started 2:50PM 
+    # Started 2:50PM, Finished 5:15PM
 
     # Begin main():
 
@@ -195,7 +195,10 @@ if __name__ == '__main__':
         result_after_drop =  process_input_db_query_drop(sql_result)
         result_after_add = process_input_db_query_add(result_after_drop)
         insert_tuple_into_output_db(result_after_add, out_db)
-   
+
+    s = "sqlite3 -header -csv " + out_db + " 'select * FROM invpat' > generate.csv"
+    call(s, shell=True) # Need Shell = True
+ 
         
         
     
