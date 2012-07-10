@@ -144,10 +144,6 @@ def process_input_db_query_add(tuple_result):
 def insert_tuple_into_output_db(insert_tuple, output_db):
     fin = sql.connect(output_db)
     fin_cur = fin.cursor()
-    # print "length of inserted tuple is...", len(insert_tuple)
-    #fin_cur.execute("""INSERT INTO invpat VALUES(?,?,?,?,?,?,?,?,?,?,
-    #                   ?,?,?,?,?,?,?,?,?,?,?,?);""", insert_tuple)
-    # print insert_tuple
     fin_cur.execute("""INSERT INTO invpat VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);""" , insert_tuple)
     fin.commit()
 
