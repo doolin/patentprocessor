@@ -67,6 +67,32 @@ def make_final_table(connection):
                 	   Coauthor TEXT
                            );
                         """)
+        fin.execute(""" CREATE INDEX IF NOT EXISTS idx_class on invpat(InvSeq) """)
+        fin.execute(""" CREATE INDEX IF NOT EXISTS idx_invnum on invpat(Invnum) """)
+        fin.execute(""" CREATE INDEX IF NOT EXISTS idx_invnumn on invpat(Invnum_N) """)
+        fin.execute(""" CREATE INDEX IF NOT EXISTS idx_invnumnuc on invpat(Invnum_N_UC) """)
+        fin.execute(""" CREATE INDEX IF NOT EXISTS idx_mid on invpat(Middlename) """)
+        fin.execute(""" CREATE INDEX IF NOT EXISTS idx_uri on invpat(Unique_Record_ID) """)
+        fin.execute(""" CREATE INDEX IF NOT EXISTS idx_apply on invpat(ApplyYear) """)
+        fin.execute(""" CREATE INDEX IF NOT EXISTS idx_coauthor on invpat(Coauthor) """)
+
+        fin.execute(""" CREATE INDEX IF NOT EXISTS idx_invs on invpat(InvSeq) """)
+        fin.execute(""" CREATE INDEX IF NOT EXISTS idx_pat on invpat(Patent) """)
+        fin.execute(""" CREATE INDEX IF NOT EXISTS idx_appy on invpat(AppYear) """)
+        fin.execute(""" CREATE INDEX IF NOT EXISTS idx_gyear on invpat(GYear) """)
+        fin.execute(""" CREATE INDEX IF NOT EXISTS idx_appdate on invpat(AppDate) """)
+        fin.execute(""" CREATE INDEX IF NOT EXISTS idx_ass on invpat(Assignee) """)
+        fin.execute(""" CREATE INDEX IF NOT EXISTS idx_asg on invpat(AsgNum) """)
+
+        fin.execute(""" CREATE INDEX IF NOT EXISTS idx_fn on invpat(Firstname) """)
+        fin.execute(""" CREATE INDEX IF NOT EXISTS idx_ln on invpat(Lastname) """)
+        fin.execute(""" CREATE INDEX IF NOT EXISTS idx_str on invpat(Street) """)
+        fin.execute(""" CREATE INDEX IF NOT EXISTS idx_ci on invpat(City) """)
+        fin.execute(""" CREATE INDEX IF NOT EXISTS idx_state on invpat(State) """)
+        fin.execute(""" CREATE INDEX IF NOT EXISTS idx_ctry on invpat(Country) """)
+        fin.execute(""" CREATE INDEX IF NOT EXISTS idx_zip on invpat(Zipcode) """)
+        fin.execute(""" CREATE INDEX IF NOT EXISTS idx_lat on invpat(Latitude) """)
+        fin.execute(""" CREATE INDEX IF NOT EXISTS idx_long on invpat(Longitude) """)
 
 def reset_logging():
     open(log_file, "w")
@@ -158,7 +184,7 @@ if __name__ == '__main__':
 
     parser = OptionParser()
 
-    parser.add_option("-f", "--file", dest="infilename", default = "../../../e2e/allbritton.csv", help="CSV File Location", metavar="FILE")
+    parser.add_option("-f", "--file", dest="infilename", default = "../../../e2e/invpat.csv", help="CSV File Location", metavar="FILE")
     parser.add_option("-i", "--input", dest="indb", default = "../../../e2e/invpat.sqlite3", help="Input Database Location", metavar="FILE")
     parser.add_option("-o", "--output", dest="outdb", default = "testgen.sqlite3", help="Output Database Location", metavar="FILE")
    
@@ -183,9 +209,12 @@ if __name__ == '__main__':
     csv_list = process_csv(open(in_file))
     initialize_logging('generator_errors.log')
     make_final_table(sql.connect(out_db))
-
+    count = 0
     for csv in csv_list:
-        print "trying", csv
+        count = count + 1
+        if count%10000 == 0:
+            print "At Patent:", count
+        # print "trying", csv
         # fn = csv[0], ln = csv[1], p = csv[2]
         query_string = build_query_string(csv[0],csv[1],csv[2])
         sql_result = con_sql_match(query_string, in_db)
@@ -195,7 +224,7 @@ if __name__ == '__main__':
         insert_tuple_into_output_db(result_after_add, out_db)
     csv_file_split = out_db.split('.')
     csv_file_name = csv_file_split[0]+".csv"
-    print csv_file_name
+    print "Exporting csv file to: ", csv_file_name
     str_to_call = "sqlite3 -header -csv " + out_db + " 'select * FROM invpat' > " + csv_file_name
     call(str_to_call, shell=True) # Need Shell = True
  
