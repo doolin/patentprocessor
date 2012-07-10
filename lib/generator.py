@@ -158,7 +158,7 @@ if __name__ == '__main__':
 
     parser = OptionParser()
 
-    parser.add_option("-f", "--file", dest="infilename", default = "../../../e2e/mercury13.csv", help="CSV File Location", metavar="FILE")
+    parser.add_option("-f", "--file", dest="infilename", default = "../../../e2e/allbritton.csv", help="CSV File Location", metavar="FILE")
     parser.add_option("-i", "--input", dest="indb", default = "../../../e2e/invpat.sqlite3", help="Input Database Location", metavar="FILE")
     parser.add_option("-o", "--output", dest="outdb", default = "testgen.sqlite3", help="Output Database Location", metavar="FILE")
    
@@ -183,7 +183,9 @@ if __name__ == '__main__':
     csv_list = process_csv(open(in_file))
     initialize_logging('generator_errors.log')
     make_final_table(sql.connect(out_db))
+
     for csv in csv_list:
+        print "trying", csv
         # fn = csv[0], ln = csv[1], p = csv[2]
         query_string = build_query_string(csv[0],csv[1],csv[2])
         sql_result = con_sql_match(query_string, in_db)
@@ -191,9 +193,11 @@ if __name__ == '__main__':
         result_after_drop =  process_input_db_query_drop(sql_result)
         result_after_add = process_input_db_query_add(result_after_drop)
         insert_tuple_into_output_db(result_after_add, out_db)
-
-    s = "sqlite3 -header -csv " + out_db + " 'select * FROM invpat' > generate.csv"
-    call(s, shell=True) # Need Shell = True
+    csv_file_split = out_db.split('.')
+    csv_file_name = csv_file_split[0]+".csv"
+    print csv_file_name
+    str_to_call = "sqlite3 -header -csv " + out_db + " 'select * FROM invpat' > " + csv_file_name
+    call(str_to_call, shell=True) # Need Shell = True
  
         
         
