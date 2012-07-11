@@ -25,6 +25,8 @@
 
 # TODO: replace "mybd" with $1 or something more useful.
 # TODO: add argument handling to support $0, $1, etc.
+# TODO: Add automatic downloading of Google Doc spreadsheet.
+# TODO: Add automatic default invpat.csv export.
 
 sqlite3 mydb.sqlite3 < schema.sql
 sqlite3 -separator , mydb.sqlite3 '.import synthetic.csv invpat'
