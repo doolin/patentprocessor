@@ -24,30 +24,7 @@
   %body
     .container
       .row
-        .span12
-          = partial 'nav.html.haml'
-      .row
         .span8
-          #main{:role => "main"}
-            - if is_blog_article?
-              - content_for :blog_article, yield
-              = partial settings.blog_article_template
-              %hr.blog-bottom-main
-            - else
-              = yield
-            -#= partial 'journal.html.ham'
+          = yield
         .span4
-          #sidebar{:role => 'sidebar'}
-            = partial 'sidebar/daily'
-            %aside
-              %h3
-                Recent Articles
-                %a{:href => "/archives"} Archive
-              %ol
-                - data.blog.articles[0...10].each do |article|
-                  %li
-                    %span= article.date.strftime('%b %e')
-                    %a{:href => article.url}= article.title
-      .row
-        .span12
-          = partial 'footer.html.haml'
+          %p Just some text here.
