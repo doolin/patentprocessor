@@ -3,6 +3,8 @@ require "kramdown"
 set :markdown_engine, :kramdown
 set :markdown, :layout_engine => :haml
 
+page '/jones/*'
+
 ###
 # Compass
 ###
