@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+
 import logging
 import sys
 sys.path.append( '.' )
@@ -11,7 +12,7 @@ from fwork  import *
 import os, datetime, re
 
 # TODO: implement as a command line option
-flder = '/var/share/patentdata/patents/test/18'
+flder = '/var/share/patentdata/patents/2012'
 #flder = '/var/share/patentdata/patents/2007'
 #logfile = flder + "/" + 'xml-parsing.log'
 logfile = "./" + 'xml-parsing.log'
@@ -52,12 +53,12 @@ for filenum, filename in enumerate(files):
             xmllist.append(XMLPatent(x))
             patents += 1
         except Exception as inst:
-            print type(inst)
+            #print type(inst)
             logging.error(type(inst))
             print "  - Error: %s (%d)  %s" % (filename, i, x[175:200])
             logging.error("  - Error: %s (%d)  %s" % (filename, i, x[175:200]))
             count += 1
-        print xmllist
+        #print xmllist
 
     print "   - number of patents:", len(xmllist), datetime.datetime.now()-t1
     logging.info("   - number of patents: %d %s ", len(xmllist), datetime.datetime.now()-t1)
