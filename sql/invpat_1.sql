@@ -162,15 +162,15 @@ SELECT
 FROM invpat_1;
 
 -- Now we drop all the current indexes... 
-DROP INDEX idx_assignee;
-DROP INDEX idx_firstlastname;
-DROP INDEX idx_firstname;
-DROP INDEX idx_invnum;
-DROP INDEX idx_lastname;
-DROP INDEX idx_lower;
-DROP INDEX idx_patent;
-DROP INDEX idx_upper;
-DROP INDEX index_invnum_on_invpat;
+DROP INDEX IF EXISTS idx_assignee;
+DROP INDEX IF EXISTS idx_firstlastname;
+DROP INDEX IF EXISTS idx_firstname;
+DROP INDEX IF EXISTS idx_invnum;
+DROP INDEX IF EXISTS idx_lastname;
+DROP INDEX IF EXISTS idx_lower;
+DROP INDEX IF EXISTS idx_patent;
+DROP INDEX IF EXISTS idx_upper;
+DROP INDEX IF EXISTS index_invnum_on_invpat;
 
 
 -- Add new indexes conforming to preprocessing schema...
