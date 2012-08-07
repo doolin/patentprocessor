@@ -188,5 +188,9 @@ CREATE INDEX locs on invpat (State);
 CREATE INDEX pdx ON invpat (Patent);
 CREATE INDEX pidx ON invpat (Patent, InvSeq);
 
+-- Get rid of the temporary table...
+drop table invpat_1;
+
 -- And close with a cleanup...
 vacuum;
+
