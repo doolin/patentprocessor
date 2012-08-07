@@ -162,7 +162,31 @@ SELECT
 FROM invpat_1;
 
 -- Now we drop all the current indexes... 
+DROP INDEX idx_assignee;
+DROP INDEX idx_firstlastname;
+DROP INDEX idx_firstname;
+DROP INDEX idx_invnum;
+DROP INDEX idx_lastname;
+DROP INDEX idx_lower;
+DROP INDEX idx_patent;
+DROP INDEX idx_upper;
+DROP INDEX index_invnum_on_invpat;
+
 
 -- Add new indexes conforming to preprocessing schema...
+-- Make sure this matches the index file in the sql
+-- directory. At some point, this should be controlled
+-- by a python or ruby script which reads the same file
+-- that the preprocessor reads.
+CREATE INDEX asg on invpat (Assignee);
+CREATE INDEX asg2 on invpat (AsgNum);
+CREATE INDEX gyr on invpat (Gyear);
+CREATE INDEX iNidx  ON invpat (Invnum_N);
+CREATE INDEX locc on invpat (City);
+CREATE INDEX loccs on invpat (City, State);
+CREATE INDEX locs on invpat (State);
+CREATE INDEX pdx ON invpat (Patent);
+CREATE INDEX pidx ON invpat (Patent, InvSeq);
 
-
+-- And close with a cleanup...
+vacuum;
