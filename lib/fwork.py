@@ -45,6 +45,8 @@ def jarow(s1,s2):
         print "Jaro-Winkler exception thrown on comparison between " + s1 + " and " + s2
         return 0
 
+def tblExist(c, table):
+	    return c.execute("SELECT count(*) FROM sqlite_master WHERE tbl_name='%s'" % table).fetchone()[0]>0
 
 class uQvals:
     def __init__(self):
