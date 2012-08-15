@@ -181,6 +181,8 @@ def bmVerify(results, filepath="", outdir = ""):
                 u = 1.0*errm/orig
                 o = 1-(float(orig)/len(rep))
                 recall = 1.0 - u
+		# overclumping is lumping
+		# underclumping is splitting
                 print """
 
                 RESULTS ==================
