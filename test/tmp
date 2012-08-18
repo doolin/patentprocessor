@@ -1,0 +1,133 @@
+EEEEEEE.FEE.EEEEEE
+======================================================================
+ERROR: test___init__ (__main__.TestSQLite)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "./test_sqlite.py", line 59, in test___init__
+    self.assertEqual(":memory:", s.path)
+AttributeError: SQLite instance has no attribute 'path'
+
+======================================================================
+ERROR: test__baseIndex (__main__.TestSQLite)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "./test_sqlite.py", line 170, in test__baseIndex
+    self.s._baseIndex(db="db"))
+AttributeError: SQLite instance has no attribute '_baseIndex'
+
+======================================================================
+ERROR: test__dbAdd (__main__.TestSQLite)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "./test_sqlite.py", line 70, in test__dbAdd
+    self.assertEqual(s._dbAdd(), "main")
+AttributeError: SQLite instance has no attribute '_dbAdd'
+
+======================================================================
+ERROR: test__getSelf (__main__.TestSQLite)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "./test_sqlite.py", line 89, in test__getSelf
+    self.assertEquals(self.s._getSelf(tbl="foo"), "foo")
+AttributeError: SQLite instance has no attribute '_getSelf'
+
+======================================================================
+ERROR: test__sqlmasterLookup (__main__.TestSQLite)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "./test_sqlite.py", line 100, in test__sqlmasterLookup
+    self.s._sqlmasterScan(var="tbl_name", type="table"))
+AttributeError: SQLite instance has no attribute '_sqlmasterScan'
+
+======================================================================
+ERROR: test_add (__main__.TestSQLite)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "./test_sqlite.py", line 151, in test_add
+    self.s.add("d")
+TypeError: add() takes at least 3 arguments (2 given)
+
+======================================================================
+ERROR: test_addSQL (__main__.TestSQLite)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "./test_sqlite.py", line 240, in test_addSQL
+    self.s.addSQL("test.csv", tbl="foo")
+TypeError: addSQL() got an unexpected keyword argument 'tbl'
+
+======================================================================
+ERROR: test_count (__main__.TestSQLite)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "./test_sqlite.py", line 125, in test_count
+    self.assertEqual(1, self.s.count(table="test", db="db"))
+TypeError: count() got an unexpected keyword argument 'db'
+
+======================================================================
+ERROR: test_csvInput (__main__.TestSQLite)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "./test_sqlite.py", line 80, in test_csvInput
+    [x for x in self.s.csvInput("test.csv", iter=True)])
+TypeError: csvInput() got an unexpected keyword argument 'iter'
+
+======================================================================
+ERROR: test_drop (__main__.TestSQLite)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "./test_sqlite.py", line 179, in test_drop
+    self.s.drop(key="b")
+TypeError: drop() got an unexpected keyword argument 'key'
+
+======================================================================
+ERROR: test_fetch (__main__.TestSQLite)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "./test_sqlite.py", line 141, in test_fetch
+    self.assertEqual(5, len(self.s.fetch()))
+AttributeError: SQLite instance has no attribute 'fetch'
+
+======================================================================
+ERROR: test_index (__main__.TestSQLite)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "./test_sqlite.py", line 191, in test_index
+    self.assertIn('test (a,c)', self.s._baseIndex())
+AttributeError: SQLite instance has no attribute '_baseIndex'
+
+======================================================================
+ERROR: test_indexes (__main__.TestSQLite)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "./test_sqlite.py", line 110, in test_indexes
+    self.assertEquals([0,0], self.s.indexes(seq="xdi"))
+TypeError: indexes() got an unexpected keyword argument 'seq'
+
+======================================================================
+ERROR: test_insert (__main__.TestSQLite)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "./test_sqlite.py", line 208, in test_insert
+    self.s.insert([99,99,99])
+AttributeError: SQLite instance has no attribute 'insert'
+
+======================================================================
+ERROR: test_replicate (__main__.TestSQLite)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "./test_sqlite.py", line 250, in test_replicate
+    self.s.replicate(tbl="test", db="db", tableTo="foo")
+TypeError: replicate() got an unexpected keyword argument 'tbl'
+
+======================================================================
+FAIL: test_column (__main__.TestSQLite)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "./test_sqlite.py", line 128, in test_column
+    self.assertEqual(['a','B','c'], self.s.columns())
+AssertionError: ['a', 'B', 'c'] != None
+
+----------------------------------------------------------------------
+Ran 18 tests in 0.469s
+
+FAILED (failures=1, errors=15)
