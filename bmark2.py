@@ -1,6 +1,5 @@
 #!/usr/bin/env python
 
-######
 # This is the refactored version for the benchmark script. Once this
 # is completely under test coverage, the original benchmark.py gets
 # turned into this, then this can be deleted.
@@ -14,10 +13,15 @@
 
 
 import sqlite3, sys, csv, datetime;
+import argparse
 sys.path.append( './lib/' )
 sys.path.append("lib")
 from fwork import *
 from bmconfig import *
+
+def is_csv_file(filename):
+    return filename.split(".")[-1].lower()=="csv"
+
 
 def bmVerify(results, filepath="", outdir = ""):
         """
@@ -102,9 +106,13 @@ def bmVerify(results, filepath="", outdir = ""):
                 exAnd = " AND ".join(["a.%s=b.%s" % (x, x) for x in exact])
                 exCom = ", ".join(exact)
 
+		# TODO: Replace with call to is_csv_file(fileB)
                 if fileB.split(".")[-1].lower()=="csv":
+	 	    # TODO: Try to move some of this to a function
                     dataB = uniVert([x for x in csv.reader(open("%s" % fileB, "rb"))])
+
                     quickSQL(c, data=dataB,  table="dataB", header=True, typeList=["Patent VARCHAR"])
+
                     c.execute("CREATE INDEX IF NOT EXISTS dB_E ON dataB (%s)" % exCom)
                     c.execute("CREATE INDEX IF NOT EXISTS dB_U ON dataB (%s)" % uqB)
                     fBnme = "dataB"
@@ -211,7 +219,8 @@ def bmVerify(results, filepath="", outdir = ""):
                   File Detail: {filename}
                          Time: {time}
                 """.format(original = orig, new = len(rep)-orig, total = len(rep), overclump = len(rep)-orig, o = o,
-                           underclump = errm, u = u, recall = recall, precision = recall/(recall+o), filename = output, time = datetime.datetime.now()-t)
+                           underclump = errm, u = u, recall = recall, precision = recall/(recall+o),
+			   filename = output, time = datetime.datetime.now()-t)
                 c.close()
                 conn.close()
 
