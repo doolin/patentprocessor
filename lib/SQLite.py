@@ -787,9 +787,9 @@ class SQLite:
         for x in [idxT, idxF]:
             if x!=None:
                 self.c.execute("DROP INDEX %s" % x)
-        
+
     # STOPPED AT THIS POINT
-    
+
     # DEPRECIATE THIS FUNCTION?
     def quickSQL(self, data, override=False, header=False, allVars=False, typescan=50, typeList=[], **kwargs):
         """ 
@@ -809,6 +809,7 @@ class SQLite:
                 headLst.append(re.sub("[()!@$%^&*'-]+", "", x).replace(" ", "_").replace("?", ""))
                 if headLst[-1] in headLst[:-1]:
                     headLst[-1]+=str(headLst[:-1].count(headLst[-1])+1)
+
         tList = []
         for i,x in enumerate(data[1]):
             if str(typeList).upper().find("%s " % data[0][i].upper())<0:
@@ -816,6 +817,7 @@ class SQLite:
                 if type(typescan)==types.IntType and cType=="VARCHAR":
                     least = 2
                     ints = 1
+
                     for j in range(1, min(typescan+1, len(data))):
                         if type(data[j][i])==types.StringType or type(data[j][i])==types.UnicodeType:
                             if re.sub(r"[-,.]", "", data[j][i]).isdigit():
@@ -823,7 +825,9 @@ class SQLite:
                                 elif len(re.findall(r"[.]", data[j][i]))==1: ints = 0
                                 else: least = 0; break
                             else: least = 0; break
+
                     cType = {0:"VARCHAR", 1:"INTEGER", 2:"REAL"}[max(least-ints, 0)]
+
                 if header:
                     if allVars:
                         tList.append("%s" % (headLst[i],))
@@ -834,6 +838,7 @@ class SQLite:
                         tList.append("v%d" % (i,))
                     else:                    
                         tList.append("v%d %s" % (i, cType))
+
             else:
                 tList.extend([y for y in typeList if y.upper().find("%s " % data[0][i].upper())==0])
 
@@ -843,6 +848,7 @@ class SQLite:
         else:
             self.c.executemany("INSERT INTO %s VALUES (%s)" % (table, ", ".join(["?"]*len(data[0]))), data[1:])
         self.conn.commit()            
+
 
     #----- OUTPUTS -----#
 
