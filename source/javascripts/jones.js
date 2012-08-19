@@ -41,7 +41,7 @@ d3.json("../data/unemployment.json", function(json) {
 
 
 
-d3.csv("../data/jonesnew.csv", function(csv) {
+d3.csv("../data/jones_small.csv", function(csv) {
   jones.selectAll("circle").data(csv).enter()
     .append("circle")
     .attr("cx", lon)
@@ -53,7 +53,7 @@ d3.csv("../data/jonesnew.csv", function(csv) {
 
 
 
-d3.csv("../data/kimnew.csv", function(csv) {
+d3.csv("../data/kim_small.csv", function(csv) {
   kim.selectAll("circle").data(csv).enter()
     .append("circle")
     .attr("cx", lon)
