@@ -101,11 +101,13 @@ def quickSQL(c, data, table="", header=False, typescan=50, typeList = []):
 
 
 ####################################
+# Refactored quickSQL functions below
+
 def get_ctypes(x):
-    return { types.StringType:"VARCHAR",
-             types.UnicodeType:"VARCHAR",
-             types.IntType:"INTEGER",
-             types.FloatType: "REAL"
+    return { types.StringType:  "VARCHAR",
+             types.UnicodeType: "VARCHAR",
+             types.IntType:     "INTEGER",
+             types.FloatType:   "REAL"
 	   }[type(x)]
 
 def text_type(datatype):
@@ -125,6 +127,7 @@ def is_all_digits(data):
     return re.sub(r"[-,.]", "", data).isdigit()
 
 
+# TODO: There should be no reason to pass in the index i
 def get_ctype(typescan, data, i):
 
 	least = 2
@@ -154,25 +157,24 @@ def get_ctype(typescan, data, i):
 		    break
 
         key = max(least-ints, 0)
-	print "key: ", key
+	#print "key: ", key
 	value =  {0:"VARCHAR", 1:"INTEGER", 2:"REAL"}[key]
-	print "value: ", value
+	#print "value: ", value
 	return value 
 
 
 def quickSQLhelper1(x, typescan, data, i, header, tList):
-    #print "From quickSQLhelper1..."
-    #print "tList:  ", tList
+
     cType = get_ctypes(x)
-    #print "cType: ", cType
+
     if type(typescan)==types.IntType and cType=="VARCHAR":
         cType = get_ctype(typescan, data, i)
-        #print "cType (modified): ", cType
+
     if header:
 	tList.append("%s %s" % (data[0][i], cType))
     else:
 	tList.append("v%d %s" % (i, cType))
-    #print "From helper: ", tList
+
     return tList
 
 
@@ -186,15 +188,15 @@ def have_schema_type(typeList, datatype):
 
 
 def create_schema(data, header, typescan, typeList):
+
     tList = []
-    #print "data[1]: ", data[1]
     for i,x in enumerate(data[1]):
-	#if str(typeList).upper().find("%s " % data[0][i].upper())<0:
 	if have_schema_type(typeList, data[0][i]) < 0:
-	    # should this be tList.extend?
             tList = quickSQLhelper1(x, typescan, data, i, header, tList)
 	else:
 	    tList.extend([y for y in typeList if y.upper().find("%s " % data[0][i].upper())==0])
+	    #tList.extend([y for y in typeList if have_schema_type(y, data[0][i]) == 0])
+
     schema = ", ".join(tList)
     return schema
 
