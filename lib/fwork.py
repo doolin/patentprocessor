@@ -100,6 +100,75 @@ def quickSQL(c, data, table="", header=False, typescan=50, typeList = []):
         c.executemany("INSERT INTO %s VALUES (%s)" % (table, ", ".join(["?"]*len(data[0]))), data[1:])
 
 
+####################################
+def get_ctypes(x):
+    print "x: ", x
+    return {
+	types.StringType:"VARCHAR",
+	types.UnicodeType:"VARCHAR",
+	types.IntType:"INTEGER",
+	types.FloatType: "REAL"}[type(x)]
+
+def get_ctype(typescan, data, i):
+	print "From get_ctype..."
+	print "typescan: ", typescan
+	print "data: ", data
+	print "i: ", i
+	least = 2
+	ints = 1
+	for j in range(1, min(typescan+1, len(data))):
+	    if type(data[j][i])==types.StringType or type(data[j][i])==types.UnicodeType:
+		if re.sub(r"[-,.]", "", data[j][i]).isdigit():
+		    if len(re.findall(r"[.]", data[j][i]))==0:   pass
+		    elif len(re.findall(r"[.]", data[j][i]))==1: ints = 0
+		    else: least = 0; break
+		else: least = 0; break
+	return {0:"VARCHAR", 1:"INTEGER", 2:"REAL"}[max(least-ints, 0)]
+
+
+def quickSQLhelper1(x, typescan, data, i, header, tList):
+    print "From quickSQLhelper1..."
+    print "tList:  ", tList
+    cType = get_ctypes(x)
+    print "cType: ", cType
+    if type(typescan)==types.IntType and cType=="VARCHAR":
+        cType = get_ctype(typescan, data, i)
+        print "cType (modified): ", cType
+    if header:
+	tList.append("%s %s" % (data[0][i], cType))
+    else:
+	tList.append("v%d %s" % (i, cType))
+    print "From helper: ", tList
+    return tList
+
+
+def quickSQL2(c, data, table="", header=False, typescan=50, typeList = []):
+
+    if table=="":
+	print "Table empty string"
+        table = "debug%d" % len([x[0] for x in c.execute("SELECT tbl_name FROM sqlite_master WHERE type='table' order by tbl_name") if len(re.findall(r"debug[0-9]+", x[0]))>0])
+    else:
+        if c.execute("SELECT count(*) FROM sqlite_master WHERE tbl_name='%s'" % table).fetchone()[0]>0:
+	    print "else block at beginning of function fired..."
+            return
+
+    tList = []
+    for i,x in enumerate(data[1]):
+
+	if str(typeList).upper().find("%s " % data[0][i].upper())<0:
+            tlist = quickSQLhelper1(x, typescan, data, i, header, tList)
+            print "From if: ", tList
+	else:
+	    tList.extend([y for y in typeList if y.upper().find("%s " % data[0][i].upper())==0])
+            print "From else: ", tList
+
+    c.execute("CREATE TABLE IF NOT EXISTS %s (%s)" % (table, ", ".join(tList)))
+    if header==False:
+        c.executemany("INSERT INTO %s VALUES (%s)" % (table, ", ".join(["?"]*len(data[0]))), data)
+    else:
+        c.executemany("INSERT INTO %s VALUES (%s)" % (table, ", ".join(["?"]*len(data[0]))), data[1:])
+
+
 def tabFile(fname, delim="\t"):
 ##    tFile = [x.split("\t") for x in open(fname).read().split("\n")]
 ##    return [x for x in tFile if len(x)==len(tFile[0])]
