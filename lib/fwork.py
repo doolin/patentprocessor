@@ -182,10 +182,7 @@ def create_column_labels(x, typescan, data, i, header, tList):
 
 # TODO: Change to boolean return
 def have_schema_type(typeList, datatype):
-    #print "str(typeList).upper(): ", str(typeList).upper()
     value = str(typeList).upper().find("%s " % datatype.upper())
-    #print "datatype.upper(): ", datatype.upper()
-    #print "value: ", value
     return value
 
 
@@ -223,6 +220,7 @@ def quickSQL2(c, data, table="", header=False, typescan=50, typeList = []):
             return
 
     quickSQL_create_table(c, data, header, table, typescan, typeList)
+    # TODO: Refactor into quickSQL_load_table(header, table, data)
     if header==False:
         c.executemany("INSERT INTO %s VALUES (%s)" % (table, ", ".join(["?"]*len(data[0]))), data)
     else:
