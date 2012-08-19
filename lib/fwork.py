@@ -164,7 +164,7 @@ def get_ctype(typescan, data, i):
 	return value 
 
 
-def quickSQLhelper1(x, typescan, data, i, header, tList):
+def create_column_labels(x, typescan, data, i, header, tList):
 
     cType = get_ctypes(x)
 
@@ -196,7 +196,7 @@ def create_schema(data, header, typescan, typeList):
     # Confusing.
     for i,x in enumerate(data[1]):
 	if have_schema_type(typeList, data[0][i]) < 0:
-            tList = quickSQLhelper1(x, typescan, data, i, header, tList)
+            tList = create_column_labels(x, typescan, data, i, header, tList)
 	else:
 	    #tList.extend([y for y in typeList if y.upper().find("%s " % data[0][i].upper())==0])
 	    # TODO: Check for an embedded override here on the schema
