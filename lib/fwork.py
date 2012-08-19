@@ -161,65 +161,61 @@ def get_ctype(typescan, data, i):
 
 
 def quickSQLhelper1(x, typescan, data, i, header, tList):
-    print "From quickSQLhelper1..."
-    print "tList:  ", tList
+    #print "From quickSQLhelper1..."
+    #print "tList:  ", tList
     cType = get_ctypes(x)
-    print "cType: ", cType
+    #print "cType: ", cType
     if type(typescan)==types.IntType and cType=="VARCHAR":
         cType = get_ctype(typescan, data, i)
-        print "cType (modified): ", cType
+        #print "cType (modified): ", cType
     if header:
 	tList.append("%s %s" % (data[0][i], cType))
     else:
 	tList.append("v%d %s" % (i, cType))
-    print "From helper: ", tList
+    #print "From helper: ", tList
     return tList
+
+
+# TODO: Change to boolean return
+def have_schema_type(typeList, datatype):
+    #print "str(typeList).upper(): ", str(typeList).upper()
+    value = str(typeList).upper().find("%s " % datatype.upper())
+    #print "datatype.upper(): ", datatype.upper()
+    #print "value: ", value
+    return value
 
 
 def create_schema(data, header, typescan, typeList):
     tList = []
+    #print "data[1]: ", data[1]
     for i,x in enumerate(data[1]):
-
-	if str(typeList).upper().find("%s " % data[0][i].upper())<0:
-            tlist = quickSQLhelper1(x, typescan, data, i, header, tList)
-            print "From if: ", tList
+	#if str(typeList).upper().find("%s " % data[0][i].upper())<0:
+	if have_schema_type(typeList, data[0][i]) < 0:
+	    # should this be tList.extend?
+            tList = quickSQLhelper1(x, typescan, data, i, header, tList)
 	else:
 	    tList.extend([y for y in typeList if y.upper().find("%s " % data[0][i].upper())==0])
-            print "From else: ", tList
     schema = ", ".join(tList)
-    print "schema: ", schema
     return schema
 
 
 def quickSQL_create_table(c, data, header, table, typescan, typeList):
-
     schema = create_schema(data, header, typescan, typeList)
-    #c.execute("CREATE TABLE IF NOT EXISTS %s (%s)" % (table, ", ".join(tList)))
     c.execute("CREATE TABLE IF NOT EXISTS %s (%s)" % (table, schema))
-
 
 
 def quickSQL2(c, data, table="", header=False, typescan=50, typeList = []):
 
     if table=="":
 	print "Table empty string"
-        table = "debug%d" % len([x[0] for x in c.execute("SELECT tbl_name FROM sqlite_master WHERE type='table' order by tbl_name") if len(re.findall(r"debug[0-9]+", x[0]))>0])
+	sql_statement = "SELECT tbl_name FROM sqlite_master WHERE type='table' order by tbl_name"
+        table = "debug%d" % len([x[0] for x in c.execute(sql_statement) if len(re.findall(r"debug[0-9]+", x[0]))>0])
     else:
         if c.execute("SELECT count(*) FROM sqlite_master WHERE tbl_name='%s'" % table).fetchone()[0]>0:
 	    print "else block at beginning of function fired..."
             return
 
-    tList = []
-    for i,x in enumerate(data[1]):
-
-	if str(typeList).upper().find("%s " % data[0][i].upper())<0:
-            tlist = quickSQLhelper1(x, typescan, data, i, header, tList)
-            print "From if: ", tList
-	else:
-	    tList.extend([y for y in typeList if y.upper().find("%s " % data[0][i].upper())==0])
-            print "From else: ", tList
-
-    c.execute("CREATE TABLE IF NOT EXISTS %s (%s)" % (table, ", ".join(tList)))
+    quickSQL_create_table(c, data, header, table, typescan, typeList)
     if header==False:
         c.executemany("INSERT INTO %s VALUES (%s)" % (table, ", ".join(["?"]*len(data[0]))), data)
     else:
