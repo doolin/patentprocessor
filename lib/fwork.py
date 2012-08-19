@@ -102,17 +102,31 @@ def quickSQL(c, data, table="", header=False, typescan=50, typeList = []):
 
 ####################################
 def get_ctypes(x):
-    return {
-	types.StringType:"VARCHAR",
-	types.UnicodeType:"VARCHAR",
-	types.IntType:"INTEGER",
-	types.FloatType: "REAL"}[type(x)]
+    return { types.StringType:"VARCHAR",
+             types.UnicodeType:"VARCHAR",
+             types.IntType:"INTEGER",
+             types.FloatType: "REAL"
+	   }[type(x)]
+
+def text_type(datatype)
+    return type(datatype)==types.StringType or type(datatype)==types.UnicodeType
+
+
+# The naming here is unfortunate with respect to how the
+# program logic works.
+def is_real(data):
+    lengthall = len(re.findall(r"[.]", data))
+    #print "length: ", lengthall
+    return lengthall
+
+
+# This function won't handle valid floating point notation.
+def is_all_digits(data):
+    return re.sub(r"[-,.]", "", data).isdigit()
+
 
 def get_ctype(typescan, data, i):
-	print "From get_ctype..."
-	print "typescan: ", typescan
-	print "data: ", data
-	print "i: ", i
+
 	least = 2
 	ints = 1
 	for j in range(1, min(typescan+1, len(data))):
