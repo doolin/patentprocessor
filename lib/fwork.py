@@ -102,7 +102,6 @@ def quickSQL(c, data, table="", header=False, typescan=50, typeList = []):
 
 ####################################
 def get_ctypes(x):
-    print "x: ", x
     return {
 	types.StringType:"VARCHAR",
 	types.UnicodeType:"VARCHAR",
@@ -140,6 +139,29 @@ def quickSQLhelper1(x, typescan, data, i, header, tList):
 	tList.append("v%d %s" % (i, cType))
     print "From helper: ", tList
     return tList
+
+
+def create_schema(data, header, typescan, typeList):
+    tList = []
+    for i,x in enumerate(data[1]):
+
+	if str(typeList).upper().find("%s " % data[0][i].upper())<0:
+            tlist = quickSQLhelper1(x, typescan, data, i, header, tList)
+            print "From if: ", tList
+	else:
+	    tList.extend([y for y in typeList if y.upper().find("%s " % data[0][i].upper())==0])
+            print "From else: ", tList
+    schema = ", ".join(tList)
+    print "schema: ", schema
+    return schema
+
+
+def quickSQL_create_table(c, data, header, table, typescan, typeList):
+
+    schema = create_schema(data, header, typescan, typeList)
+    #c.execute("CREATE TABLE IF NOT EXISTS %s (%s)" % (table, ", ".join(tList)))
+    c.execute("CREATE TABLE IF NOT EXISTS %s (%s)" % (table, schema))
+
 
 
 def quickSQL2(c, data, table="", header=False, typescan=50, typeList = []):
