@@ -194,8 +194,8 @@ def create_schema(data, header, typescan, typeList):
 	if have_schema_type(typeList, data[0][i]) < 0:
             tList = quickSQLhelper1(x, typescan, data, i, header, tList)
 	else:
-	    tList.extend([y for y in typeList if y.upper().find("%s " % data[0][i].upper())==0])
-	    #tList.extend([y for y in typeList if have_schema_type(y, data[0][i]) == 0])
+	    #tList.extend([y for y in typeList if y.upper().find("%s " % data[0][i].upper())==0])
+	    tList.extend([y for y in typeList if have_schema_type(y, data[0][i]) == 0])
 
     schema = ", ".join(tList)
     return schema
