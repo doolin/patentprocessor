@@ -173,6 +173,7 @@ def quickSQLhelper1(x, typescan, data, i, header, tList):
     if header:
 	tList.append("%s %s" % (data[0][i], cType))
     else:
+	# Create "fake" column labels v0, v1, v2,...
 	tList.append("v%d %s" % (i, cType))
 
     return tList
@@ -190,11 +191,14 @@ def have_schema_type(typeList, datatype):
 def create_schema(data, header, typescan, typeList):
 
     tList = []
+    # Find out why this is spinning data[1] instead of data[0]
+    # Confusing.
     for i,x in enumerate(data[1]):
 	if have_schema_type(typeList, data[0][i]) < 0:
             tList = quickSQLhelper1(x, typescan, data, i, header, tList)
 	else:
 	    #tList.extend([y for y in typeList if y.upper().find("%s " % data[0][i].upper())==0])
+	    # TODO: Check for an embedded override here on the schema
 	    tList.extend([y for y in typeList if have_schema_type(y, data[0][i]) == 0])
 
     schema = ", ".join(tList)
