@@ -83,6 +83,10 @@ class TestFWork(unittest.TestCase):
 	data = '1.23'
 	assert(True == text_type(data))
 
+    def test_create_column_labels(self):
+	assert(1 == 1)
+
+
     def test_have_schema_type(self):
 	tl = self.get_typelist()
         assert(-1 == have_schema_type(tl, 'UNIQUEID'))
