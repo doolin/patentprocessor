@@ -56,9 +56,39 @@ class TestFWork(unittest.TestCase):
     def get_quicksql_data(self):
 	return [
 		[u'UniqueID', u'Patent', u'Lastname', u'Firstname'],
-		[u'1', u'08194655', u'PISTER', u'KRISTOPHER S J'],
-		[u'1', u'08190055', u'PISTER', u'KRISTOPHER S J']
+		[u'1', u'0.8194655', u'PISTER', u'KRISTOPHER S J'],
+		[u'1', u'0.8190055', u'PISTER', u'KRISTOPHER S J']
                ]
+
+    def test_is_real(self):
+	data = u'0.1234'
+	assert(1 == is_real(data))
+	data = u'01234'
+	assert(0 == is_real(data))
+
+
+    def get_typelist(self):
+	#return [u'Patent REAL', u'Lastname INTEGER'] 
+	return [u'Lastname INTEGER'] 
+
+    def test_text_type(self):
+	data = 'foo'
+	assert(True == text_type(data))
+	data = 123
+	assert(False == text_type(data))
+	data = 1.23
+	assert(False == text_type(data))
+	data = u'123'
+	assert(True == text_type(data))
+	data = '1.23'
+	assert(True == text_type(data))
+
+    def test_have_schema_type(self):
+	tl = self.get_typelist()
+        assert(-1 == have_schema_type(tl, 'UNIQUEID'))
+        #assert(3  == have_schema_type(tl, 'PATENT'))
+        #assert(19 == have_schema_type(tl, 'LASTNAME'))
+        assert(-1 == have_schema_type(tl, 'FIRSTNAME'))
 
     def test_quickSQL2(self):
         import sqlite3
@@ -67,7 +97,8 @@ class TestFWork(unittest.TestCase):
 	self.conn = sqlite3.connect(dbfilename)
 	self.cursor = self.conn.cursor()
 	data = self.get_quicksql_data()
-	quickSQL2(self.cursor, data, table="test", header=True, typeList=[u'Patent VARCHAR'])
+	typelist = self.get_typelist()
+	quickSQL2(self.cursor, data, table="test", header=True, typeList=typelist)
 	self.conn.commit()
 	self.cursor.close()
 
