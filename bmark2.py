@@ -80,6 +80,7 @@ def bmVerify(results, filepath="", outdir = ""):
 
                 #1 = Variables, 2 = Type, 3 = Format (If necessary), 4 = Matching Type
                 tList = ["%s %s" % (dataS[0][i], x) for i,x in enumerate(dataS[1]) if  x != ""]
+                print "tList: ", tList
 
                 dataS2 = [dataS[0]]
                 dataS2.extend(dataS[4:])
@@ -121,7 +122,8 @@ def bmVerify(results, filepath="", outdir = ""):
                     dataB = uniVert([x for x in csv.reader(open("%s" % fileB, "rb"))])
 
                     print_diagnostics(dataB, "dataB", True, ["Patent VARCHAR"])
-                    quickSQL(c, data=dataB,  table="dataB", header=True, typeList=["Patent VARCHAR"])
+                    #quickSQL(c, data=dataB,  table="dataB", header=True, typeList=["Patent VARCHAR"])
+                    quickSQL2(c, data=dataB,  table="dataB", header=True, typeList=["Patent VARCHAR"])
 
                     c.execute("CREATE INDEX IF NOT EXISTS dB_E ON dataB (%s)" % exCom)
                     c.execute("CREATE INDEX IF NOT EXISTS dB_U ON dataB (%s)" % uqB)
@@ -136,7 +138,8 @@ def bmVerify(results, filepath="", outdir = ""):
                         fBnme = "db.%s" % tblB
 
                 print_diagnostics(dataS2, "dataS", True, tList)
-                quickSQL(c, data=dataS2, table="dataS", header=True, typeList=tList)
+                #quickSQL(c, data=dataS2, table="dataS", header=True, typeList=tList)
+                quickSQL2(c, data=dataS2, table="dataS", header=True, typeList=tList)
 
                 if fuzzy:
                     c.execute("CREATE INDEX IF NOT EXISTS dS_E ON dataS (%s);" % (exCom))
