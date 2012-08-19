@@ -129,8 +129,12 @@ def get_ctype(typescan, data, i):
 
 	least = 2
 	ints = 1
-	for j in range(1, min(typescan+1, len(data))):
-	    if type(data[j][i])==types.StringType or type(data[j][i])==types.UnicodeType:
+	length = min(typescan+1, len(data))
+
+	for j in range(1, length):
+
+	    if text_type(data[j][i]):
+
 		if re.sub(r"[-,.]", "", data[j][i]).isdigit():
 
 		    lengthall = is_real(data[j][i])
