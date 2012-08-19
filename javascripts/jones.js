@@ -41,7 +41,7 @@ d3.json("../data/unemployment.json", function(json) {
 
 
 
-d3.csv("../data/jones.csv", function(csv) {
+d3.csv("../data/jonesnew.csv", function(csv) {
   jones.selectAll("circle").data(csv).enter()
     .append("circle")
     .attr("cx", lon)
@@ -52,8 +52,8 @@ d3.csv("../data/jones.csv", function(csv) {
 });
 
 
-/*
-d3.csv("../data/kim.csv", function(csv) {
+
+d3.csv("../data/kimnew.csv", function(csv) {
   kim.selectAll("circle").data(csv).enter()
     .append("circle")
     .attr("cx", lon)
@@ -62,7 +62,7 @@ d3.csv("../data/kim.csv", function(csv) {
     .attr("fill", "green")
     .attr("class", "kim");
 });
-*/
+
 
 function lat(d) {
   var y = d3.geo.albersUsa();
