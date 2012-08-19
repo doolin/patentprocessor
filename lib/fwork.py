@@ -108,7 +108,7 @@ def get_ctypes(x):
              types.FloatType: "REAL"
 	   }[type(x)]
 
-def text_type(datatype)
+def text_type(datatype):
     return type(datatype)==types.StringType or type(datatype)==types.UnicodeType
 
 
@@ -132,11 +132,28 @@ def get_ctype(typescan, data, i):
 	for j in range(1, min(typescan+1, len(data))):
 	    if type(data[j][i])==types.StringType or type(data[j][i])==types.UnicodeType:
 		if re.sub(r"[-,.]", "", data[j][i]).isdigit():
-		    if len(re.findall(r"[.]", data[j][i]))==0:   pass
-		    elif len(re.findall(r"[.]", data[j][i]))==1: ints = 0
-		    else: least = 0; break
-		else: least = 0; break
-	return {0:"VARCHAR", 1:"INTEGER", 2:"REAL"}[max(least-ints, 0)]
+
+		    lengthall = is_real(data[j][i])
+
+		    if lengthall == 0:
+		        pass
+		    elif lengthall == 1:
+			ints = 0
+		    else:
+			least = 0;
+			# This break is unfortunate, prevents an easy refactoring of
+			# the conditional logic. General principal: try not to break
+			# out of loops from deeply nested conditionals.
+			break
+		else:
+		    least = 0;
+		    break
+
+        key = max(least-ints, 0)
+	print "key: ", key
+	value =  {0:"VARCHAR", 1:"INTEGER", 2:"REAL"}[key]
+	print "value: ", value
+	return value 
 
 
 def quickSQLhelper1(x, typescan, data, i, header, tList):
