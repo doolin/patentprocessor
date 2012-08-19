@@ -1,3 +1,4 @@
+tmp*
 results*.txt
 .sass*
 .DS_*
