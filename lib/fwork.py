@@ -123,6 +123,7 @@ def is_real(data):
 
 
 # This function won't handle valid floating point notation.
+# Will fail on 1.23e45
 def is_all_digits(data):
     return re.sub(r"[-,.]", "", data).isdigit()
 
