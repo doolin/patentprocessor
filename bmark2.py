@@ -116,6 +116,7 @@ def bmVerify(results, filepath="", outdir = ""):
 
 		# This is the case where the fileB "database" is actually a csv file
 		# instead of an SQlite3 file.
+                # TODO: Refactor whole block to `attach_database()
 		# TODO: Replace with call to is_csv_file(fileB)
                 if fileB.split(".")[-1].lower()=="csv":
 	 	    # TODO: Try to move some of this to a function
@@ -179,6 +180,7 @@ def bmVerify(results, filepath="", outdir = ""):
                                 ON  %s;
                         """ % (exCom, uqB, uqS, fBnme, exAnd))
 
+		# Refactor to `create_match_tables()`
                 c.executescript("""
                     /* EXPAND UNIQUE BASE AND INDICATE ACTIVE MATCHES */
                     CREATE TABLE dataM3 AS
@@ -206,9 +208,12 @@ def bmVerify(results, filepath="", outdir = ""):
                 print "Indices Done ... " + str(datetime.datetime.now())
 
                 #EXPORT THE RESULTS
+		# TODO: Refactor to `export_csv_results()`
                 writer = csv.writer(open(output, "wb"), lineterminator="\n")
                 writer.writerows([[x[1] for x in c.execute("PRAGMA TABLE_INFO(dataM4)")]])
                 writer.writerows(c.execute("SELECT * FROM dataM4").fetchall())
+
+		# TODO: Refactor to `print_results()`
                 print "Printing results ..." + str(datetime.datetime.now())
                 rep = [list(x) for x in c.execute("SELECT ErrUQ, uqSUB FROM dataM4")]
 		#print "Rep: ", rep
