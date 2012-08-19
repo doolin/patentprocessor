@@ -23,6 +23,13 @@ def is_csv_file(filename):
     return filename.split(".")[-1].lower()=="csv"
 
 
+def print_diagnostics(data, table, header, tList):
+   print "Printing diagnostics..."
+   print "data: ", data
+   print "table: ", table
+   print "header: ", header
+   print "tList: ", tList
+
 def bmVerify(results, filepath="", outdir = ""):
         """
         Analysis function on disambiguation results, assuming that all benchmark data
