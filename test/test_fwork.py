@@ -16,6 +16,12 @@ from  fwork import *
 
 class TestFWork(unittest.TestCase):
 
+    def removeFile(self, file):
+        #delete a file if it exists
+        if os.path.isfile(file):
+            os.system("rm {file}".format(file=file))
+
+
     def setUp(self):
         self.foo = 'bar'
 
