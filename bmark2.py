@@ -160,6 +160,13 @@ def attach_database(c, fileB, tblB, exCom, exAnd):
         return fBnme
 
 
+def handle_dataS(c, exCom, uqB, uqS, fuzzy, fBnme, exAnd):
+	c.execute("CREATE INDEX IF NOT EXISTS dS_E ON dataS (%s);" % (exCom))
+	if fuzzy:
+	    handle_fuzzy_dataS(c, exCom, uqB, uqS, fuzzy, fBnme, exAnd)
+	else:
+	    handle_nonfuzzy_dataS(uqB, uqS, fBnme, exAnd)
+
 
 
 def bmVerify(results, filepath="", outdir = ""):
@@ -198,7 +205,7 @@ def bmVerify(results, filepath="", outdir = ""):
 
                 print "Start time: " + str(datetime.datetime.now())
 
-		# TODO: Move this out of this function if possible.
+		# TODO: Move freqUQ out of this function if possible.
                 class freqUQ:
                     def __init__(self):
                         self.list=[]
@@ -208,19 +215,24 @@ def bmVerify(results, filepath="", outdir = ""):
                         return sorted([(self.list.count(x), x) for x in set(self.list)], reverse=True)[0][1]
 
                 #MAKE THIS SO IT CAN ATTACH SQLITE3 FOR BENCHMARK
-
+		# UniqueID,Patent,Lastname,Firstname
+		# ,VARCHAR,,
+		# ,%08d,,
+		# UNIQUE,EXACT,FUZZY,FUZZY
+		# 1,5773227,ALLBRITTON,NANCY L
                 dataS = uniVert([x for x in csv.reader(open(fileS, "rb"))])
-
                 #print dataS
 
+		# TODO: Refactor into create_column_types()
                 #1 = Variables, 2 = Type, 3 = Format (If necessary), 4 = Matching Type
                 tList = ["%s %s" % (dataS[0][i], x) for i,x in enumerate(dataS[1]) if  x != ""]
                 print "tList: ", tList
 
+		# Slice out rows 1, 2 & 3 from dataS. This is the data which gets
+		# put in the database created below, and used for matching.
+		# TODO: Refactor into slice_header_out()
                 dataS2 = [dataS[0]]
                 dataS2.extend(dataS[4:])
-
-                #print dataS[2]
 
                 #Format if its necessary --> Basically for Patents..
                 for i,x in enumerate(dataS[2]):
@@ -245,8 +257,11 @@ def bmVerify(results, filepath="", outdir = ""):
 
                 #CREATE INDEX, MERGE DATA BASED ON EXACTS
                 print "Creating indices... " + str(datetime.datetime.now())
+
                 exAnd = " AND ".join(["a.%s=b.%s" % (x, x) for x in exact])
+		print "exAnd: ", exAnd
                 exCom = ", ".join(exact)
+                print "exCom: ", exCom
 
                 fBnme = attach_database(c, fileB, tblB, exCom, exAnd)
 
@@ -255,11 +270,12 @@ def bmVerify(results, filepath="", outdir = ""):
                 quickSQL2(c, data=dataS2, table="dataS", header=True, typeList=tList)
 
 		# TODO: Refactor all of this into handle_dataS
-                c.execute("CREATE INDEX IF NOT EXISTS dS_E ON dataS (%s);" % (exCom))
-                if fuzzy:
-                    handle_fuzzy_dataS(c, exCom, uqB, uqS, fuzzy, fBnme, exAnd)
-                else:
-                    handle_nonfuzzy_dataS(uqB, uqS, fBnme, exAnd)
+		handle_dataS(c, exCom, uqB, uqS, fuzzy, fBnme, exAnd)
+#                c.execute("CREATE INDEX IF NOT EXISTS dS_E ON dataS (%s);" % (exCom))
+#                if fuzzy:
+#                    handle_fuzzy_dataS(c, exCom, uqB, uqS, fuzzy, fBnme, exAnd)
+#                else:
+#                    handle_nonfuzzy_dataS(uqB, uqS, fBnme, exAnd)
 
                 create_match_tables(c, fBnme, uqB, exCom, exAnd)
 
