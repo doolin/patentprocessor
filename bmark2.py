@@ -32,58 +32,58 @@ def print_diagnostics(data, table, header, tList):
 
 
 def create_match_tables(c, fBnme, uqB, exCom, exAnd):
-	c.executescript("""
-	    /* EXPAND UNIQUE BASE AND INDICATE ACTIVE MATCHES */
-	    CREATE TABLE dataM3 AS
-		SELECT  uqS, a.*
-		  FROM (SELECT  uqS AS uqSUB, a.*
-			  FROM (SELECT  uqB, b.*
-				  FROM  (SELECT DISTINCT(uqB) FROM dataM2 WHERE uqB!="") AS a
-			    INNER JOIN  %s AS b
-				    ON  a.uqB=b.%s) AS a
-		     LEFT JOIN (SELECT %s, uqB, uqS FROM dataM2) AS b
-			    ON  a.uqB=b.uqB AND %s) AS a
-	    INNER JOIN (SELECT DISTINCT uqB, uqS FROM dataM2) AS b
-		    ON  a.%s=b.uqB;
+    c.executescript("""
+        /* EXPAND UNIQUE BASE AND INDICATE ACTIVE MATCHES */
+        CREATE TABLE dataM3 AS
+        SELECT  uqS, a.*
+          FROM (SELECT  uqS AS uqSUB, a.*
+              FROM (SELECT  uqB, b.*
+                  FROM  (SELECT DISTINCT(uqB) FROM dataM2 WHERE uqB!="") AS a
+                INNER JOIN  %s AS b
+                    ON  a.uqB=b.%s) AS a
+             LEFT JOIN (SELECT %s, uqB, uqS FROM dataM2) AS b
+                ON  a.uqB=b.uqB AND %s) AS a
+        INNER JOIN (SELECT DISTINCT uqB, uqS FROM dataM2) AS b
+            ON  a.%s=b.uqB;
 
-	    /* INDICATE INVENTORS WHO DO NOT MATCH */
-	    CREATE TABLE dataM4 AS
-		SELECT  errD(a.ErrUQ, uqB) AS ErrUQ, b.*
-		  FROM (SELECT uqS, freqUQ(uqB) as ErrUQ FROM dataM3 GROUP BY uqS) AS a
-	    INNER JOIN  dataM3 AS b
-		    ON  a.uqS=b.uqS AND b.AppYear <= '2010' /*AND a.uqS not in (83, 85, 93)*/
-	      ORDER BY  uqS, %s;
+        /* INDICATE INVENTORS WHO DO NOT MATCH */
+        CREATE TABLE dataM4 AS
+        SELECT  errD(a.ErrUQ, uqB) AS ErrUQ, b.*
+          FROM (SELECT uqS, freqUQ(uqB) as ErrUQ FROM dataM3 GROUP BY uqS) AS a
+        INNER JOIN  dataM3 AS b
+            ON  a.uqS=b.uqS AND b.AppYear <= '2010' /*AND a.uqS not in (83, 85, 93)*/
+          ORDER BY  uqS, %s;
 
-	    """ % (fBnme, uqB, exCom, exAnd, uqB, exCom))
+        """ % (fBnme, uqB, exCom, exAnd, uqB, exCom))
 
 
 def handle_fuzzy_dataS(c, exCom, uqB, uqS, fuzzy, fBnme, exAnd):
-	    c.executescript("""
-		CREATE INDEX IF NOT EXISTS dS_E ON dataS (%s);
+        c.executescript("""
+        CREATE INDEX IF NOT EXISTS dS_E ON dataS (%s);
 
-		/* RETAIN ONLY JARO>0.9 FUZZY AND EXACT MATCHES */
-		CREATE TABLE dataM AS
-		    SELECT  a.*, %s AS uqB, %s AS uqS, %s AS jaro
-		      FROM  %s AS a
-		INNER JOIN  dataS AS b
-			ON  %s
-		     WHERE  jaro>0.90;
+        /* RETAIN ONLY JARO>0.9 FUZZY AND EXACT MATCHES */
+        CREATE TABLE dataM AS
+            SELECT  a.*, %s AS uqB, %s AS uqS, %s AS jaro
+              FROM  %s AS a
+        INNER JOIN  dataS AS b
+            ON  %s
+             WHERE  jaro>0.90;
 
-		/* DETERMINE MAXIMUM JARO FOR EACH UQ AND EXACT COMBO */
-		CREATE TABLE dataT AS
-		    SELECT  uqS, %s, MAX(jaro) AS jaro, count(*) as cnt
-		      FROM  dataM
-		  GROUP BY  uqS, %s;
+        /* DETERMINE MAXIMUM JARO FOR EACH UQ AND EXACT COMBO */
+        CREATE TABLE dataT AS
+            SELECT  uqS, %s, MAX(jaro) AS jaro, count(*) as cnt
+              FROM  dataM
+          GROUP BY  uqS, %s;
 
-		/* RETAIN ONLY MAXIMUM JARO */
-		CREATE TABLE dataM2 AS
-		    SELECT  a.*
-		      FROM  dataM AS a
-		INNER JOIN  dataT AS b
-			ON  a.uqS=b.uqS AND a.jaro=b.jaro AND %s;
-		""" % (exCom, uqB, uqS, 
-		       "*".join(["jarow(a.%s, b.%s)" % (x,x) for x in fuzzy]),
-		       fBnme, exAnd, exCom, exCom, exAnd))
+        /* RETAIN ONLY MAXIMUM JARO */
+        CREATE TABLE dataM2 AS
+            SELECT  a.*
+              FROM  dataM AS a
+        INNER JOIN  dataT AS b
+            ON  a.uqS=b.uqS AND a.jaro=b.jaro AND %s;
+        """ % (exCom, uqB, uqS, 
+               "*".join(["jarow(a.%s, b.%s)" % (x,x) for x in fuzzy]),
+               fBnme, exAnd, exCom, exCom, exAnd))
 
 
 
@@ -133,7 +133,7 @@ def bmVerify(results, filepath="", outdir = ""):
                 #MAKE THIS SO IT CAN ATTACH SQLITE3 FOR BENCHMARK
                 dataS = uniVert([x for x in csv.reader(open(fileS, "rb"))])
 
-		#print dataS
+                #print dataS
 
                 #1 = Variables, 2 = Type, 3 = Format (If necessary), 4 = Matching Type
                 tList = ["%s %s" % (dataS[0][i], x) for i,x in enumerate(dataS[1]) if  x != ""]
@@ -159,9 +159,9 @@ def bmVerify(results, filepath="", outdir = ""):
 
                 #FIGURE OUT WHICH ONES HAVE EXACT/FUZZY
                 exact = [dataS[0][i] for i,x in enumerate(dataS[3]) if x.upper()[0]=="E"]
-		print "Exact: ", exact
+                print "Exact: ", exact
                 fuzzy = [dataS[0][i] for i,x in enumerate(dataS[3]) if x.upper()[0]=="F"]
-		print "Fuzzy: ", fuzzy
+                print "Fuzzy: ", fuzzy
                 uqS =   [dataS[0][i] for i,x in enumerate(dataS[3]) if x.upper()[0]=="U"][0]
 
 
@@ -171,12 +171,12 @@ def bmVerify(results, filepath="", outdir = ""):
                 exAnd = " AND ".join(["a.%s=b.%s" % (x, x) for x in exact])
                 exCom = ", ".join(exact)
 
-		# This is the case where the fileB "database" is actually a csv file
-		# instead of an SQlite3 file.
+                # This is the case where the fileB "database" is actually a csv file
+                # instead of an SQlite3 file.
                 # TODO: Refactor whole block to `attach_database()
-		# TODO: Replace with call to is_csv_file(fileB)
+                # TODO: Replace with call to is_csv_file(fileB)
                 if fileB.split(".")[-1].lower()=="csv":
-	 	    # TODO: Try to move some of this to a function
+                # TODO: Try to move some of this to a function
                     dataB = uniVert([x for x in csv.reader(open("%s" % fileB, "rb"))])
 
                     print_diagnostics(dataB, "dataB", True, ["Patent VARCHAR"])
@@ -186,10 +186,10 @@ def bmVerify(results, filepath="", outdir = ""):
                     c.execute("CREATE INDEX IF NOT EXISTS dB_E ON dataB (%s)" % exCom)
                     c.execute("CREATE INDEX IF NOT EXISTS dB_U ON dataB (%s)" % uqB)
                     fBnme = "dataB"
-		# fileB is an SQLite3 database file...
+                # fileB is an SQLite3 database file...
                 else:
                     c.execute("ATTACH DATABASE '%s' AS db" % fileB)
-		    # fBnme is, apparently a table name. Or maybe a tbl nme...
+                    # fBnme is, apparently a table name. Or maybe a tbl nme...
                     if tblB=="":
                         fBnme = "db.%s" % fileB.split(".")[-2].split("/")[-1]
                     else:
@@ -203,7 +203,7 @@ def bmVerify(results, filepath="", outdir = ""):
                     c.execute("CREATE INDEX IF NOT EXISTS dS_E ON dataS (%s);" % (exCom))
                     handle_fuzzy_dataS(c, exCom, uqB, uqS, fuzzy, fBnme, exAnd)
                 else:
-		    # TODO: Refactor into handle_dataS()
+                    # TODO: Refactor into handle_dataS()
                     c.executescript("""
                         CREATE INDEX IF NOT EXISTS dS_E ON dataS (%s);
                         CREATE TABLE dataM2 AS
@@ -218,23 +218,23 @@ def bmVerify(results, filepath="", outdir = ""):
                 print "Indices Done ... " + str(datetime.datetime.now())
 
                 #EXPORT THE RESULTS
-		# TODO: Refactor to `export_csv_results()`
+                # TODO: Refactor to `export_csv_results()`
                 writer = csv.writer(open(output, "wb"), lineterminator="\n")
                 writer.writerows([[x[1] for x in c.execute("PRAGMA TABLE_INFO(dataM4)")]])
                 writer.writerows(c.execute("SELECT * FROM dataM4").fetchall())
 
-		# TODO: Refactor to `print_results()`
+                # TODO: Refactor to `print_results()`
                 print "Printing results ..." + str(datetime.datetime.now())
                 rep = [list(x) for x in c.execute("SELECT ErrUQ, uqSUB FROM dataM4")]
-		#print "Rep: ", rep
+                #print "Rep: ", rep
                 orig = len([x for x in rep if x[1]!=None])
                 errm = sum([int(x[0]) for x in rep if x[0]!=None])
-		#print errm
+                #print errm
                 u = 1.0*errm/orig
                 o = 1-(float(orig)/len(rep))
                 recall = 1.0 - u
-		# overclumping is lumping
-		# underclumping is splitting
+                # overclumping is lumping
+                # underclumping is splitting
                 print """
 
                 RESULTS ==================
@@ -251,7 +251,7 @@ def bmVerify(results, filepath="", outdir = ""):
                          Time: {time}
                 """.format(original = orig, new = len(rep)-orig, total = len(rep), overclump = len(rep)-orig, o = o,
                            underclump = errm, u = u, recall = recall, precision = recall/(recall+o),
-			   filename = output, time = datetime.datetime.now()-t)
+                filename = output, time = datetime.datetime.now()-t)
                 c.close()
                 conn.close()
 
