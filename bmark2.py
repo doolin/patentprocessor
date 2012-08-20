@@ -239,19 +239,19 @@ def bmVerify(results, filepath="", outdir = ""):
                 #quickSQL(c, data=dataS2, table="dataS", header=True, typeList=tList)
                 quickSQL2(c, data=dataS2, table="dataS", header=True, typeList=tList)
 
+                c.execute("CREATE INDEX IF NOT EXISTS dS_E ON dataS (%s);" % (exCom))
                 if fuzzy:
-                    c.execute("CREATE INDEX IF NOT EXISTS dS_E ON dataS (%s);" % (exCom))
+                    #c.execute("CREATE INDEX IF NOT EXISTS dS_E ON dataS (%s);" % (exCom))
                     handle_fuzzy_dataS(c, exCom, uqB, uqS, fuzzy, fBnme, exAnd)
                 else:
                     # TODO: Refactor into handle_dataS()
                     c.executescript("""
-                        CREATE INDEX IF NOT EXISTS dS_E ON dataS (%s);
                         CREATE TABLE dataM2 AS
                             SELECT  *, %s AS uqB, %s AS uqS
                               FROM  %s AS a
                         INNER JOIN  dataS AS b
                                 ON  %s;
-                        """ % (exCom, uqB, uqS, fBnme, exAnd))
+                        """ % (uqB, uqS, fBnme, exAnd))
 
                 create_match_tables(c, fBnme, uqB, exCom, exAnd)
 
