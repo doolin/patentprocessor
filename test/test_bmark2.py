@@ -7,6 +7,7 @@ import unittest
 import sys
 
 sys.path.append( '.' )
+sys.path.append( '..' )
 sys.path.append( '../lib/' )
 
 from  bmark2 import *
