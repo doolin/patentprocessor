@@ -241,21 +241,22 @@ def bmVerify(results, filepath="", outdir = ""):
 		# ,%08d,,
 		# UNIQUE,EXACT,FUZZY,FUZZY
 		# 1,5773227,ALLBRITTON,NANCY L
+		# TODO: Refactor into read_benchmark_csvfile()
+		# This will help for unit test and provide self-documentation
                 dataS = uniVert([x for x in csv.reader(open(fileS, "rb"))])
                 #print dataS
 
 		# TODO: Refactor into create_column_types()
                 #1 = Variables, 2 = Type, 3 = Format (If necessary), 4 = Matching Type
                 tList = ["%s %s" % (dataS[0][i], x) for i,x in enumerate(dataS[1]) if  x != ""]
-                print "tList: ", tList
 
 		# Slice out rows 1, 2 & 3 from dataS. This is the data which gets
 		# put in the database created below, and used for matching.
-		# TODO: Refactor into slice_header_out()
+		# TODO: Refactor into slice_out_header()
                 dataS2 = [dataS[0]]
                 dataS2.extend(dataS[4:])
 
-                #Format if its necessary --> Basically for Patents..
+                # Format if its necessary --> Basically for Patents..
                 for i,x in enumerate(dataS[2]):
                     if x!="":
                         for j in xrange(1,len(dataS2)):
