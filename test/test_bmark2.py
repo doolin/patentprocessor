@@ -23,20 +23,18 @@ class TestBMark2(unittest.TestCase):
     def setUp(self):
         self.foo = 'bar'
 
-    def test_dummy(self):
-        assert(1 == 1)
+    def test_get_filename_suffix(self):
+        filename = 'foo.bar.csv'
+	assert('csv' == get_filename_suffix(filename))
+        filename = 'foo.bar.sqlite3'
+	assert('sqlite3' == get_filename_suffix(filename))
 
-    def test_int(self):
-        assert('1' == ascit('1'))
 
-    def test_float(self):
-        # Default strict=True removes periods.
-        result = ascit('1.0', strict=False)
-        assert('1.0' == result)
-
-    def test_remove_period(self):
-        assert('10' == ascit('1.0', strict=True))
-
+    def test_is_csv_file(self):
+        filename = 'foo.bar.csv'
+	assert(True == is_csv_file(filename))
+        filename = 'foo.bar.sqlite3'
+	assert(False == is_csv_file(filename))
 
 if __name__ == '__main__':
     unittest.main()
