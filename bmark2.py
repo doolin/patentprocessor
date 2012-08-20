@@ -92,6 +92,37 @@ def export_csv_results(c, output):
 	writer.writerows(c.execute("SELECT * FROM dataM4").fetchall())
 
 
+def print_results(c, output, t):
+	print "Printing results ..." + str(datetime.datetime.now())
+	rep = [list(x) for x in c.execute("SELECT ErrUQ, uqSUB FROM dataM4")]
+	#print "Rep: ", rep
+	orig = len([x for x in rep if x[1]!=None])
+	errm = sum([int(x[0]) for x in rep if x[0]!=None])
+	#print errm
+	u = 1.0*errm/orig
+	o = 1-(float(orig)/len(rep))
+	recall = 1.0 - u
+	# overclumping is lumping
+	# underclumping is splitting
+	print """
+
+	RESULTS ==================
+
+	     Original: {original}
+	  New Records: {new}
+		Total: {total}
+
+	    Overclump: {overclump} ({o:.2%})
+	   Underclump: {underclump} ({u:.2%})
+	    Precision: {precision:.2%}
+	       Recall: {recall:.2%}
+	  File Detail: {filename}
+		 Time: {time}
+	""".format(original = orig, new = len(rep)-orig, total = len(rep), overclump = len(rep)-orig, o = o,
+		   underclump = errm, u = u, recall = recall, precision = recall/(recall+o), filename = output,
+		   time = datetime.datetime.now()-t)
+
+
 
 def bmVerify(results, filepath="", outdir = ""):
         """
@@ -226,34 +257,37 @@ def bmVerify(results, filepath="", outdir = ""):
 		export_csv_results(c, output)
 
                 # TODO: Refactor to `print_results()`
-                print "Printing results ..." + str(datetime.datetime.now())
-                rep = [list(x) for x in c.execute("SELECT ErrUQ, uqSUB FROM dataM4")]
-                #print "Rep: ", rep
-                orig = len([x for x in rep if x[1]!=None])
-                errm = sum([int(x[0]) for x in rep if x[0]!=None])
-                #print errm
-                u = 1.0*errm/orig
-                o = 1-(float(orig)/len(rep))
-                recall = 1.0 - u
-                # overclumping is lumping
-                # underclumping is splitting
-                print """
+		print_results(c, output, t)
+#                print "Printing results ..." + str(datetime.datetime.now())
+#                rep = [list(x) for x in c.execute("SELECT ErrUQ, uqSUB FROM dataM4")]
+#                #print "Rep: ", rep
+#                orig = len([x for x in rep if x[1]!=None])
+#                errm = sum([int(x[0]) for x in rep if x[0]!=None])
+#                #print errm
+#                u = 1.0*errm/orig
+#                o = 1-(float(orig)/len(rep))
+#                recall = 1.0 - u
+#                # overclumping is lumping
+#                # underclumping is splitting
+#                print """
+#
+#                RESULTS ==================
+#
+#                     Original: {original}
+#                  New Records: {new}
+#                        Total: {total}
+#
+#                    Overclump: {overclump} ({o:.2%})
+#                   Underclump: {underclump} ({u:.2%})
+#                    Precision: {precision:.2%}
+#                       Recall: {recall:.2%}
+#                  File Detail: {filename}
+#                         Time: {time}
+#                """.format(original = orig, new = len(rep)-orig, total = len(rep), overclump = len(rep)-orig, o = o,
+#                           underclump = errm, u = u, recall = recall, precision = recall/(recall+o),
+#                filename = output, time = datetime.datetime.now()-t)
 
-                RESULTS ==================
 
-                     Original: {original}
-                  New Records: {new}
-                        Total: {total}
-
-                    Overclump: {overclump} ({o:.2%})
-                   Underclump: {underclump} ({u:.2%})
-                    Precision: {precision:.2%}
-                       Recall: {recall:.2%}
-                  File Detail: {filename}
-                         Time: {time}
-                """.format(original = orig, new = len(rep)-orig, total = len(rep), overclump = len(rep)-orig, o = o,
-                           underclump = errm, u = u, recall = recall, precision = recall/(recall+o),
-                filename = output, time = datetime.datetime.now()-t)
                 c.close()
                 conn.close()
 
