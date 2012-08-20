@@ -96,6 +96,7 @@ def handle_fuzzy_dataS(c, exCom, uqB, uqS, fuzzy, fBnme, exAnd):
                "*".join(["jarow(a.%s, b.%s)" % (x,x) for x in fuzzy]),
                fBnme, exAnd, exCom, exCom, exAnd))
 
+
 def handle_nonfuzzy_dataS(uqB, uqS, fBnme, exAnd):
     c.executescript("""
 	CREATE TABLE dataM2 AS
@@ -221,9 +222,9 @@ def bmVerify(results, filepath="", outdir = ""):
                 fileB = filepath + "{result}.sqlite3".format(result=result)
                 output = outdir + "{result}_DT5.csv".format(result=result)
 
-                t=datetime.datetime.now()
+                t = datetime.datetime.now()
 
-                print "Start time: " + str(datetime.datetime.now())
+                #print "Start time: " + str(datetime.datetime.now())
 
 		# TODO: Move freqUQ out of this function if possible.
                 class freqUQ:
@@ -262,28 +263,29 @@ def bmVerify(results, filepath="", outdir = ""):
                                 dataS2[j][i] = x % int(dataS2[j][i])
 
                 conn = sqlite3.connect(":memory:")
+                #conn = sqlite3.connect("bmark2.sqlite3")
                 conn.create_function("jarow", 2, jarow)
                 conn.create_function("errD", 2, lambda x,y: (x!=y) and 1 or None)
                 conn.create_aggregate("freqUQ", 1, freqUQ)
                 c = conn.cursor()
 
-                #FIGURE OUT WHICH ONES HAVE EXACT/FUZZY
+                # FIGURE OUT WHICH ONES HAVE EXACT/FUZZY
                 exact = [dataS[0][i] for i,x in enumerate(dataS[3]) if x.upper()[0]=="E"]
                 fuzzy = [dataS[0][i] for i,x in enumerate(dataS[3]) if x.upper()[0]=="F"]
                 uqS =   [dataS[0][i] for i,x in enumerate(dataS[3]) if x.upper()[0]=="U"][0]
-                print_match_qualifiers(exact, fuzzy, uqS)
+                #print_match_qualifiers(exact, fuzzy, uqS)
 
-                #CREATE INDEX, MERGE DATA BASED ON EXACTS
-                print "Creating indices... " + str(datetime.datetime.now())
+                # CREATE INDEX, MERGE DATA BASED ON EXACTS
+                #print "Creating indices... " + str(datetime.datetime.now())
 
                 exAnd = " AND ".join(["a.%s=b.%s" % (x, x) for x in exact])
-		print "exAnd: ", exAnd
+		#print "exAnd: ", exAnd
                 exCom = ", ".join(exact)
-                print "exCom: ", exCom
+                #print "exCom: ", exCom
 
                 fBnme = attach_database(c, fileB, tblB, exCom, exAnd)
 
-                print_diagnostics(dataS2, "dataS", True, tList)
+                #print_diagnostics(dataS2, "dataS", True, tList)
                 #quickSQL(c, data=dataS2, table="dataS", header=True, typeList=tList)
                 quickSQL2(c, data=dataS2, table="dataS", header=True, typeList=tList)
 
@@ -291,7 +293,7 @@ def bmVerify(results, filepath="", outdir = ""):
 
                 create_match_tables(c, fBnme, uqB, exCom, exAnd)
 
-                print "Indices Done ... " + str(datetime.datetime.now())
+                #print "Indices Done ... " + str(datetime.datetime.now())
 
 		export_csv_results(c, output)
 		print_results(c, output, t)
