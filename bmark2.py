@@ -30,6 +30,33 @@ def print_diagnostics(data, table, header, tList):
    print "header: ", header
    print "tList: ", tList
 
+
+def create_match_tables(c, fBnme, uqB, exCom, exAnd):
+	c.executescript("""
+	    /* EXPAND UNIQUE BASE AND INDICATE ACTIVE MATCHES */
+	    CREATE TABLE dataM3 AS
+		SELECT  uqS, a.*
+		  FROM (SELECT  uqS AS uqSUB, a.*
+			  FROM (SELECT  uqB, b.*
+				  FROM  (SELECT DISTINCT(uqB) FROM dataM2 WHERE uqB!="") AS a
+			    INNER JOIN  %s AS b
+				    ON  a.uqB=b.%s) AS a
+		     LEFT JOIN (SELECT %s, uqB, uqS FROM dataM2) AS b
+			    ON  a.uqB=b.uqB AND %s) AS a
+	    INNER JOIN (SELECT DISTINCT uqB, uqS FROM dataM2) AS b
+		    ON  a.%s=b.uqB;
+
+	    /* INDICATE INVENTORS WHO DO NOT MATCH */
+	    CREATE TABLE dataM4 AS
+		SELECT  errD(a.ErrUQ, uqB) AS ErrUQ, b.*
+		  FROM (SELECT uqS, freqUQ(uqB) as ErrUQ FROM dataM3 GROUP BY uqS) AS a
+	    INNER JOIN  dataM3 AS b
+		    ON  a.uqS=b.uqS AND b.AppYear <= '2010' /*AND a.uqS not in (83, 85, 93)*/
+	      ORDER BY  uqS, %s;
+
+	    """ % (fBnme, uqB, exCom, exAnd, uqB, exCom))
+
+
 def bmVerify(results, filepath="", outdir = ""):
         """
         Analysis function on disambiguation results, assuming that all benchmark data
@@ -170,6 +197,7 @@ def bmVerify(results, filepath="", outdir = ""):
                         """ % (exCom, uqB, uqS, 
                                "*".join(["jarow(a.%s, b.%s)" % (x,x) for x in fuzzy]),
                                fBnme, exAnd, exCom, exCom, exAnd))
+
                 else:
                     c.executescript("""
                         CREATE INDEX IF NOT EXISTS dS_E ON dataS (%s);
@@ -181,29 +209,30 @@ def bmVerify(results, filepath="", outdir = ""):
                         """ % (exCom, uqB, uqS, fBnme, exAnd))
 
 		# Refactor to `create_match_tables()`
-                c.executescript("""
-                    /* EXPAND UNIQUE BASE AND INDICATE ACTIVE MATCHES */
-                    CREATE TABLE dataM3 AS
-                        SELECT  uqS, a.*
-                          FROM (SELECT  uqS AS uqSUB, a.*
-                                  FROM (SELECT  uqB, b.*
-                                          FROM  (SELECT DISTINCT(uqB) FROM dataM2 WHERE uqB!="") AS a
-                                    INNER JOIN  %s AS b
-                                            ON  a.uqB=b.%s) AS a
-                             LEFT JOIN (SELECT %s, uqB, uqS FROM dataM2) AS b
-                                    ON  a.uqB=b.uqB AND %s) AS a
-                    INNER JOIN (SELECT DISTINCT uqB, uqS FROM dataM2) AS b
-                            ON  a.%s=b.uqB;
-
-                    /* INDICATE INVENTORS WHO DO NOT MATCH */
-                    CREATE TABLE dataM4 AS
-                        SELECT  errD(a.ErrUQ, uqB) AS ErrUQ, b.*
-                          FROM (SELECT uqS, freqUQ(uqB) as ErrUQ FROM dataM3 GROUP BY uqS) AS a
-                    INNER JOIN  dataM3 AS b
-                            ON  a.uqS=b.uqS AND b.AppYear <= '2010' /*AND a.uqS not in (83, 85, 93)*/
-                      ORDER BY  uqS, %s;
-
-                    """ % (fBnme, uqB, exCom, exAnd, uqB, exCom))
+#                c.executescript("""
+#                    /* EXPAND UNIQUE BASE AND INDICATE ACTIVE MATCHES */
+#                    CREATE TABLE dataM3 AS
+#                        SELECT  uqS, a.*
+#                          FROM (SELECT  uqS AS uqSUB, a.*
+#                                  FROM (SELECT  uqB, b.*
+#                                          FROM  (SELECT DISTINCT(uqB) FROM dataM2 WHERE uqB!="") AS a
+#                                    INNER JOIN  %s AS b
+#                                            ON  a.uqB=b.%s) AS a
+#                             LEFT JOIN (SELECT %s, uqB, uqS FROM dataM2) AS b
+#                                    ON  a.uqB=b.uqB AND %s) AS a
+#                    INNER JOIN (SELECT DISTINCT uqB, uqS FROM dataM2) AS b
+#                            ON  a.%s=b.uqB;
+#
+#                    /* INDICATE INVENTORS WHO DO NOT MATCH */
+#                    CREATE TABLE dataM4 AS
+#                        SELECT  errD(a.ErrUQ, uqB) AS ErrUQ, b.*
+#                          FROM (SELECT uqS, freqUQ(uqB) as ErrUQ FROM dataM3 GROUP BY uqS) AS a
+#                    INNER JOIN  dataM3 AS b
+#                            ON  a.uqS=b.uqS AND b.AppYear <= '2010' /*AND a.uqS not in (83, 85, 93)*/
+#                      ORDER BY  uqS, %s;
+#
+#                    """ % (fBnme, uqB, exCom, exAnd, uqB, exCom))
+                create_match_tables(c, fBnme, uqB, exCom, exAnd)
 
                 print "Indices Done ... " + str(datetime.datetime.now())
 
