@@ -134,6 +134,7 @@ def print_results(c, output, t):
 		   underclump = errm, u = u, recall = recall, precision = recall/(recall+o), filename = output,
 		   time = datetime.datetime.now()-t)
 
+
 def attach_database(c, fileB, tblB, exCom, exAnd):
 	# TODO: Replace with call to is_csv_file(fileB)
 	if fileB.split(".")[-1].lower()=="csv":
@@ -196,6 +197,8 @@ def bmVerify(results, filepath="", outdir = ""):
                 t=datetime.datetime.now()
 
                 print "Start time: " + str(datetime.datetime.now())
+
+		# TODO: Move this out of this function if possible.
                 class freqUQ:
                     def __init__(self):
                         self.list=[]
@@ -205,6 +208,7 @@ def bmVerify(results, filepath="", outdir = ""):
                         return sorted([(self.list.count(x), x) for x in set(self.list)], reverse=True)[0][1]
 
                 #MAKE THIS SO IT CAN ATTACH SQLITE3 FOR BENCHMARK
+
                 dataS = uniVert([x for x in csv.reader(open(fileS, "rb"))])
 
                 #print dataS
@@ -237,8 +241,7 @@ def bmVerify(results, filepath="", outdir = ""):
                 fuzzy = [dataS[0][i] for i,x in enumerate(dataS[3]) if x.upper()[0]=="F"]
                 print "Fuzzy: ", fuzzy
                 uqS =   [dataS[0][i] for i,x in enumerate(dataS[3]) if x.upper()[0]=="U"][0]
-
-
+                print "uqS: ", uqS
 
                 #CREATE INDEX, MERGE DATA BASED ON EXACTS
                 print "Creating indices... " + str(datetime.datetime.now())
@@ -251,20 +254,12 @@ def bmVerify(results, filepath="", outdir = ""):
                 #quickSQL(c, data=dataS2, table="dataS", header=True, typeList=tList)
                 quickSQL2(c, data=dataS2, table="dataS", header=True, typeList=tList)
 
+		# TODO: Refactor all of this into handle_dataS
                 c.execute("CREATE INDEX IF NOT EXISTS dS_E ON dataS (%s);" % (exCom))
                 if fuzzy:
-                    #c.execute("CREATE INDEX IF NOT EXISTS dS_E ON dataS (%s);" % (exCom))
                     handle_fuzzy_dataS(c, exCom, uqB, uqS, fuzzy, fBnme, exAnd)
                 else:
-                    # TODO: Refactor into handle_nonfuzzy_dataS()
                     handle_nonfuzzy_dataS(uqB, uqS, fBnme, exAnd)
-#                    c.executescript("""
-#                        CREATE TABLE dataM2 AS
-#                            SELECT  *, %s AS uqB, %s AS uqS
-#                              FROM  %s AS a
-#                        INNER JOIN  dataS AS b
-#                                ON  %s;
-#                        """ % (uqB, uqS, fBnme, exAnd))
 
                 create_match_tables(c, fBnme, uqB, exCom, exAnd)
 
