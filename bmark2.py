@@ -85,6 +85,18 @@ def handle_fuzzy_dataS(c, exCom, uqB, uqS, fuzzy, fBnme, exAnd):
                "*".join(["jarow(a.%s, b.%s)" % (x,x) for x in fuzzy]),
                fBnme, exAnd, exCom, exCom, exAnd))
 
+def handle_nonfuzzy_dataS(uqB, uqS, fBnme, exAnd):
+    c.executescript("""
+	CREATE TABLE dataM2 AS
+	    SELECT  *, %s AS uqB, %s AS uqS
+	      FROM  %s AS a
+	INNER JOIN  dataS AS b
+		ON  %s;
+	""" % (uqB, uqS, fBnme, exAnd))
+
+
+
+
 
 def export_csv_results(c, output):
 	writer = csv.writer(open(output, "wb"), lineterminator="\n")
@@ -244,14 +256,15 @@ def bmVerify(results, filepath="", outdir = ""):
                     #c.execute("CREATE INDEX IF NOT EXISTS dS_E ON dataS (%s);" % (exCom))
                     handle_fuzzy_dataS(c, exCom, uqB, uqS, fuzzy, fBnme, exAnd)
                 else:
-                    # TODO: Refactor into handle_dataS()
-                    c.executescript("""
-                        CREATE TABLE dataM2 AS
-                            SELECT  *, %s AS uqB, %s AS uqS
-                              FROM  %s AS a
-                        INNER JOIN  dataS AS b
-                                ON  %s;
-                        """ % (uqB, uqS, fBnme, exAnd))
+                    # TODO: Refactor into handle_nonfuzzy_dataS()
+                    handle_nonfuzzy_dataS(uqB, uqS, fBnme, exAnd)
+#                    c.executescript("""
+#                        CREATE TABLE dataM2 AS
+#                            SELECT  *, %s AS uqB, %s AS uqS
+#                              FROM  %s AS a
+#                        INNER JOIN  dataS AS b
+#                                ON  %s;
+#                        """ % (uqB, uqS, fBnme, exAnd))
 
                 create_match_tables(c, fBnme, uqB, exCom, exAnd)
 
