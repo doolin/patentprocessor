@@ -1,16 +1,19 @@
+
 svg {
   background: #eee;
   width: 960px;
   height: 500px;
 }
 
+#states path {
+  fill: none;
+  stroke: #0f5;
+  stroke-width: 1.5px;
+}
+
 #counties path {
-  stroke: #fff;
+  fill: #fff;
+  stroke: #f0f;
   stroke-width: .25px;
 }
 
-#states path {
-  fill: none;
-  stroke: #fff;
-  stroke-width: 1.5px;
-}
