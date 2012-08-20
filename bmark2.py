@@ -233,33 +233,7 @@ def bmVerify(results, filepath="", outdir = ""):
                 exAnd = " AND ".join(["a.%s=b.%s" % (x, x) for x in exact])
                 exCom = ", ".join(exact)
 
-                # This is the case where the fileB "database" is actually a csv file
-                # instead of an SQlite3 file.
-
-                # TODO: Refactor whole block to `attach_database()
                 fBnme = attach_database(c, fileB, tblB, exCom, exAnd)
-                # TODO: Replace with call to is_csv_file(fileB)
-
-#                if fileB.split(".")[-1].lower()=="csv":
-#                # TODO: Try to move some of this to a function
-#                    dataB = uniVert([x for x in csv.reader(open("%s" % fileB, "rb"))])
-#
-#                    print_diagnostics(dataB, "dataB", True, ["Patent VARCHAR"])
-#                    #quickSQL(c, data=dataB,  table="dataB", header=True, typeList=["Patent VARCHAR"])
-#                    quickSQL2(c, data=dataB,  table="dataB", header=True, typeList=["Patent VARCHAR"])
-#
-#                    c.execute("CREATE INDEX IF NOT EXISTS dB_E ON dataB (%s)" % exCom)
-#                    c.execute("CREATE INDEX IF NOT EXISTS dB_U ON dataB (%s)" % uqB)
-#                    fBnme = "dataB"
-#                # fileB is an SQLite3 database file...
-#                else:
-#                    c.execute("ATTACH DATABASE '%s' AS db" % fileB)
-#                    # fBnme is, apparently a table name. Or maybe a tbl nme...
-#                    if tblB=="":
-#                        fBnme = "db.%s" % fileB.split(".")[-2].split("/")[-1]
-#                    else:
-#                        fBnme = "db.%s" % tblB
-
 
                 print_diagnostics(dataS2, "dataS", True, tList)
                 #quickSQL(c, data=dataS2, table="dataS", header=True, typeList=tList)
