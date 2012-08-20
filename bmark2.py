@@ -19,8 +19,14 @@ sys.path.append("lib")
 from fwork import *
 from bmconfig import *
 
+
+# This is what is known as "testable code"
+def get_filename_suffix(filename):
+    return filename.split(".")[-1].lower()
+
+# More testable code...
 def is_csv_file(filename):
-    return filename.split(".")[-1].lower()=="csv"
+    return get_filename_suffix(filename) == "csv"
 
 
 def print_diagnostics(data, table, header, tList):
