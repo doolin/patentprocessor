@@ -167,6 +167,10 @@ def handle_dataS(c, exCom, uqB, uqS, fuzzy, fBnme, exAnd):
 	else:
 	    handle_nonfuzzy_dataS(uqB, uqS, fBnme, exAnd)
 
+def print_match_qualifiers(exact, fuzzy, uqS):
+	print "Exact: ", exact
+	print "Fuzzy: ", fuzzy
+	print "uqS: ", uqS
 
 
 def bmVerify(results, filepath="", outdir = ""):
@@ -249,11 +253,9 @@ def bmVerify(results, filepath="", outdir = ""):
 
                 #FIGURE OUT WHICH ONES HAVE EXACT/FUZZY
                 exact = [dataS[0][i] for i,x in enumerate(dataS[3]) if x.upper()[0]=="E"]
-                print "Exact: ", exact
                 fuzzy = [dataS[0][i] for i,x in enumerate(dataS[3]) if x.upper()[0]=="F"]
-                print "Fuzzy: ", fuzzy
                 uqS =   [dataS[0][i] for i,x in enumerate(dataS[3]) if x.upper()[0]=="U"][0]
-                print "uqS: ", uqS
+                print_match_qualifiers(exact, fuzzy, uqS)
 
                 #CREATE INDEX, MERGE DATA BASED ON EXACTS
                 print "Creating indices... " + str(datetime.datetime.now())
@@ -269,13 +271,7 @@ def bmVerify(results, filepath="", outdir = ""):
                 #quickSQL(c, data=dataS2, table="dataS", header=True, typeList=tList)
                 quickSQL2(c, data=dataS2, table="dataS", header=True, typeList=tList)
 
-		# TODO: Refactor all of this into handle_dataS
 		handle_dataS(c, exCom, uqB, uqS, fuzzy, fBnme, exAnd)
-#                c.execute("CREATE INDEX IF NOT EXISTS dS_E ON dataS (%s);" % (exCom))
-#                if fuzzy:
-#                    handle_fuzzy_dataS(c, exCom, uqB, uqS, fuzzy, fBnme, exAnd)
-#                else:
-#                    handle_nonfuzzy_dataS(uqB, uqS, fBnme, exAnd)
 
                 create_match_tables(c, fBnme, uqB, exCom, exAnd)
 
