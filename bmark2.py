@@ -86,6 +86,12 @@ def handle_fuzzy_dataS(c, exCom, uqB, uqS, fuzzy, fBnme, exAnd):
                fBnme, exAnd, exCom, exCom, exAnd))
 
 
+def export_csv_results(c, output):
+	writer = csv.writer(open(output, "wb"), lineterminator="\n")
+	writer.writerows([[x[1] for x in c.execute("PRAGMA TABLE_INFO(dataM4)")]])
+	writer.writerows(c.execute("SELECT * FROM dataM4").fetchall())
+
+
 
 def bmVerify(results, filepath="", outdir = ""):
         """
@@ -217,11 +223,7 @@ def bmVerify(results, filepath="", outdir = ""):
 
                 print "Indices Done ... " + str(datetime.datetime.now())
 
-                #EXPORT THE RESULTS
-                # TODO: Refactor to `export_csv_results()`
-                writer = csv.writer(open(output, "wb"), lineterminator="\n")
-                writer.writerows([[x[1] for x in c.execute("PRAGMA TABLE_INFO(dataM4)")]])
-                writer.writerows(c.execute("SELECT * FROM dataM4").fetchall())
+		export_csv_results(c, output)
 
                 # TODO: Refactor to `print_results()`
                 print "Printing results ..." + str(datetime.datetime.now())
