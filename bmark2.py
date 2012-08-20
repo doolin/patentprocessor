@@ -65,6 +65,10 @@ def create_match_tables(c, fBnme, uqB, exCom, exAnd):
 
 
 def handle_fuzzy_dataS(c, exCom, uqB, uqS, fuzzy, fBnme, exAnd):
+	# TODO: Remove leading CREATE INDEX as its already been created in the
+	# calling function
+	# TODO: Split this into 3 functions, no reason to do all this work in
+	# one monster query.
         c.executescript("""
         CREATE INDEX IF NOT EXISTS dS_E ON dataS (%s);
 
@@ -102,17 +106,17 @@ def handle_nonfuzzy_dataS(uqB, uqS, fBnme, exAnd):
 	""" % (uqB, uqS, fBnme, exAnd))
 
 
-
-
-
 def export_csv_results(c, output):
 	writer = csv.writer(open(output, "wb"), lineterminator="\n")
 	writer.writerows([[x[1] for x in c.execute("PRAGMA TABLE_INFO(dataM4)")]])
 	writer.writerows(c.execute("SELECT * FROM dataM4").fetchall())
 
 
+# TODO: Create functions for handling true and false positives and negatives,
+# compute all the relevant statistics using those measures instead of the
+# mess of inline computation following the heredoc.
 def print_results(c, output, t):
-	print "Printing results ..." + str(datetime.datetime.now())
+	#print "Printing results ..." + str(datetime.datetime.now())
 	rep = [list(x) for x in c.execute("SELECT ErrUQ, uqSUB FROM dataM4")]
 	#print "Rep: ", rep
 	orig = len([x for x in rep if x[1]!=None])
@@ -199,6 +203,8 @@ def bmVerify(results, filepath="", outdir = ""):
 
         """
 
+	# TODO: Move these out of this function completely, and into the top
+	# part of this file.
 	uqB = "Unique_Inventor_ID2"
 	tblB = "invpat"
 	#fileS = "/home/ron/disambig/BM/DefTruth5.csv"
