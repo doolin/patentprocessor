@@ -116,6 +116,7 @@ def export_csv_results(c, output):
 # TODO: Create functions for handling true and false positives and negatives,
 # compute all the relevant statistics using those measures instead of the
 # mess of inline computation following the heredoc.
+# TODO: Switch to printing json results
 def print_results(c, output, t):
 	#print "Printing results ..." + str(datetime.datetime.now())
 	rep = [list(x) for x in c.execute("SELECT ErrUQ, uqSUB FROM dataM4")]
@@ -148,8 +149,9 @@ def print_results(c, output, t):
 
 
 def attach_database(c, fileB, tblB, exCom, exAnd):
-	# TODO: Replace with call to is_csv_file(fileB)
-	if fileB.split(".")[-1].lower()=="csv":
+	# TODO: Replace with call to is_csv_file(fileB),
+	# after it's unit tested.
+	if is_csv_file(fileB): #fileB.split(".")[-1].lower()=="csv":
 	# TODO: Try to move some of this to a function
 	    dataB = uniVert([x for x in csv.reader(open("%s" % fileB, "rb"))])
 
@@ -160,7 +162,7 @@ def attach_database(c, fileB, tblB, exCom, exAnd):
 	    c.execute("CREATE INDEX IF NOT EXISTS dB_E ON dataB (%s)" % exCom)
 	    c.execute("CREATE INDEX IF NOT EXISTS dB_U ON dataB (%s)" % uqB)
 	    fBnme = "dataB"
-	# fileB is an SQLite3 database file...
+	# else assume fileB is an SQLite3 database file...
 	else:
 	    c.execute("ATTACH DATABASE '%s' AS db" % fileB)
 	    # fBnme is, apparently a table name. Or maybe a tbl nme...
@@ -252,7 +254,7 @@ def bmVerify(results, filepath="", outdir = ""):
 
 		# Slice out rows 1, 2 & 3 from dataS. This is the data which gets
 		# put in the database created below, and used for matching.
-		# TODO: Refactor into slice_out_header()
+		# TODO: Refactor into slice_header_from()
                 dataS2 = [dataS[0]]
                 dataS2.extend(dataS[4:])
 
