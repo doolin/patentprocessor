@@ -70,31 +70,36 @@ def handle_fuzzy_dataS(c, exCom, uqB, uqS, fuzzy, fBnme, exAnd):
 	# TODO: Split this into 3 functions, no reason to do all this work in
 	# one monster query.
         c.executescript("""
-        CREATE INDEX IF NOT EXISTS dS_E ON dataS (%s);
+               CREATE INDEX
+	      IF NOT EXISTS dS_E ON dataS (%s);
 
-        /* RETAIN ONLY JARO>0.9 FUZZY AND EXACT MATCHES */
-        CREATE TABLE dataM AS
-            SELECT  a.*, %s AS uqB, %s AS uqS, %s AS jaro
-              FROM  %s AS a
-        INNER JOIN  dataS AS b
-            ON  %s
-             WHERE  jaro>0.90;
+              /* RETAIN ONLY JARO>0.9 FUZZY AND EXACT MATCHES */
+               CREATE TABLE  dataM AS
+                     SELECT  a.*, %s AS uqB, %s AS uqS, %s AS jaro
+                       FROM  %s AS a
+                 INNER JOIN  dataS AS b
+                         ON  %s
+                      WHERE  jaro>0.90;
 
-        /* DETERMINE MAXIMUM JARO FOR EACH UQ AND EXACT COMBO */
-        CREATE TABLE dataT AS
-            SELECT  uqS, %s, MAX(jaro) AS jaro, count(*) as cnt
-              FROM  dataM
-          GROUP BY  uqS, %s;
+              /* DETERMINE MAXIMUM JARO FOR EACH UQ AND EXACT COMBO */
+               CREATE TABLE  dataT AS
+                     SELECT  uqS, %s, MAX(jaro)
+		         AS  jaro, count(*) as cnt
+                       FROM  dataM
+                   GROUP BY  uqS, %s;
 
-        /* RETAIN ONLY MAXIMUM JARO */
-        CREATE TABLE dataM2 AS
-            SELECT  a.*
-              FROM  dataM AS a
-        INNER JOIN  dataT AS b
-            ON  a.uqS=b.uqS AND a.jaro=b.jaro AND %s;
-        """ % (exCom, uqB, uqS, 
-               "*".join(["jarow(a.%s, b.%s)" % (x,x) for x in fuzzy]),
-               fBnme, exAnd, exCom, exCom, exAnd))
+              /* RETAIN ONLY  MAXIMUM JARO */
+               CREATE TABLE  dataM2 AS
+                     SELECT  a.*
+                       FROM  dataM
+		         AS  a
+                 INNER JOIN  dataT AS b
+                         ON  a.uqS=b.uqS
+                        AND  a.jaro=b.jaro
+			AND  %s;
+                        """  % (exCom, uqB, uqS, 
+                               "*".join(["jarow(a.%s, b.%s)" % (x,x) for x in fuzzy]),
+                                fBnme, exAnd, exCom, exCom, exAnd))
 
 
 def handle_nonfuzzy_dataS(uqB, uqS, fBnme, exAnd):
