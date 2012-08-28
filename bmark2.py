@@ -37,31 +37,34 @@ def print_diagnostics(data, table, header, tList):
    print "tList: ", tList
 
 
+#def create_table_dataM3(c, fBnme, uqB, exCom, exAnd):
+
 def create_match_tables(c, fBnme, uqB, exCom, exAnd):
     # TODO: Split this query into two functions, test each
     c.executescript("""
         /* EXPAND UNIQUE BASE AND INDICATE ACTIVE MATCHES */
-        CREATE TABLE dataM3 AS
-        SELECT  uqS, a.*
-          FROM (SELECT  uqS AS uqSUB, a.*
-              FROM (SELECT  uqB, b.*
-                  FROM  (SELECT DISTINCT(uqB) FROM dataM2 WHERE uqB!="") AS a
-                INNER JOIN  %s AS b
-                    ON  a.uqB=b.%s) AS a
-             LEFT JOIN (SELECT %s, uqB, uqS FROM dataM2) AS b
-                ON  a.uqB=b.uqB AND %s) AS a
-        INNER JOIN (SELECT DISTINCT uqB, uqS FROM dataM2) AS b
-            ON  a.%s=b.uqB;
+           CREATE TABLE  dataM3 AS
+                 SELECT  uqS, a.*
+           FROM (SELECT  uqS AS uqSUB, a.*
+             FROM  (SELECT  uqB, b.*
+               FROM  (SELECT DISTINCT(uqB)
+	         FROM dataM2 WHERE uqB!="") AS a
+                        INNER JOIN  %s AS b
+                                ON  a.uqB=b.%s) AS a
+                         LEFT JOIN  (SELECT %s, uqB, uqS FROM dataM2) AS b
+                                ON  a.uqB=b.uqB AND %s) AS a
+                        INNER JOIN  (SELECT DISTINCT uqB, uqS FROM dataM2) AS b
+                                ON  a.%s=b.uqB;
 
         /* INDICATE INVENTORS WHO DO NOT MATCH */
-        CREATE TABLE dataM4 AS
-        SELECT  errD(a.ErrUQ, uqB) AS ErrUQ, b.*
-          FROM (SELECT uqS, freqUQ(uqB) as ErrUQ FROM dataM3 GROUP BY uqS) AS a
-        INNER JOIN  dataM3 AS b
-            ON  a.uqS=b.uqS AND b.AppYear <= '2010' /*AND a.uqS not in (83, 85, 93)*/
-          ORDER BY  uqS, %s;
-
-        """ % (fBnme, uqB, exCom, exAnd, uqB, exCom))
+           CREATE TABLE  dataM4 AS
+                 SELECT  errD(a.ErrUQ, uqB) AS ErrUQ, b.*
+                   FROM  (SELECT uqS, freqUQ(uqB) as ErrUQ
+		     FROM  dataM3 GROUP BY uqS) AS a
+               INNER JOIN  dataM3 AS b
+                       ON  a.uqS=b.uqS AND b.AppYear <= '2010' /*AND a.uqS not in (83, 85, 93)*/
+                 ORDER BY  uqS, %s;
+                      """  % (fBnme, uqB, exCom, exAnd, uqB, exCom))
 
 
 def handle_fuzzy_dataS(c, exCom, uqB, uqS, fuzzy, fBnme, exAnd):
@@ -71,7 +74,7 @@ def handle_fuzzy_dataS(c, exCom, uqB, uqS, fuzzy, fBnme, exAnd):
 	# one monster query.
         c.executescript("""
                CREATE INDEX
-	      IF NOT EXISTS dS_E ON dataS (%s);
+	      IF NOT EXISTS  dS_E ON dataS (%s);
 
               /* RETAIN ONLY JARO>0.9 FUZZY AND EXACT MATCHES */
                CREATE TABLE  dataM AS
@@ -104,12 +107,12 @@ def handle_fuzzy_dataS(c, exCom, uqB, uqS, fuzzy, fBnme, exAnd):
 
 def handle_nonfuzzy_dataS(uqB, uqS, fBnme, exAnd):
     c.executescript("""
-	CREATE TABLE dataM2 AS
-	    SELECT  *, %s AS uqB, %s AS uqS
-	      FROM  %s AS a
-	INNER JOIN  dataS AS b
-		ON  %s;
-	""" % (uqB, uqS, fBnme, exAnd))
+           CREATE TABLE  dataM2 AS
+	         SELECT  *, %s AS uqB, %s AS uqS
+	           FROM  %s AS a
+	     INNER JOIN  dataS AS b
+		     ON  %s;
+	            """  % (uqB, uqS, fBnme, exAnd))
 
 
 def export_csv_results(c, output):
