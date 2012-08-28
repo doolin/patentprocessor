@@ -37,10 +37,7 @@ def print_diagnostics(data, table, header, tList):
    print "tList: ", tList
 
 
-#def create_table_dataM3(c, fBnme, uqB, exCom, exAnd):
-
-def create_match_tables(c, fBnme, uqB, exCom, exAnd):
-    # TODO: Split this query into two functions, test each
+def create_table_dataM3(c, fBnme, uqB, exCom, exAnd):
     c.executescript("""
         /* EXPAND UNIQUE BASE AND INDICATE ACTIVE MATCHES */
            CREATE TABLE  dataM3 AS
@@ -55,7 +52,11 @@ def create_match_tables(c, fBnme, uqB, exCom, exAnd):
                                 ON  a.uqB=b.uqB AND %s) AS a
                         INNER JOIN  (SELECT DISTINCT uqB, uqS FROM dataM2) AS b
                                 ON  a.%s=b.uqB;
+                               """  % (fBnme, uqB, exCom, exAnd, uqB))
 
+
+def create_table_dataM4(c, exCom):
+    c.executescript("""
         /* INDICATE INVENTORS WHO DO NOT MATCH */
            CREATE TABLE  dataM4 AS
                  SELECT  errD(a.ErrUQ, uqB) AS ErrUQ, b.*
@@ -64,7 +65,13 @@ def create_match_tables(c, fBnme, uqB, exCom, exAnd):
                INNER JOIN  dataM3 AS b
                        ON  a.uqS=b.uqS AND b.AppYear <= '2010' /*AND a.uqS not in (83, 85, 93)*/
                  ORDER BY  uqS, %s;
-                      """  % (fBnme, uqB, exCom, exAnd, uqB, exCom))
+                      """  % (exCom))
+
+
+def create_match_tables(c, fBnme, uqB, exCom, exAnd):
+    # TODO: Split this query into two functions, test each
+    create_table_dataM3(c, fBnme, uqB, exCom, exAnd)
+    create_table_dataM4(c, exCom)
 
 
 def handle_fuzzy_dataS(c, exCom, uqB, uqS, fuzzy, fBnme, exAnd):
