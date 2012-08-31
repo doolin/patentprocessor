@@ -171,6 +171,7 @@ DROP INDEX IF EXISTS idx_lower;
 DROP INDEX IF EXISTS idx_patent;
 DROP INDEX IF EXISTS idx_upper;
 DROP INDEX IF EXISTS index_invnum_on_invpat;
+DROP INDEX IF EXISTS idx_urid;
 
 
 -- Add new indexes conforming to preprocessing schema...
@@ -187,6 +188,7 @@ CREATE INDEX loccs on invpat (City, State);
 CREATE INDEX locs on invpat (State);
 CREATE INDEX pdx ON invpat (Patent);
 CREATE INDEX pidx ON invpat (Patent, InvSeq);
+CREATE INDEX idx_urid  ON invpat (Unique_Record_ID);
 
 -- Get rid of the temporary table...
 drop table invpat_1;
