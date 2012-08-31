@@ -262,7 +262,23 @@ class SQLite:
 
     #-------------------------------------TABLE MANIPULATION
 
-    def add(self, key=None, **kwargs):
+    # The original definition of add, used by `clean.py`.
+    # TODO: Fix clean.py and delete this function
+    def add(self, key, typ="", table=None):
+        import types
+        table = self.getTbl(table)
+        if type(key) != types.ListType:
+            key = [key]
+        for k in key:
+            try:
+                self.c.execute("ALTER TABLE %s ADD COLUMN %s %s" % (table, k, typ))
+            except:
+                pass
+
+    # The add function was changed on June 30, and this new definition won't
+    # work with the call in clean.py
+    # TODO: Reconcile the calling function with the new definition.
+    def add_new(self, key=None, **kwargs):
         """
         Allows one the ability to add columns to SQLite table
         **update 2012/06/30: 
