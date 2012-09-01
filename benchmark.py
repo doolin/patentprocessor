@@ -6,9 +6,16 @@
 # Underclumping: unique records vs. total records
 
 
-import sqlite3, sys, csv, datetime;
+import sqlite3
+import csv
+import datetime;
+# http://docs.python.org/howto/argparse.html
+import argparse
+
+import sys
 sys.path.append( './lib/' )
 sys.path.append("lib")
+
 from fwork import *;
 
 def bmVerify(results, filepath="", outdir = ""):
@@ -30,11 +37,11 @@ def bmVerify(results, filepath="", outdir = ""):
         
         """
         for result in results:
-                #uqB = "Unique_Inventor_ID2"
+                uqB = "Unique_Inventor_ID2"
                 #uqB = "final_1"
                 #uqB = "final_2"
                 #uqB = "final_3"
-                uqB = "final_5"
+                #uqB = "final_5"
                 #uqB = "final_6"
                 tblB = "invpat"
                 #fileS = "/home/doolin/src/patentbenchmarks/combined.csv"

@@ -1,17 +1,23 @@
 #!/usr/bin/env python
 
 import logging
+# http://docs.python.org/howto/argparse.html
+import argparse
+import os
+import datetime
+import re
+
 import sys
 sys.path.append( '.' )
 sys.path.append( './lib/' )
 import shutil
+
 from patXML import SQLPatent
 from patXML import XMLPatent
 from patXML import uniasc
 from fwork  import *
-import os, datetime, re
 
-# TODO: implement as a command line option
+# TODO: implement as a command line option using argparse
 flder = '/data/patentdata/patents/2011'
 #flder = '/var/share/patentdata/patents/2007'
 #logfile = flder + "/" + 'xml-parsing.log'
