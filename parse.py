@@ -12,7 +12,7 @@ from fwork  import *
 import os, datetime, re
 
 # TODO: implement as a command line option
-flder = '/var/share/patentdata/patents/2012'
+flder = '/data/patentdata/patents/2011'
 #flder = '/var/share/patentdata/patents/2007'
 #logfile = flder + "/" + 'xml-parsing.log'
 logfile = "./" + 'xml-parsing.log'
