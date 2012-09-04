@@ -37,10 +37,12 @@ def bmVerify(results, filepath="", outdir = ""):
         
         """
         for result in results:
-                uqB = "Unique_Inventor_ID2"
+
+                #uqB = "Unique_Inventor_ID2"
                 #uqB = "final_1"
                 #uqB = "final_2"
                 #uqB = "final_3"
+                uqB = "final_4"
                 #uqB = "final_5"
                 #uqB = "final_6"
                 tblB = "invpat"
@@ -180,7 +182,7 @@ def bmVerify(results, filepath="", outdir = ""):
                         SELECT  errD(a.ErrUQ, uqB) AS ErrUQ, b.*
                           FROM (SELECT uqS, freqUQ(uqB) as ErrUQ FROM dataM3 GROUP BY uqS) AS a
                     INNER JOIN  dataM3 AS b
-                            ON  a.uqS=b.uqS AND b.AppYear <= '2009' /*AND a.uqS not in (83, 85, 93)*/
+                            ON  a.uqS=b.uqS AND b.AppYear <= '2012' /*AND a.uqS not in (83, 85, 93)*/
                       ORDER BY  uqS, %s;
 
                     """ % (fBnme, uqB, exCom, exAnd, uqB, exCom))
