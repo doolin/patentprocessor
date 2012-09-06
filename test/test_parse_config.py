@@ -45,6 +45,14 @@ class TestPatentConfig(unittest.TestCase):
         # reset directory
         os.chdir('test')
 
+    def test_argparse_regex(self):
+        # test that argparse is setting the regular expression correctly
+        os.chdir('..')
+        
+        # test valid regex on unittest/fixtures folder
+        exit_status = os.system('python parse.py --patentroot %s --regex 201\d_\d.xml' % (os.getcwd() + '/unittest/fixtures'))
+        self.assertTrue(exit_status == 0)
+
     def test_argparse_directory(self):
         # test that argparse is setting the variables correctly for directories
         os.chdir('..')
