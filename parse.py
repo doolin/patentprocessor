@@ -25,15 +25,17 @@ parser.add_argument('--xmlregex','-x', type=str, nargs='?', default=r"ipg\d{6}.x
 
 # parse arguments and assign values
 args = parser.parse_args()
-PATENTROOT = args.patentroot
 DIRECTORIES = args.directory.split(',')
 XMLREGEX = args.xmlregex
-
-# TODO: implement as a command line option using argparse
-if os.environ.has_key('PATENTROOT'):
-    flder = os.environ['PATENTROOT']
+if args.patentroot:
+    PATENTROOT = args.patentroot
+elif os.environ.has_key('PATENTROOT'):
+    PATENTROOT = os.environ['PATENTROOT']
 else:
-    flder = '/data/patentdata/patents/2012'
+    PATENTROOT = '/data/patentdata/patents/2012'
+
+flder = PATENTROOT
+
 #flder = '/var/share/patentdata/patents/2007'
 #logfile = flder + "/" + 'xml-parsing.log'
 logfile = "./" + 'xml-parsing.log'
