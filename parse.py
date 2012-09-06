@@ -18,7 +18,10 @@ from patXML import uniasc
 from fwork  import *
 
 # TODO: implement as a command line option using argparse
-flder = '/data/patentdata/patents/2012'
+if os.environ.has_key('PATENTROOT'):
+    flder = os.environ['PATENTROOT']
+else:
+    flder = '/data/patentdata/patents/2012'
 #flder = '/var/share/patentdata/patents/2007'
 #logfile = flder + "/" + 'xml-parsing.log'
 logfile = "./" + 'xml-parsing.log'
