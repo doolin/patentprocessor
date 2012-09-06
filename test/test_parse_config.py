@@ -31,8 +31,8 @@ class TestPatentConfig(unittest.TestCase):
         # test that argparse is setting the variables correctly for patentroot
         os.chdir('..')
         exit_status = os.system('python parse.py --patentroot %s' % (os.getcwd() + '/test/unittest/fixtures'))
-        # because of the default regex, this should fail
-        self.assertTrue(exit_status != 0)
+        # valid directory, but no xml files
+        self.assertTrue(exit_status == 0)
 
         exit_status = os.system('python parse.py --patentroot /dev/null')
         # specify invalid directory, should fail
@@ -59,9 +59,9 @@ class TestPatentConfig(unittest.TestCase):
     def test_argparse_directory(self):
         # test that argparse is setting the variables correctly for directories
         os.chdir('..')
-        # parse.py should not find any .xml files, so this should fail
+        # parse.py should not find any .xml files, but this should still pass
         exit_status = os.system('python parse.py --patentroot %s' % (os.getcwd() + '/test/unittest'))
-        self.assertTrue(exit_status != 0)
+        self.assertTrue(exit_status == 0)
 
         # parse.py should concatentate the correct directory and find xml files
         exit_status = os.system("python parse.py --patentroot %s --directory fixtures --xmlregex '201\d_\d.xml'" % (os.getcwd() + '/test/unittest'))
