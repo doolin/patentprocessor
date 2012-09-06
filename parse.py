@@ -19,7 +19,7 @@ from fwork  import *
 
 # setup argparse
 parser = argparse.ArgumentParser(description='Specify source directory/directories for xml files to be parsed')
-parser.add_argument('--directory','-d', type=str, nargs='?', default='', help='comma separated list of directories relative to $PATENTROOT that parse.py will search for .xml files')
+parser.add_argument('--directory','-d', type=str, nargs='+', default='', help='comma separated list of directories relative to $PATENTROOT that parse.py will search for .xml files')
 parser.add_argument('--patentroot','-p', type=str, nargs='?', default=os.environ['PATENTROOT'] if os.environ.has_key('PATENTROOT') else '/', help='root directory of all patent files/directories')
 parser.add_argument('--xmlregex','-x', type=str, nargs='?', default=r"ipg\d{6}.xml", help='regex used to match xml files in each directory')
 
@@ -37,8 +37,9 @@ logging.basicConfig(filename=logfile, level=logging.DEBUG)
 t1 = datetime.datetime.now()
 
 #get a listing of all files within the directory that follow the naming pattern
-files = [x for x in os.listdir(PATENTROOT)
-         if re.match(XMLREGEX, x, re.I)!=None]
+files = [directory+'/'+fi for directory in DIRECTORIES for fi in os.listdir(PATENTROOT+'/'+directory) if re.match(XMLREGEX, fi, re.I) != None]
+#files = [x for x in os.listdir(PATENTROOT)
+#         if re.match(XMLREGEX, x, re.I)!=None]
 print "Total files: %d" % (len(files))
 logging.info("Total files: %d" % (len(files)))
 
