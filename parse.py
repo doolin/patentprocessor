@@ -45,9 +45,7 @@ t1 = datetime.datetime.now()
 
 #get a listing of all files within the directory that follow the naming pattern
 files = [x for x in os.listdir(flder)
-         #if re.match(r"ip[a-z]{2}[0-9]{6,8}[.]xml", x, re.I)!=None]
-         #if re.match(r"ipg\d{6}.one.xml", x, re.I)!=None]
-         if re.match(r"ipg\d{6}.xml", x, re.I)!=None]
+         if re.match(XMLREGEX, x, re.I)!=None]
 print "Total files: %d" % (len(files))
 logging.info("Total files: %d" % (len(files)))
 
