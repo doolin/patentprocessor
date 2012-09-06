@@ -30,7 +30,7 @@ class TestPatentConfig(unittest.TestCase):
     def test_argparse_patentroot(self):
         # test that argparse is setting the variables correctly for patentroot
         os.chdir('..')
-        exit_status = os.system('python parse.py --patentroot %s' % (os.getcwd() + '/unittest/fixtures'))
+        exit_status = os.system('python parse.py --patentroot %s' % (os.getcwd() + '/test/unittest/fixtures'))
         # because of the default regex, this should fail
         self.assertTrue(exit_status != 0)
 
@@ -50,7 +50,7 @@ class TestPatentConfig(unittest.TestCase):
         os.chdir('..')
         
         # test valid regex on unittest/fixtures folder
-        exit_status = os.system("python parse.py --patentroot %s --xmlregex '201\d_\d.xml'" % (os.getcwd() + '/unittest/fixtures'))
+        exit_status = os.system("python parse.py --patentroot %s --xmlregex '201\d_\d.xml'" % (os.getcwd() + '/test/unittest/fixtures'))
         self.assertTrue(exit_status == 0)
 
         # reset directory
@@ -60,11 +60,11 @@ class TestPatentConfig(unittest.TestCase):
         # test that argparse is setting the variables correctly for directories
         os.chdir('..')
         # parse.py should not find any .xml files, so this should fail
-        exit_status = os.system('python parse.py --patentroot %s' % (os.getcwd() + '/unittest'))
+        exit_status = os.system('python parse.py --patentroot %s' % (os.getcwd() + '/test/unittest'))
         self.assertTrue(exit_status != 0)
 
         # parse.py should concatentate the correct directory and find xml files
-        exit_status = os.system("python parse.py --patentroot %s --directory fixtures --xmlregex '201\d_\d.xml'" % (os.getcwd() + '/unittest'))
+        exit_status = os.system("python parse.py --patentroot %s --directory fixtures --xmlregex '201\d_\d.xml'" % (os.getcwd() + '/test/unittest'))
         self.assertTrue(exit_status == 0)
 
         # TODO: make test for iterating through multiple directories
