@@ -29,8 +29,6 @@ DIRECTORIES = args.directory
 XMLREGEX = args.xmlregex
 PATENTROOT = args.patentroot
 
-#PATENTROOT = '/var/share/patentdata/patents/2007'
-#logfile = PATENTROOT + "/" + 'xml-parsing.log'
 logfile = "./" + 'xml-parsing.log'
 logging.basicConfig(filename=logfile, level=logging.DEBUG)
 
@@ -38,8 +36,6 @@ t1 = datetime.datetime.now()
 
 #get a listing of all files within the directory that follow the naming pattern
 files = [directory+'/'+fi for directory in DIRECTORIES for fi in os.listdir(PATENTROOT+'/'+directory) if re.match(XMLREGEX, fi, re.I) != None]
-#files = [x for x in os.listdir(PATENTROOT)
-#         if re.match(XMLREGEX, x, re.I)!=None]
 print "Total files: %d" % (len(files))
 logging.info("Total files: %d" % (len(files)))
 
