@@ -17,6 +17,17 @@ from patXML import XMLPatent
 from patXML import uniasc
 from fwork  import *
 
+# setup argparse
+parser = argparse.ArgumentParser(description='Specify source directory/directories for xml files to be parsed')
+parser.add_argument('--directory','-d', type=str, nargs='+', help='comma separated list of directories relative to $PATENTROOT that parse.py will search for .xml files')
+parser.add_argument('--patentroot','-p', type=str, nargs='?', help='root directory of all patent files/directories')
+parser.add_argument('--xmlregex','-x', type=str, nargs='?', default=r"ipg\d{6}.xml", help='regex used to match xml files in each directory')
+
+# parse arguments and assign values
+args = parser.parse_args()
+print args
+
+
 # TODO: implement as a command line option using argparse
 if os.environ.has_key('PATENTROOT'):
     flder = os.environ['PATENTROOT']
