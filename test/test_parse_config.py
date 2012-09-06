@@ -27,7 +27,7 @@ class TestPatentConfig(unittest.TestCase):
         # need a default value for later tests
         self.assertTrue(os.environ.has_key('PATENTROOT'))
 
-    def test_patentroot(self):
+    def test_argparse_patentroot(self):
         # test that argparse is setting the variables correctly for patentroot
         os.chdir('..')
         exit_status = os.system('python parse.py --patentroot %s' % (os.getcwd() + '/unittest/fixtures'))
