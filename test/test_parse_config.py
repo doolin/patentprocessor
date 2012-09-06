@@ -42,6 +42,8 @@ class TestPatentConfig(unittest.TestCase):
         exit_status = os.system('python parse.py --patentroot %s' % (os.environ['PATENTROOT']))
         # this should pass
         self.assertTrue(exit_status == 0)
+        # reset directory
+        os.chdir('test')
 
 
     def test_gets_environment_var(self):
