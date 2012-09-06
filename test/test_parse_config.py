@@ -14,7 +14,6 @@ logging.basicConfig(filename=log_file, level=logging.DEBUG)
 
 
 # TODO: use subprocess.Popen to suppress output instead of using janky os.system
-# TODO: use only 2012_\d.xml as regex -- don't need to do a bunch of files
 class TestPatentConfig(unittest.TestCase):
     # Make sure that if os.environ['PATENTROOT'] is set, then we parse it correctly
     # if it is nonexistant/incorrect, then recover
@@ -48,7 +47,7 @@ class TestPatentConfig(unittest.TestCase):
     def test_argparse_regex(self):
         # test that argparse is setting the regular expression correctly
         # test valid regex on unittest/fixtures folder
-        exit_status = os.system("python parse.py --patentroot %s --xmlregex '201\d_\d.xml'" % (os.getcwd() + '/test/unittest/fixtures'))
+        exit_status = os.system("python parse.py --patentroot %s --xmlregex '2012_\d.xml'" % (os.getcwd() + '/test/unittest/fixtures'))
         self.assertTrue(exit_status == 0)
 
     def test_argparse_directory(self):
@@ -58,7 +57,7 @@ class TestPatentConfig(unittest.TestCase):
         self.assertTrue(exit_status == 0)
 
         # parse.py should concatentate the correct directory and find xml files
-        exit_status = os.system("python parse.py --patentroot %s --directory fixtures --xmlregex '201\d_\d.xml'" % (os.getcwd() + '/test/unittest'))
+        exit_status = os.system("python parse.py --patentroot %s --directory fixtures --xmlregex '2012_\d.xml'" % (os.getcwd() + '/test/unittest'))
         self.assertTrue(exit_status == 0)
 
         # TODO: make test for iterating through multiple directories
