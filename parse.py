@@ -19,20 +19,15 @@ from fwork  import *
 
 # setup argparse
 parser = argparse.ArgumentParser(description='Specify source directory/directories for xml files to be parsed')
-parser.add_argument('--directory','-d', type=str, nargs='+', help='comma separated list of directories relative to $PATENTROOT that parse.py will search for .xml files')
-parser.add_argument('--patentroot','-p', type=str, nargs='?', help='root directory of all patent files/directories')
+parser.add_argument('--directory','-d', type=str, nargs='?', default='', help='comma separated list of directories relative to $PATENTROOT that parse.py will search for .xml files')
+parser.add_argument('--patentroot','-p', type=str, nargs='?', default=os.environ['PATENTROOT'] if os.environ.has_key('PATENTROOT') else '/', help='root directory of all patent files/directories')
 parser.add_argument('--xmlregex','-x', type=str, nargs='?', default=r"ipg\d{6}.xml", help='regex used to match xml files in each directory')
 
 # parse arguments and assign values
 args = parser.parse_args()
 DIRECTORIES = args.directory
 XMLREGEX = args.xmlregex
-if args.patentroot:
-    PATENTROOT = args.patentroot
-elif os.environ.has_key('PATENTROOT'):
-    PATENTROOT = os.environ['PATENTROOT']
-else:
-    PATENTROOT = '/data/patentdata/patents/2012'
+PATENTROOT = args.patentroot
 
 #PATENTROOT = '/var/share/patentdata/patents/2007'
 #logfile = PATENTROOT + "/" + 'xml-parsing.log'
