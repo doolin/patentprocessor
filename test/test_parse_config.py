@@ -26,10 +26,10 @@ class TestPatentConfig(unittest.TestCase):
             logging.error('Please run from the patentprocessor/test directory')
         # need a default value for later tests
         self.assertTrue(os.environ.has_key('PATENTROOT'))
+        os.chdir('..')
 
     def test_argparse_patentroot(self):
         # test that argparse is setting the variables correctly for patentroot
-        os.chdir('..')
         exit_status = os.system('python parse.py --patentroot %s' % (os.getcwd() + '/test/unittest/fixtures'))
         # valid directory, but no xml files
         self.assertTrue(exit_status == 0)
@@ -42,23 +42,15 @@ class TestPatentConfig(unittest.TestCase):
         exit_status = os.system('python parse.py --patentroot %s' % (os.environ['PATENTROOT']))
         # this should pass
         self.assertTrue(exit_status == 0)
-        # reset directory
-        os.chdir('test')
 
     def test_argparse_regex(self):
         # test that argparse is setting the regular expression correctly
-        os.chdir('..')
-        
         # test valid regex on unittest/fixtures folder
         exit_status = os.system("python parse.py --patentroot %s --xmlregex '201\d_\d.xml'" % (os.getcwd() + '/test/unittest/fixtures'))
         self.assertTrue(exit_status == 0)
 
-        # reset directory
-        os.chdir('test')
-
     def test_argparse_directory(self):
         # test that argparse is setting the variables correctly for directories
-        os.chdir('..')
         # parse.py should not find any .xml files, but this should still pass
         exit_status = os.system('python parse.py --patentroot %s' % (os.getcwd() + '/test/unittest'))
         self.assertTrue(exit_status == 0)
@@ -69,15 +61,13 @@ class TestPatentConfig(unittest.TestCase):
 
         # TODO: make test for iterating through multiple directories
 
-        # reset directory
-        os.chdir('test')
-
-
-
     def test_gets_environment_var(self):
         # sanity check for existing valid path
         logging.info("Testing getting valid env var PATENTROOT")
         self.assertTrue(os.environ.has_key('PATENTROOT'))
+
+    def tearDown(self):
+        os.chdir('test')
 
 if __name__ == '__main__':
 
