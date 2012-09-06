@@ -45,6 +45,23 @@ class TestPatentConfig(unittest.TestCase):
         # reset directory
         os.chdir('test')
 
+    def test_argparse_directory(self):
+        # test that argparse is setting the variables correctly for directories
+        os.chdir('..')
+        # parse.py should not find any .xml files, so this should fail
+        exit_status = os.system('python parse.py --patentroot %s' % (os.getcwd() + '/unittest'))
+        self.assertTrue(exit_status != 0)
+
+        # parse.py should concatentate the correct directory and find xml files
+        exit_status = os.system('python parse.py --patentroot %s --directory fixtures' % (os.getcwd() + '/unittest'))
+        self.assertTrue(exit_status == 0)
+
+        # TODO: make test for iterating through multiple directories
+
+        # reset directory
+        os.chdir('test')
+
+
 
     def test_gets_environment_var(self):
         # sanity check for existing valid path
