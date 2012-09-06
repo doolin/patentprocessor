@@ -34,17 +34,15 @@ elif os.environ.has_key('PATENTROOT'):
 else:
     PATENTROOT = '/data/patentdata/patents/2012'
 
-flder = PATENTROOT
-
-#flder = '/var/share/patentdata/patents/2007'
-#logfile = flder + "/" + 'xml-parsing.log'
+#PATENTROOT = '/var/share/patentdata/patents/2007'
+#logfile = PATENTROOT + "/" + 'xml-parsing.log'
 logfile = "./" + 'xml-parsing.log'
 logging.basicConfig(filename=logfile, level=logging.DEBUG)
 
 t1 = datetime.datetime.now()
 
 #get a listing of all files within the directory that follow the naming pattern
-files = [x for x in os.listdir(flder)
+files = [x for x in os.listdir(PATENTROOT)
          if re.match(XMLREGEX, x, re.I)!=None]
 print "Total files: %d" % (len(files))
 logging.info("Total files: %d" % (len(files)))
@@ -60,7 +58,7 @@ for filenum, filename in enumerate(files):
                 .*?
                 [<][/]us[-]patent[-]grant[>])    #and here is the end tag
              """,
-            open(flder+"/"+files[filenum]).read(), re.I + re.S + re.X)
+            open(PATENTROOT+"/"+files[filenum]).read(), re.I + re.S + re.X)
     print "   - Total Patents: %d" % (len(XMLs))
     logging.info("   - Total Patents: %d" % (len(XMLs)))
 
@@ -92,7 +90,7 @@ for filenum, filename in enumerate(files):
         # Cut the chaining here to better parameterize the call, allowing
         # the databases to be built in place
         # (/var/share/patentdata/patents/<year>)
-        # outdb = flder + "/" + table
+        # outdb = PATENTROOT + "/" + table
         q = SQLPatent().tblBuild(xmllist, tbl=table)
         SQLPatent().dbBuild(q, tbl=table, week=filename)
         #SQLPatent().dbBuild(q=SQLPatent().tblBuild(xmllist, tbl=table), tbl=table, week=filename)
@@ -107,5 +105,5 @@ for table in tables:
 
 #for table in tables:
 #    filename = table + ".sqlite3"
-#    shutil.move(filename,flder)
+#    shutil.move(filename,PATENTROOT)
 
