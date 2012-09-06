@@ -25,8 +25,9 @@ parser.add_argument('--xmlregex','-x', type=str, nargs='?', default=r"ipg\d{6}.x
 
 # parse arguments and assign values
 args = parser.parse_args()
-print args
-
+PATENTROOT = args.patentroot
+DIRECTORIES = args.directory.split(',')
+XMLREGEX = args.xmlregex
 
 # TODO: implement as a command line option using argparse
 if os.environ.has_key('PATENTROOT'):
