@@ -50,7 +50,7 @@ class TestPatentConfig(unittest.TestCase):
         os.chdir('..')
         
         # test valid regex on unittest/fixtures folder
-        exit_status = os.system('python parse.py --patentroot %s --regex 201\d_\d.xml' % (os.getcwd() + '/unittest/fixtures'))
+        exit_status = os.system('python parse.py --patentroot %s --xmlregex 201\d_\d.xml' % (os.getcwd() + '/unittest/fixtures'))
         self.assertTrue(exit_status == 0)
 
         # reset directory
@@ -64,7 +64,7 @@ class TestPatentConfig(unittest.TestCase):
         self.assertTrue(exit_status != 0)
 
         # parse.py should concatentate the correct directory and find xml files
-        exit_status = os.system('python parse.py --patentroot %s --directory fixtures --regex 201\d_\d.xml' % (os.getcwd() + '/unittest'))
+        exit_status = os.system('python parse.py --patentroot %s --directory fixtures --xmlregex 201\d_\d.xml' % (os.getcwd() + '/unittest'))
         self.assertTrue(exit_status == 0)
 
         # TODO: make test for iterating through multiple directories
