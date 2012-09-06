@@ -25,7 +25,7 @@ parser.add_argument('--xmlregex','-x', type=str, nargs='?', default=r"ipg\d{6}.x
 
 # parse arguments and assign values
 args = parser.parse_args()
-DIRECTORIES = args.directory.split(',')
+DIRECTORIES = args.directory.split(',') if args.directory else None
 XMLREGEX = args.xmlregex
 if args.patentroot:
     PATENTROOT = args.patentroot
