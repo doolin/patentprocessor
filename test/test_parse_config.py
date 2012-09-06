@@ -13,6 +13,8 @@ log_file = os.path.join(dir, 'unittest/unit-test.log')
 logging.basicConfig(filename=log_file, level=logging.DEBUG)
 
 
+# TODO: use subprocess.Popen to suppress output instead of using janky os.system
+# TODO: use only 2012_\d.xml as regex -- don't need to do a bunch of files
 class TestPatentConfig(unittest.TestCase):
     # Make sure that if os.environ['PATENTROOT'] is set, then we parse it correctly
     # if it is nonexistant/incorrect, then recover
