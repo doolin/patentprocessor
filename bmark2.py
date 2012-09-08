@@ -487,6 +487,10 @@ def bmVerify(results, filepath="", outdir = ""):
 		handle_dataS(c, exCom, uqB, uqS, fuzzy, fBnme, exAnd)
 
                 create_match_tables(c, fBnme, uqB, exCom, exAnd)
+                stmt = """create view results as select
+		          ErrUQ, uqS, uqSUB, uqB, Lastname,
+			  Firstname, Patent, City, State from dataM4;"""
+		c.executescript(stmt)
 
                 #print "Indices Done ... " + str(datetime.datetime.now())
 
