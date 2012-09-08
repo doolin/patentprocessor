@@ -122,6 +122,51 @@ def create_match_tables(c, fBnme, uqB, exCom, exAnd):
     #create_table_dataM4(c, exCom)
     create_table_dataM4_format(c, exCom)
 
+# "exCom" might be short for "exact Compare", which part of
+# the schema inference. When Patent is the only field which 
+# is compared exactly, exCom <- Patent. Then again, from a
+# comment below, "exCom" might stand for "EXACT COMBO".
+# fBnme <- db.tblB <- db.invpat most likely.
+def handle_fuzzy_dataS_wrapper(c, exCom, uqB, uqS, fuzzy, fBnme, exAnd):
+	# TODO: Remove leading CREATE INDEX as its already been created in the
+	# calling function
+	# TODO: Split this into 3 functions, no reason to do all this work in
+	# one monster query.
+	print "fBnme", fBnme
+	c.executescript("""
+               CREATE INDEX IF NOT EXISTS  dS_E ON dataS ({exCom});
+	      """.format(exCom = exCom))
+
+        c.executescript("""
+
+              /* RETAIN ONLY JARO>0.9 FUZZY AND EXACT MATCHES */
+               CREATE TABLE  dataM AS
+                     SELECT  a.*, %s AS uqB, %s AS uqS, %s AS jaro
+                       FROM  %s AS a
+                 INNER JOIN  dataS AS b
+                         ON  %s
+                      WHERE  jaro>0.90;
+
+              /* DETERMINE MAXIMUM JARO FOR EACH UQ AND EXACT COMBO */
+               CREATE TABLE  dataT AS
+                     SELECT  uqS, %s, MAX(jaro)
+		         AS  jaro, count(*) as cnt
+                       FROM  dataM
+                   GROUP BY  uqS, %s;
+
+              /* RETAIN ONLY  MAXIMUM JARO */
+               CREATE TABLE  dataM2 AS
+                     SELECT  a.*
+                       FROM  dataM
+		         AS  a
+                 INNER JOIN  dataT AS b
+                         ON  a.uqS=b.uqS
+                        AND  a.jaro=b.jaro
+			AND  %s;
+                        """  % (uqB, uqS, 
+                               "*".join(["jarow(a.%s, b.%s)" % (x,x) for x in fuzzy]),
+                                fBnme, exAnd, exCom, exCom, exAnd))
+
 
 
 # "exCom" might be short for "exact Compare", which part of
@@ -310,7 +355,8 @@ def attach_database(c, fileB, tblB, exCom, exAnd):
 def handle_dataS(c, exCom, uqB, uqS, fuzzy, fBnme, exAnd):
 	c.execute("CREATE INDEX IF NOT EXISTS dS_E ON dataS (%s);" % (exCom))
 	if fuzzy:
-	    handle_fuzzy_dataS(c, exCom, uqB, uqS, fuzzy, fBnme, exAnd)
+	    #handle_fuzzy_dataS(c, exCom, uqB, uqS, fuzzy, fBnme, exAnd)
+	    handle_fuzzy_dataS_wrapper(c, exCom, uqB, uqS, fuzzy, fBnme, exAnd)
 	else:
 	    handle_nonfuzzy_dataS(uqB, uqS, fBnme, exAnd)
 
