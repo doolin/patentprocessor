@@ -242,13 +242,15 @@ def handle_nonfuzzy_dataS(uqB, uqS, fBnme, exAnd):
     # TODO: Make a function call right next which creates a view
     # which can be invoked from the create table statement.
     # Explain what the view is supposed to do.
-    c.executescript("""
+    stmt = """
            CREATE TABLE  dataM2 AS
 	         SELECT  *, %s AS uqB, %s AS uqS
 	           FROM  %s AS a
 	     INNER JOIN  dataS AS b
 		     ON  %s;
-	            """  % (uqB, uqS, fBnme, exAnd))
+	            """  % (uqB, uqS, fBnme, exAnd)
+    print "handle_nonfuzzy_dataS: ", stmt
+    c.executescript(stmt)
 
 
 def export_csv_results(c, output):
