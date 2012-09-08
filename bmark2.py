@@ -123,6 +123,21 @@ def create_match_tables(c, fBnme, uqB, exCom, exAnd):
     create_table_dataM4_format(c, exCom)
 
 
+
+def create_table_M(c, uqB, uqS, fuzzy, fBnme, exAnd):
+	stmt = """
+              /* RETAIN ONLY JARO>0.9 FUZZY AND EXACT MATCHES */
+               CREATE TABLE  dataM AS
+                     SELECT  a.*, %s AS uqB, %s AS uqS, %s AS jaro
+                       FROM  %s AS a
+                 INNER JOIN  dataS AS b
+                         ON  %s
+                      WHERE  jaro>0.90;
+                        """  % (uqB, uqS, "*".join(["jarow(a.%s, b.%s)" % (x,x) for x in fuzzy]), fBnme, exAnd)
+        #print "stmt: ", stmt
+        c.executescript(stmt)
+
+
 def create_table_M2(c, exAnd):
         stmt = """
               /* RETAIN ONLY  MAXIMUM JARO */
@@ -154,26 +169,7 @@ def handle_fuzzy_dataS_wrapper(c, exCom, uqB, uqS, fuzzy, fBnme, exAnd):
 	c.executescript(""" CREATE INDEX IF NOT EXISTS  dS_E ON dataS ({exCom});
 	                """.format(exCom = exCom))
 
-	stmt = """
-              /* RETAIN ONLY JARO>0.9 FUZZY AND EXACT MATCHES */
-               CREATE TABLE  dataM AS
-                     SELECT  a.*, %s AS uqB, %s AS uqS, %s AS jaro
-                       FROM  %s AS a
-                 INNER JOIN  dataS AS b
-                         ON  %s
-                      WHERE  jaro>0.90;
-                        """  % (uqB, uqS, "*".join(["jarow(a.%s, b.%s)" % (x,x) for x in fuzzy]), fBnme, exAnd)
-        print "stmt: ", stmt
-
-        c.executescript("""
-              /* RETAIN ONLY JARO>0.9 FUZZY AND EXACT MATCHES */
-               CREATE TABLE  dataM AS
-                     SELECT  a.*, %s AS uqB, %s AS uqS, %s AS jaro
-                       FROM  %s AS a
-                 INNER JOIN  dataS AS b
-                         ON  %s
-                      WHERE  jaro>0.90;
-                        """  % (uqB, uqS, "*".join(["jarow(a.%s, b.%s)" % (x,x) for x in fuzzy]), fBnme, exAnd))
+        create_table_M(c, uqB, uqS, fuzzy, fBnme, exAnd)
 
         c.executescript("""
               /* DETERMINE MAXIMUM JARO FOR EACH UQ AND EXACT COMBO */
