@@ -139,14 +139,16 @@ def create_table_M(c, uqB, uqS, fuzzy, fBnme, exAnd):
 
 
 def create_table_T(c, exCom):
-        c.executescript("""
+        stmt = """
               /* DETERMINE MAXIMUM JARO FOR EACH UQ AND EXACT COMBO */
                CREATE TABLE  dataT AS
                      SELECT  uqS, {exCom}, MAX(jaro)
 		         AS  jaro, count(*) as cnt
                        FROM  dataM
                    GROUP BY  uqS, {exCom};
-                        """.format(exCom = exCom))
+                        """.format(exCom = exCom)
+        #print "create_table_T: ", stmt
+        c.executescript(stmt)
 
 
 
