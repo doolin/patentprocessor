@@ -154,7 +154,9 @@ def handle_fuzzy_dataS_wrapper(c, exCom, uqB, uqS, fuzzy, fBnme, exAnd):
 		         AS  jaro, count(*) as cnt
                        FROM  dataM
                    GROUP BY  uqS, %s;
+                        """  % (exCom, exCom))
 
+        c.executescript("""
               /* RETAIN ONLY  MAXIMUM JARO */
                CREATE TABLE  dataM2 AS
                      SELECT  a.*
@@ -164,8 +166,7 @@ def handle_fuzzy_dataS_wrapper(c, exCom, uqB, uqS, fuzzy, fBnme, exAnd):
                          ON  a.uqS=b.uqS
                         AND  a.jaro=b.jaro
 			AND  %s;
-                        """  % (exCom, exCom, # dataT
-				exAnd))       # dataM2
+                        """  % (exAnd)) 
 
 
 
