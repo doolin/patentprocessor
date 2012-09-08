@@ -111,8 +111,12 @@ def handle_fuzzy_dataS(c, exCom, uqB, uqS, fuzzy, fBnme, exAnd):
                                "*".join(["jarow(a.%s, b.%s)" % (x,x) for x in fuzzy]),
                                 fBnme, exAnd, exCom, exCom, exAnd))
 
-
+# TODO: Describe schema for dataM2, it will either be a
+# full table or just the key columns
 def handle_nonfuzzy_dataS(uqB, uqS, fBnme, exAnd):
+    # TODO: Make a function call right next which creates a view
+    # which can be invoked from the create table statement.
+    # Explain what the view is supposed to do.
     c.executescript("""
            CREATE TABLE  dataM2 AS
 	         SELECT  *, %s AS uqB, %s AS uqS
