@@ -79,17 +79,33 @@ def create_table_dataM4(c, exCom):
                    FROM  (SELECT uqS, freqUQ(uqB) as ErrUQ
 		     FROM  dataM3 GROUP BY uqS) AS a
                INNER JOIN  dataM3 AS b
-                       ON  a.uqS=b.uqS AND b.AppYear <= '2001' /*AND a.uqS not in (83, 85, 93)*/
+                       ON  a.uqS=b.uqS AND b.AppYear <= '2012' /*AND a.uqS not in (83, 85, 93)*/
                  ORDER BY  uqS, %s;
                       """  % (exCom))
+
+def create_table_dataM4_format(c, exCom):
+    c.executescript("""
+        /* INDICATE INVENTORS WHO DO NOT MATCH */
+           CREATE TABLE  dataM4 AS
+                 SELECT  errD(a.ErrUQ, uqB) AS ErrUQ, b.*
+                   FROM  (SELECT uqS, freqUQ(uqB) as ErrUQ
+		     FROM  dataM3 GROUP BY uqS) AS a
+               INNER JOIN  dataM3 AS b
+                       ON  a.uqS=b.uqS AND b.AppYear <= '2012' /*AND a.uqS not in (83, 85, 93)*/
+                 ORDER BY  uqS, {exCom};
+                      """.format(exCom = exCom))
 
 
 def create_match_tables(c, fBnme, uqB, exCom, exAnd):
     # TODO: Split this query into two functions, test each
     create_table_dataM3(c, fBnme, uqB, exCom, exAnd)
-    create_table_dataM4(c, exCom)
+    #create_table_dataM4(c, exCom)
+    create_table_dataM4_format(c, exCom)
 
-
+# "exCom" might be short for "exact Compare", which part of
+# the schema inference. When Patent is the only field which 
+# is compared exactly, exCom <- Patent. Then again, from a
+# comment below, "exCom" might stand for "EXACT COMBO".
 def handle_fuzzy_dataS(c, exCom, uqB, uqS, fuzzy, fBnme, exAnd):
 	# TODO: Remove leading CREATE INDEX as its already been created in the
 	# calling function
@@ -151,12 +167,13 @@ def export_csv_results(c, output):
 def compute_orig(c):
 	rep = [list(x) for x in c.execute("SELECT ErrUQ, uqSUB FROM dataM4")]
 	orig = len([x for x in rep if x[1]!=None])
+        return orig
 
 
 def compute_errm(c):
 	rep = [list(x) for x in c.execute("SELECT ErrUQ, uqSUB FROM dataM4")]
 	errm = sum([int(x[0]) for x in rep if x[0]!=None])
-
+        return errm
 
 def compute_u(errm, orig):
 	u = 1.0*errm/orig
@@ -164,7 +181,7 @@ def compute_u(errm, orig):
 
 
 def compute_o(orig, lenrep):
-	o = 1-(float(orig)/len(rep))
+	o = 1-(float(orig)/lenrep)
         return o
 
 
@@ -340,8 +357,8 @@ def bmVerify(results, filepath="", outdir = ""):
                             if dataS2[j][i].isdigit():
                                 dataS2[j][i] = x % int(dataS2[j][i])
 
-                conn = sqlite3.connect(":memory:")
-                #conn = sqlite3.connect("bmark2.sqlite3")
+                #conn = sqlite3.connect(":memory:")
+                conn = sqlite3.connect("combined.sqlite3")
                 conn.create_function("jarow", 2, jarow)
                 conn.create_function("errD", 2, lambda x,y: (x!=y) and 1 or None)
                 conn.create_aggregate("freqUQ", 1, freqUQ)
@@ -385,4 +402,4 @@ if __name__ == "__main__":
         print bmVerify.__doc__
 
     else:
-            bmVerify(sys.argv[3:], sys.argv[1], sys.argv[2])
+        bmVerify(sys.argv[3:], sys.argv[1], sys.argv[2])
