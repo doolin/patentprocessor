@@ -20,6 +20,22 @@ from fwork import *
 from bmconfig import *
 
 
+# TODO: Move these out of this function completely, and into the top
+# part of this file.
+#uqB = "Unique_Inventor_ID2"
+uqB = "final_5"
+tblB = "invpat"
+#fileS = "/home/ron/disambig/BM/DefTruth5.csv"
+#fileS = "/home/doolin/src/patentbenchmarks/DefTruth5.csv"
+#fileS = "/home/doolin/src/patentbenchmarks/berkeley.csv"
+#fileS = "/home/doolin/src/patentbenchmarks/pister.csv"
+#fileS = "/home/doolin/src/patentbenchmarks/paulrgray.csv"
+#fileS = "/home/doolin/src/patentbenchmarks/allbritton.csv"
+fileS = "/home/doolin/src/patentbenchmarks/combined.csv"
+#fileS = "/home/doolin/src/patentbenchmarks/siddhu.csv"
+#fileS = "/var/share/patentdata/disambiguation/experiments/earth/berkeley/benchmark.csv"
+
+
 # This is what is known as "testable code"
 def get_filename_suffix(filename):
     return filename.split(".")[-1].lower()
@@ -246,21 +262,6 @@ def bmVerify(results, filepath="", outdir = ""):
         bmVerify(['final_r7', 'final_r8'], filepath="/home/ysun/disambig/newcode/all/", outdir = "/home/ayu/results_v2/")
 
         """
-
-	# TODO: Move these out of this function completely, and into the top
-	# part of this file.
-	#uqB = "Unique_Inventor_ID2"
-	uqB = "final_5"
-	tblB = "invpat"
-	#fileS = "/home/ron/disambig/BM/DefTruth5.csv"
-	#fileS = "/home/doolin/src/patentbenchmarks/DefTruth5.csv"
-	#fileS = "/home/doolin/src/patentbenchmarks/berkeley.csv"
-	#fileS = "/home/doolin/src/patentbenchmarks/pister.csv"
-	#fileS = "/home/doolin/src/patentbenchmarks/paulrgray.csv"
-	#fileS = "/home/doolin/src/patentbenchmarks/allbritton.csv"
-	fileS = "/home/doolin/src/patentbenchmarks/combined.csv"
-	#fileS = "/home/doolin/src/patentbenchmarks/siddhu.csv"
-	#fileS = "/var/share/patentdata/disambiguation/experiments/earth/berkeley/benchmark.csv"
 
         for result in results:
 
