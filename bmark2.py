@@ -72,6 +72,24 @@ def create_table_dataM3(c, fBnme, uqB, exCom, exAnd):
                                """  % (fBnme, uqB, exCom, exAnd, uqB))
 
 
+def create_table_dataM3_format(c, fBnme, uqB, exCom, exAnd):
+    c.executescript("""
+        /* EXPAND UNIQUE BASE AND INDICATE ACTIVE MATCHES */
+           CREATE TABLE  dataM3 AS
+                 SELECT  uqS, a.*
+           FROM (SELECT  uqS AS uqSUB, a.*
+             FROM  (SELECT  uqB, b.*
+               FROM  (SELECT DISTINCT(uqB)
+	         FROM dataM2 WHERE uqB!="") AS a
+                        INNER JOIN  {fBnme} AS b
+                                ON  a.uqB=b.{uqB}) AS a
+                         LEFT JOIN  (SELECT {exCom}, uqB, uqS FROM dataM2) AS b
+                                ON  a.uqB=b.uqB AND {exAnd}) AS a
+                        INNER JOIN  (SELECT DISTINCT uqB, uqS FROM dataM2) AS b
+                                ON  a.{uqB}=b.uqB;
+                               """.format(fBnme = fBnme, uqB = uqB, exCom = exCom, exAnd = exAnd))
+
+
 def create_table_dataM4(c, exCom):
     c.executescript("""
         /* INDICATE INVENTORS WHO DO NOT MATCH */
@@ -99,19 +117,28 @@ def create_table_dataM4_format(c, exCom):
 
 def create_match_tables(c, fBnme, uqB, exCom, exAnd):
     # TODO: Split this query into two functions, test each
-    create_table_dataM3(c, fBnme, uqB, exCom, exAnd)
+    #create_table_dataM3(c, fBnme, uqB, exCom, exAnd)
+    create_table_dataM3_format(c, fBnme, uqB, exCom, exAnd)
     #create_table_dataM4(c, exCom)
     create_table_dataM4_format(c, exCom)
+
+
 
 # "exCom" might be short for "exact Compare", which part of
 # the schema inference. When Patent is the only field which 
 # is compared exactly, exCom <- Patent. Then again, from a
 # comment below, "exCom" might stand for "EXACT COMBO".
+# fBnme <- db.tblB <- db.invpat most likely.
 def handle_fuzzy_dataS(c, exCom, uqB, uqS, fuzzy, fBnme, exAnd):
 	# TODO: Remove leading CREATE INDEX as its already been created in the
 	# calling function
 	# TODO: Split this into 3 functions, no reason to do all this work in
 	# one monster query.
+	print "fBnme", fBnme
+	c.executescript("""
+               CREATE INDEX IF NOT EXISTS  dS_E ON dataS ({exCom});
+	      """.format(exCom = exCom))
+
         c.executescript("""
                CREATE INDEX
 	      IF NOT EXISTS  dS_E ON dataS (%s);
