@@ -136,8 +136,18 @@ def handle_fuzzy_dataS_wrapper(c, exCom, uqB, uqS, fuzzy, fBnme, exAnd):
 	c.executescript(""" CREATE INDEX IF NOT EXISTS  dS_E ON dataS ({exCom});
 	                """.format(exCom = exCom))
 
-        c.executescript("""
+	stmt = """
+              /* RETAIN ONLY JARO>0.9 FUZZY AND EXACT MATCHES */
+               CREATE TABLE  dataM AS
+                     SELECT  a.*, %s AS uqB, %s AS uqS, %s AS jaro
+                       FROM  %s AS a
+                 INNER JOIN  dataS AS b
+                         ON  %s
+                      WHERE  jaro>0.90;
+                        """  % (uqB, uqS, "*".join(["jarow(a.%s, b.%s)" % (x,x) for x in fuzzy]), fBnme, exAnd)
+        print "stmt: ", stmt
 
+        c.executescript("""
               /* RETAIN ONLY JARO>0.9 FUZZY AND EXACT MATCHES */
                CREATE TABLE  dataM AS
                      SELECT  a.*, %s AS uqB, %s AS uqS, %s AS jaro
