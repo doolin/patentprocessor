@@ -133,9 +133,8 @@ def handle_fuzzy_dataS_wrapper(c, exCom, uqB, uqS, fuzzy, fBnme, exAnd):
 	# TODO: Split this into 3 functions, no reason to do all this work in
 	# one monster query.
 	print "fBnme", fBnme
-	c.executescript("""
-               CREATE INDEX IF NOT EXISTS  dS_E ON dataS ({exCom});
-	      """.format(exCom = exCom))
+	c.executescript(""" CREATE INDEX IF NOT EXISTS  dS_E ON dataS ({exCom});
+	                """.format(exCom = exCom))
 
         c.executescript("""
 
@@ -163,9 +162,9 @@ def handle_fuzzy_dataS_wrapper(c, exCom, uqB, uqS, fuzzy, fBnme, exAnd):
                          ON  a.uqS=b.uqS
                         AND  a.jaro=b.jaro
 			AND  %s;
-                        """  % (uqB, uqS, 
-                               "*".join(["jarow(a.%s, b.%s)" % (x,x) for x in fuzzy]),
-                                fBnme, exAnd, exCom, exCom, exAnd))
+                        """  % (uqB, uqS, "*".join(["jarow(a.%s, b.%s)" % (x,x) for x in fuzzy]), fBnme, exAnd,
+				exCom, exCom, # dataT
+				exAnd))       # dataM2
 
 
 
