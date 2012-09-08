@@ -5,6 +5,7 @@
 
 import unittest
 import sys
+import sqlite3
 
 sys.path.append( '.' )
 sys.path.append( '..' )
@@ -21,18 +22,22 @@ def removeFile(self, file):
 class TestBMark2(unittest.TestCase):
 
     @classmethod
-    def setUpClass(cls):
-	print "Setting up TestCase..."
+    def setUpClass(self):
+	print "Setting up TestCase"
+        self.conn = sqlite3.connect("./fixtures/sqlite3/combined.sqlite3")
+        self.c = self.conn.cursor() 
 
     def setUp(self):
-        print "Setting up..."
+        #print "Setting up..."
         self.foo = 'bar'
 
     def test_compute_orig(self):
-	    print "Testing compute_orig"
+            orig = compute_orig(self.c)
+	    assert(1442 == orig)
 
     def test_compute_errm(self):
-        print "Testing compute_errm"
+        errm = compute_errm(self.c)
+	assert(60 == errm)
 
     def test_compute_u(self):
 	print "Testing compute_u"
@@ -54,12 +59,13 @@ class TestBMark2(unittest.TestCase):
 	assert(False == is_csv_file(filename))
 
     def tearDown(self):
-        print "Done with testing."
+        foo = 1
+        #print "Done with testing."
 
     @classmethod
-    def tearDownClass(cls):
-        print "Tearing down TestCase."
-
+    def tearDownClass(self):
+        print "\nTearing down TestCase."
+        self.c.close()
 
 if __name__ == '__main__':
     unittest.main()
