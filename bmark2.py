@@ -148,6 +148,35 @@ def export_csv_results(c, output):
 	writer.writerows(c.execute("SELECT * FROM dataM4").fetchall())
 
 
+def compute_orig(c):
+	rep = [list(x) for x in c.execute("SELECT ErrUQ, uqSUB FROM dataM4")]
+	orig = len([x for x in rep if x[1]!=None])
+
+
+def compute_errm(c):
+	rep = [list(x) for x in c.execute("SELECT ErrUQ, uqSUB FROM dataM4")]
+	errm = sum([int(x[0]) for x in rep if x[0]!=None])
+
+
+def compute_u(errm, orig):
+	u = 1.0*errm/orig
+        return u
+
+
+def compute_o(orig, lenrep):
+	o = 1-(float(orig)/len(rep))
+        return o
+
+
+def compute_recall(u):
+	recall = 1.0 - u
+	return recall
+
+
+#def compute_precision()
+#def compute_lumping()
+#def compute_splitting()
+
 # TODO: Create functions for handling true and false positives and negatives,
 # compute all the relevant statistics using those measures instead of the
 # mess of inline computation following the heredoc.
@@ -155,6 +184,8 @@ def export_csv_results(c, output):
 # TODO: Separate computing results and printing results
 def print_results(c, output, t):
 	#print "Printing results ..." + str(datetime.datetime.now())
+	# TODO: Explain ErrUQ in detail
+	# TODO: Explain uqSUB in detail
 	rep = [list(x) for x in c.execute("SELECT ErrUQ, uqSUB FROM dataM4")]
 	#print "Rep: ", rep
 	orig = len([x for x in rep if x[1]!=None])
