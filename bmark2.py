@@ -103,7 +103,7 @@ def create_table_dataM4(c, exCom):
                       """  % (exCom))
 
 def create_table_dataM4_format(c, exCom):
-    c.executescript("""
+    stmt = """
         /* INDICATE INVENTORS WHO DO NOT MATCH */
            CREATE TABLE  dataM4 AS
                  SELECT  errD(a.ErrUQ, uqB) AS ErrUQ, b.*
@@ -112,7 +112,9 @@ def create_table_dataM4_format(c, exCom):
                INNER JOIN  dataM3 AS b
                        ON  a.uqS=b.uqS AND b.AppYear <= '2012' /*AND a.uqS not in (83, 85, 93)*/
                  ORDER BY  uqS, {exCom};
-                      """.format(exCom = exCom))
+                      """.format(exCom = exCom)
+    print "create_table_M4: ", stmt
+    c.executescript(stmt)
 
 
 def create_match_tables(c, fBnme, uqB, exCom, exAnd):
@@ -179,9 +181,11 @@ def handle_fuzzy_dataS_wrapper(c, exCom, uqB, uqS, fuzzy, fBnme, exAnd):
 	# calling function
 	# TODO: Split this into 3 functions, no reason to do all this work in
 	# one monster query.
-	print "fBnme", fBnme
-	c.executescript(""" CREATE INDEX IF NOT EXISTS  dS_E ON dataS ({exCom});
-	                """.format(exCom = exCom))
+	#print "fBnme", fBnme
+	stmt = """ CREATE INDEX IF NOT EXISTS  dS_E ON dataS ({exCom});
+	                """.format(exCom = exCom)
+	# print "handle_fuzzy_data: ", stmt
+	c.executescript(stmt)
 
         create_table_M(c, uqB, uqS, fuzzy, fBnme, exAnd)
         create_table_T(c, exCom)
@@ -238,7 +242,7 @@ def handle_fuzzy_dataS(c, exCom, uqB, uqS, fuzzy, fBnme, exAnd):
 
 # TODO: Describe schema for dataM2, it will either be a
 # full table or just the key columns
-def handle_nonfuzzy_dataS(uqB, uqS, fBnme, exAnd):
+def handle_nonfuzzy_dataS(c, uqB, uqS, fBnme, exAnd):
     # TODO: Make a function call right next which creates a view
     # which can be invoked from the create table statement.
     # Explain what the view is supposed to do.
@@ -380,7 +384,7 @@ def handle_dataS(c, exCom, uqB, uqS, fuzzy, fBnme, exAnd):
 	    #handle_fuzzy_dataS(c, exCom, uqB, uqS, fuzzy, fBnme, exAnd)
 	    handle_fuzzy_dataS_wrapper(c, exCom, uqB, uqS, fuzzy, fBnme, exAnd)
 	else:
-	    handle_nonfuzzy_dataS(uqB, uqS, fBnme, exAnd)
+	    handle_nonfuzzy_dataS(c, uqB, uqS, fBnme, exAnd)
 
 def print_match_qualifiers(exact, fuzzy, uqS):
 	print "Exact: ", exact
