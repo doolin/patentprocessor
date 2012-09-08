@@ -162,9 +162,30 @@ def print_results(c, output, t):
 	       Recall: {recall:.2%}
 	  File Detail: {filename}
 		 Time: {time}
-	""".format(original = orig, new = len(rep)-orig, total = len(rep), overclump = len(rep)-orig, o = o,
-		   underclump = errm, u = u, recall = recall, precision = recall/(recall+o), filename = output,
-		   time = datetime.datetime.now()-t)
+	""".format(original = orig,
+                        new = len(rep)-orig,
+                      total = len(rep),
+                  overclump = len(rep)-orig,
+                          o = o,
+                 underclump = errm,
+                          u = u,
+                     recall = recall,
+                  precision = recall/(recall+o),
+                   filename = output,
+                       time = datetime.datetime.now()-t)
+        new = len(rep)-orig
+	now = datetime.datetime.now()-t
+	precision = recall/(recall+o)
+        # TODO: Finish out the formatting
+        print "Original:    %s" % orig
+        print "New Records: %d" % new #len(rep)-orig #{new}
+        print "Total:       %s" % len(rep) #{total}
+        print "Overclump:   %s (%0.2f%%)" % (new, o*100)
+        print "Underclump:  %s (%0.2f%%)" % (errm, u*100) #{ underclump} ({u:.2%})
+        print "Precision:   %0.2f%%" % (precision*100) #{precision:.2%}
+        print "Recall:      %0.2f%%" % (recall*100) #{recall:.2%}
+        print "File Detail: %s" % output #{filename}
+        print "Time:        %s" % now #  {time}
 
 
 def attach_database(c, fileB, tblB, exCom, exAnd):
