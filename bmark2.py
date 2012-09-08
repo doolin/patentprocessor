@@ -150,11 +150,11 @@ def handle_fuzzy_dataS_wrapper(c, exCom, uqB, uqS, fuzzy, fBnme, exAnd):
         c.executescript("""
               /* DETERMINE MAXIMUM JARO FOR EACH UQ AND EXACT COMBO */
                CREATE TABLE  dataT AS
-                     SELECT  uqS, %s, MAX(jaro)
+                     SELECT  uqS, {exCom}, MAX(jaro)
 		         AS  jaro, count(*) as cnt
                        FROM  dataM
-                   GROUP BY  uqS, %s;
-                        """  % (exCom, exCom))
+                   GROUP BY  uqS, {exCom};
+                        """.format(exCom = exCom)) #  % (exCom, exCom))
 
         c.executescript("""
               /* RETAIN ONLY  MAXIMUM JARO */
