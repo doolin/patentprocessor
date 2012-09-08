@@ -63,7 +63,7 @@ def create_table_dataM4(c, exCom):
                    FROM  (SELECT uqS, freqUQ(uqB) as ErrUQ
 		     FROM  dataM3 GROUP BY uqS) AS a
                INNER JOIN  dataM3 AS b
-                       ON  a.uqS=b.uqS AND b.AppYear <= '2010' /*AND a.uqS not in (83, 85, 93)*/
+                       ON  a.uqS=b.uqS AND b.AppYear <= '2001' /*AND a.uqS not in (83, 85, 93)*/
                  ORDER BY  uqS, %s;
                       """  % (exCom))
 
@@ -136,6 +136,7 @@ def export_csv_results(c, output):
 # compute all the relevant statistics using those measures instead of the
 # mess of inline computation following the heredoc.
 # TODO: Switch to printing json results
+# TODO: Separate computing results and printing results
 def print_results(c, output, t):
 	#print "Printing results ..." + str(datetime.datetime.now())
 	rep = [list(x) for x in c.execute("SELECT ErrUQ, uqSUB FROM dataM4")]
@@ -248,14 +249,16 @@ def bmVerify(results, filepath="", outdir = ""):
 
 	# TODO: Move these out of this function completely, and into the top
 	# part of this file.
-	uqB = "Unique_Inventor_ID2"
+	#uqB = "Unique_Inventor_ID2"
+	uqB = "final_5"
 	tblB = "invpat"
 	#fileS = "/home/ron/disambig/BM/DefTruth5.csv"
 	#fileS = "/home/doolin/src/patentbenchmarks/DefTruth5.csv"
 	#fileS = "/home/doolin/src/patentbenchmarks/berkeley.csv"
-	fileS = "/home/doolin/src/patentbenchmarks/pister.csv"
+	#fileS = "/home/doolin/src/patentbenchmarks/pister.csv"
 	#fileS = "/home/doolin/src/patentbenchmarks/paulrgray.csv"
 	#fileS = "/home/doolin/src/patentbenchmarks/allbritton.csv"
+	fileS = "/home/doolin/src/patentbenchmarks/combined.csv"
 	#fileS = "/home/doolin/src/patentbenchmarks/siddhu.csv"
 	#fileS = "/var/share/patentdata/disambiguation/experiments/earth/berkeley/benchmark.csv"
 
