@@ -154,7 +154,7 @@ def handle_fuzzy_dataS_wrapper(c, exCom, uqB, uqS, fuzzy, fBnme, exAnd):
 		         AS  jaro, count(*) as cnt
                        FROM  dataM
                    GROUP BY  uqS, {exCom};
-                        """.format(exCom = exCom)) #  % (exCom, exCom))
+                        """.format(exCom = exCom))
 
         c.executescript("""
               /* RETAIN ONLY  MAXIMUM JARO */
@@ -165,8 +165,8 @@ def handle_fuzzy_dataS_wrapper(c, exCom, uqB, uqS, fuzzy, fBnme, exAnd):
                  INNER JOIN  dataT AS b
                          ON  a.uqS=b.uqS
                         AND  a.jaro=b.jaro
-			AND  %s;
-                        """  % (exAnd)) 
+			AND  {exAnd};
+                        """.format(exAnd = exAnd)) # (exAnd))
 
 
 
