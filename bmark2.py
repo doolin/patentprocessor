@@ -138,6 +138,18 @@ def create_table_M(c, uqB, uqS, fuzzy, fBnme, exAnd):
         c.executescript(stmt)
 
 
+def create_table_T(c, exCom):
+        c.executescript("""
+              /* DETERMINE MAXIMUM JARO FOR EACH UQ AND EXACT COMBO */
+               CREATE TABLE  dataT AS
+                     SELECT  uqS, {exCom}, MAX(jaro)
+		         AS  jaro, count(*) as cnt
+                       FROM  dataM
+                   GROUP BY  uqS, {exCom};
+                        """.format(exCom = exCom))
+
+
+
 def create_table_M2(c, exAnd):
         stmt = """
               /* RETAIN ONLY  MAXIMUM JARO */
@@ -170,16 +182,7 @@ def handle_fuzzy_dataS_wrapper(c, exCom, uqB, uqS, fuzzy, fBnme, exAnd):
 	                """.format(exCom = exCom))
 
         create_table_M(c, uqB, uqS, fuzzy, fBnme, exAnd)
-
-        c.executescript("""
-              /* DETERMINE MAXIMUM JARO FOR EACH UQ AND EXACT COMBO */
-               CREATE TABLE  dataT AS
-                     SELECT  uqS, {exCom}, MAX(jaro)
-		         AS  jaro, count(*) as cnt
-                       FROM  dataM
-                   GROUP BY  uqS, {exCom};
-                        """.format(exCom = exCom))
-
+        create_table_T(c, exCom)
 	create_table_M2(c, exAnd)
 
 
