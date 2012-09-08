@@ -145,7 +145,9 @@ def handle_fuzzy_dataS_wrapper(c, exCom, uqB, uqS, fuzzy, fBnme, exAnd):
                  INNER JOIN  dataS AS b
                          ON  %s
                       WHERE  jaro>0.90;
+                        """  % (uqB, uqS, "*".join(["jarow(a.%s, b.%s)" % (x,x) for x in fuzzy]), fBnme, exAnd))
 
+        c.executescript("""
               /* DETERMINE MAXIMUM JARO FOR EACH UQ AND EXACT COMBO */
                CREATE TABLE  dataT AS
                      SELECT  uqS, %s, MAX(jaro)
@@ -162,8 +164,7 @@ def handle_fuzzy_dataS_wrapper(c, exCom, uqB, uqS, fuzzy, fBnme, exAnd):
                          ON  a.uqS=b.uqS
                         AND  a.jaro=b.jaro
 			AND  %s;
-                        """  % (uqB, uqS, "*".join(["jarow(a.%s, b.%s)" % (x,x) for x in fuzzy]), fBnme, exAnd,
-				exCom, exCom, # dataT
+                        """  % (exCom, exCom, # dataT
 				exAnd))       # dataM2
 
 
