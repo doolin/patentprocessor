@@ -122,6 +122,24 @@ def create_match_tables(c, fBnme, uqB, exCom, exAnd):
     #create_table_dataM4(c, exCom)
     create_table_dataM4_format(c, exCom)
 
+
+def create_table_M2(c, exAnd):
+        stmt = """
+              /* RETAIN ONLY  MAXIMUM JARO */
+               CREATE TABLE  dataM2 AS
+                     SELECT  a.*
+                       FROM  dataM
+		         AS  a
+                 INNER JOIN  dataT AS b
+                         ON  a.uqS=b.uqS
+                        AND  a.jaro=b.jaro
+			AND  {exAnd};
+                        """.format(exAnd = exAnd)
+	#print "create_table_M2: ", stmt
+	c.executescript(stmt)
+
+
+
 # "exCom" might be short for "exact Compare", which part of
 # the schema inference. When Patent is the only field which 
 # is compared exactly, exCom <- Patent. Then again, from a
@@ -166,17 +184,7 @@ def handle_fuzzy_dataS_wrapper(c, exCom, uqB, uqS, fuzzy, fBnme, exAnd):
                    GROUP BY  uqS, {exCom};
                         """.format(exCom = exCom))
 
-        c.executescript("""
-              /* RETAIN ONLY  MAXIMUM JARO */
-               CREATE TABLE  dataM2 AS
-                     SELECT  a.*
-                       FROM  dataM
-		         AS  a
-                 INNER JOIN  dataT AS b
-                         ON  a.uqS=b.uqS
-                        AND  a.jaro=b.jaro
-			AND  {exAnd};
-                        """.format(exAnd = exAnd)) # (exAnd))
+	create_table_M2(c, exAnd)
 
 
 
