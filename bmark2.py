@@ -20,6 +20,22 @@ from fwork import *
 from bmconfig import *
 
 
+# TODO: Move these out of this function completely, and into the top
+# part of this file.
+#uqB = "Unique_Inventor_ID2"
+uqB = "final_5"
+tblB = "invpat"
+#fileS = "/home/ron/disambig/BM/DefTruth5.csv"
+#fileS = "/home/doolin/src/patentbenchmarks/DefTruth5.csv"
+#fileS = "/home/doolin/src/patentbenchmarks/berkeley.csv"
+#fileS = "/home/doolin/src/patentbenchmarks/pister.csv"
+#fileS = "/home/doolin/src/patentbenchmarks/paulrgray.csv"
+#fileS = "/home/doolin/src/patentbenchmarks/allbritton.csv"
+fileS = "/home/doolin/src/patentbenchmarks/combined.csv"
+#fileS = "/home/doolin/src/patentbenchmarks/siddhu.csv"
+#fileS = "/var/share/patentdata/disambiguation/experiments/earth/berkeley/benchmark.csv"
+
+
 # This is what is known as "testable code"
 def get_filename_suffix(filename):
     return filename.split(".")[-1].lower()
@@ -37,6 +53,7 @@ def print_diagnostics(data, table, header, tList):
    print "tList: ", tList
 
 
+# fBnme <- db.tblB <- db.invpat most likely.
 def create_table_dataM3(c, fBnme, uqB, exCom, exAnd):
     c.executescript("""
         /* EXPAND UNIQUE BASE AND INDICATE ACTIVE MATCHES */
@@ -55,6 +72,24 @@ def create_table_dataM3(c, fBnme, uqB, exCom, exAnd):
                                """  % (fBnme, uqB, exCom, exAnd, uqB))
 
 
+def create_table_dataM3_format(c, fBnme, uqB, exCom, exAnd):
+    c.executescript("""
+        /* EXPAND UNIQUE BASE AND INDICATE ACTIVE MATCHES */
+           CREATE TABLE  dataM3 AS
+                 SELECT  uqS, a.*
+           FROM (SELECT  uqS AS uqSUB, a.*
+             FROM  (SELECT  uqB, b.*
+               FROM  (SELECT DISTINCT(uqB)
+	         FROM dataM2 WHERE uqB!="") AS a
+                        INNER JOIN  {fBnme} AS b
+                                ON  a.uqB=b.{uqB}) AS a
+                         LEFT JOIN  (SELECT {exCom}, uqB, uqS FROM dataM2) AS b
+                                ON  a.uqB=b.uqB AND {exAnd}) AS a
+                        INNER JOIN  (SELECT DISTINCT uqB, uqS FROM dataM2) AS b
+                                ON  a.{uqB}=b.uqB;
+                               """.format(fBnme = fBnme, uqB = uqB, exCom = exCom, exAnd = exAnd))
+
+
 def create_table_dataM4(c, exCom):
     c.executescript("""
         /* INDICATE INVENTORS WHO DO NOT MATCH */
@@ -63,22 +98,116 @@ def create_table_dataM4(c, exCom):
                    FROM  (SELECT uqS, freqUQ(uqB) as ErrUQ
 		     FROM  dataM3 GROUP BY uqS) AS a
                INNER JOIN  dataM3 AS b
-                       ON  a.uqS=b.uqS AND b.AppYear <= '2010' /*AND a.uqS not in (83, 85, 93)*/
+                       ON  a.uqS=b.uqS AND b.AppYear <= '2012' /*AND a.uqS not in (83, 85, 93)*/
                  ORDER BY  uqS, %s;
                       """  % (exCom))
+
+def create_table_dataM4_format(c, exCom):
+    stmt = """
+        /* INDICATE INVENTORS WHO DO NOT MATCH */
+           CREATE TABLE  dataM4 AS
+                 SELECT  errD(a.ErrUQ, uqB) AS ErrUQ, b.*
+                   FROM  (SELECT uqS, freqUQ(uqB) as ErrUQ
+		     FROM  dataM3 GROUP BY uqS) AS a
+               INNER JOIN  dataM3 AS b
+                       ON  a.uqS=b.uqS AND b.AppYear <= '2012' /*AND a.uqS not in (83, 85, 93)*/
+                 ORDER BY  uqS, {exCom};
+                      """.format(exCom = exCom)
+    print "create_table_M4: ", stmt
+    c.executescript(stmt)
 
 
 def create_match_tables(c, fBnme, uqB, exCom, exAnd):
     # TODO: Split this query into two functions, test each
-    create_table_dataM3(c, fBnme, uqB, exCom, exAnd)
-    create_table_dataM4(c, exCom)
+    #create_table_dataM3(c, fBnme, uqB, exCom, exAnd)
+    create_table_dataM3_format(c, fBnme, uqB, exCom, exAnd)
+    #create_table_dataM4(c, exCom)
+    create_table_dataM4_format(c, exCom)
 
 
+
+def create_table_M(c, uqB, uqS, fuzzy, fBnme, exAnd):
+	stmt = """
+              /* RETAIN ONLY JARO>0.9 FUZZY AND EXACT MATCHES */
+               CREATE TABLE  dataM AS
+                     SELECT  a.*, %s AS uqB, %s AS uqS, %s AS jaro
+                       FROM  %s AS a
+                 INNER JOIN  dataS AS b
+                         ON  %s
+                      WHERE  jaro>0.90;
+                        """  % (uqB, uqS, "*".join(["jarow(a.%s, b.%s)" % (x,x) for x in fuzzy]), fBnme, exAnd)
+        #print "stmt: ", stmt
+        c.executescript(stmt)
+
+
+def create_table_T(c, exCom):
+        stmt = """
+              /* DETERMINE MAXIMUM JARO FOR EACH UQ AND EXACT COMBO */
+               CREATE TABLE  dataT AS
+                     SELECT  uqS, {exCom}, MAX(jaro)
+		         AS  jaro, count(*) as cnt
+                       FROM  dataM
+                   GROUP BY  uqS, {exCom};
+                        """.format(exCom = exCom)
+        #print "create_table_T: ", stmt
+        c.executescript(stmt)
+
+
+
+def create_table_M2(c, exAnd):
+        stmt = """
+              /* RETAIN ONLY  MAXIMUM JARO */
+               CREATE TABLE  dataM2 AS
+                     SELECT  a.*
+                       FROM  dataM
+		         AS  a
+                 INNER JOIN  dataT AS b
+                         ON  a.uqS=b.uqS
+                        AND  a.jaro=b.jaro
+			AND  {exAnd};
+                        """.format(exAnd = exAnd)
+	#print "create_table_M2: ", stmt
+	c.executescript(stmt)
+
+
+
+# "exCom" might be short for "exact Compare", which part of
+# the schema inference. When Patent is the only field which 
+# is compared exactly, exCom <- Patent. Then again, from a
+# comment below, "exCom" might stand for "EXACT COMBO".
+# fBnme <- db.tblB <- db.invpat most likely.
+def handle_fuzzy_dataS_wrapper(c, exCom, uqB, uqS, fuzzy, fBnme, exAnd):
+	# TODO: Remove leading CREATE INDEX as its already been created in the
+	# calling function
+	# TODO: Split this into 3 functions, no reason to do all this work in
+	# one monster query.
+	#print "fBnme", fBnme
+	stmt = """ CREATE INDEX IF NOT EXISTS  dS_E ON dataS ({exCom});
+	                """.format(exCom = exCom)
+	# print "handle_fuzzy_data: ", stmt
+	c.executescript(stmt)
+
+        create_table_M(c, uqB, uqS, fuzzy, fBnme, exAnd)
+        create_table_T(c, exCom)
+	create_table_M2(c, exAnd)
+
+
+
+# "exCom" might be short for "exact Compare", which part of
+# the schema inference. When Patent is the only field which 
+# is compared exactly, exCom <- Patent. Then again, from a
+# comment below, "exCom" might stand for "EXACT COMBO".
+# fBnme <- db.tblB <- db.invpat most likely.
 def handle_fuzzy_dataS(c, exCom, uqB, uqS, fuzzy, fBnme, exAnd):
 	# TODO: Remove leading CREATE INDEX as its already been created in the
 	# calling function
 	# TODO: Split this into 3 functions, no reason to do all this work in
 	# one monster query.
+	print "fBnme", fBnme
+	c.executescript("""
+               CREATE INDEX IF NOT EXISTS  dS_E ON dataS ({exCom});
+	      """.format(exCom = exCom))
+
         c.executescript("""
                CREATE INDEX
 	      IF NOT EXISTS  dS_E ON dataS (%s);
@@ -111,15 +240,21 @@ def handle_fuzzy_dataS(c, exCom, uqB, uqS, fuzzy, fBnme, exAnd):
                                "*".join(["jarow(a.%s, b.%s)" % (x,x) for x in fuzzy]),
                                 fBnme, exAnd, exCom, exCom, exAnd))
 
-
-def handle_nonfuzzy_dataS(uqB, uqS, fBnme, exAnd):
-    c.executescript("""
+# TODO: Describe schema for dataM2, it will either be a
+# full table or just the key columns
+def handle_nonfuzzy_dataS(c, uqB, uqS, fBnme, exAnd):
+    # TODO: Make a function call right next which creates a view
+    # which can be invoked from the create table statement.
+    # Explain what the view is supposed to do.
+    stmt = """
            CREATE TABLE  dataM2 AS
 	         SELECT  *, %s AS uqB, %s AS uqS
 	           FROM  %s AS a
 	     INNER JOIN  dataS AS b
 		     ON  %s;
-	            """  % (uqB, uqS, fBnme, exAnd))
+	            """  % (uqB, uqS, fBnme, exAnd)
+    print "handle_nonfuzzy_dataS: ", stmt
+    c.executescript(stmt)
 
 
 def export_csv_results(c, output):
@@ -128,12 +263,45 @@ def export_csv_results(c, output):
 	writer.writerows(c.execute("SELECT * FROM dataM4").fetchall())
 
 
+def compute_orig(c):
+	rep = [list(x) for x in c.execute("SELECT ErrUQ, uqSUB FROM dataM4")]
+	orig = len([x for x in rep if x[1]!=None])
+        return orig
+
+
+def compute_errm(c):
+	rep = [list(x) for x in c.execute("SELECT ErrUQ, uqSUB FROM dataM4")]
+	errm = sum([int(x[0]) for x in rep if x[0]!=None])
+        return errm
+
+def compute_u(errm, orig):
+	u = 1.0*errm/orig
+        return u
+
+
+def compute_o(orig, lenrep):
+	o = 1-(float(orig)/lenrep)
+        return o
+
+
+def compute_recall(u):
+	recall = 1.0 - u
+	return recall
+
+
+#def compute_precision()
+#def compute_lumping()
+#def compute_splitting()
+
 # TODO: Create functions for handling true and false positives and negatives,
 # compute all the relevant statistics using those measures instead of the
 # mess of inline computation following the heredoc.
 # TODO: Switch to printing json results
+# TODO: Separate computing results and printing results
 def print_results(c, output, t):
 	#print "Printing results ..." + str(datetime.datetime.now())
+	# TODO: Explain ErrUQ in detail
+	# TODO: Explain uqSUB in detail
 	rep = [list(x) for x in c.execute("SELECT ErrUQ, uqSUB FROM dataM4")]
 	#print "Rep: ", rep
 	orig = len([x for x in rep if x[1]!=None])
@@ -158,9 +326,30 @@ def print_results(c, output, t):
 	       Recall: {recall:.2%}
 	  File Detail: {filename}
 		 Time: {time}
-	""".format(original = orig, new = len(rep)-orig, total = len(rep), overclump = len(rep)-orig, o = o,
-		   underclump = errm, u = u, recall = recall, precision = recall/(recall+o), filename = output,
-		   time = datetime.datetime.now()-t)
+	""".format(original = orig,
+                        new = len(rep)-orig,
+                      total = len(rep),
+                  overclump = len(rep)-orig,
+                          o = o,
+                 underclump = errm,
+                          u = u,
+                     recall = recall,
+                  precision = recall/(recall+o),
+                   filename = output,
+                       time = datetime.datetime.now()-t)
+        new = len(rep)-orig
+	now = datetime.datetime.now()-t
+	precision = recall/(recall+o)
+        # TODO: Finish out the formatting
+        print "Original:    %s" % orig
+        print "New Records: %d" % new #len(rep)-orig #{new}
+        print "Total:       %s" % len(rep) #{total}
+        print "Overclump:   %s (%0.2f%%)" % (new, o*100)
+        print "Underclump:  %s (%0.2f%%)" % (errm, u*100) #{ underclump} ({u:.2%})
+        print "Precision:   %0.2f%%" % (precision*100) #{precision:.2%}
+        print "Recall:      %0.2f%%" % (recall*100) #{recall:.2%}
+        print "File Detail: %s" % output #{filename}
+        print "Time:        %s" % now #  {time}
 
 
 def attach_database(c, fileB, tblB, exCom, exAnd):
@@ -192,9 +381,10 @@ def attach_database(c, fileB, tblB, exCom, exAnd):
 def handle_dataS(c, exCom, uqB, uqS, fuzzy, fBnme, exAnd):
 	c.execute("CREATE INDEX IF NOT EXISTS dS_E ON dataS (%s);" % (exCom))
 	if fuzzy:
-	    handle_fuzzy_dataS(c, exCom, uqB, uqS, fuzzy, fBnme, exAnd)
+	    #handle_fuzzy_dataS(c, exCom, uqB, uqS, fuzzy, fBnme, exAnd)
+	    handle_fuzzy_dataS_wrapper(c, exCom, uqB, uqS, fuzzy, fBnme, exAnd)
 	else:
-	    handle_nonfuzzy_dataS(uqB, uqS, fBnme, exAnd)
+	    handle_nonfuzzy_dataS(c, uqB, uqS, fBnme, exAnd)
 
 def print_match_qualifiers(exact, fuzzy, uqS):
 	print "Exact: ", exact
@@ -221,19 +411,6 @@ def bmVerify(results, filepath="", outdir = ""):
 
         """
 
-	# TODO: Move these out of this function completely, and into the top
-	# part of this file.
-	uqB = "Unique_Inventor_ID2"
-	tblB = "invpat"
-	#fileS = "/home/ron/disambig/BM/DefTruth5.csv"
-	#fileS = "/home/doolin/src/patentbenchmarks/DefTruth5.csv"
-	#fileS = "/home/doolin/src/patentbenchmarks/berkeley.csv"
-	fileS = "/home/doolin/src/patentbenchmarks/pister.csv"
-	#fileS = "/home/doolin/src/patentbenchmarks/paulrgray.csv"
-	#fileS = "/home/doolin/src/patentbenchmarks/allbritton.csv"
-	#fileS = "/home/doolin/src/patentbenchmarks/siddhu.csv"
-	#fileS = "/var/share/patentdata/disambiguation/experiments/earth/berkeley/benchmark.csv"
-
         for result in results:
 
                 fileB = filepath + "{result}.sqlite3".format(result=result)
@@ -244,6 +421,7 @@ def bmVerify(results, filepath="", outdir = ""):
                 #print "Start time: " + str(datetime.datetime.now())
 
 		# TODO: Move freqUQ out of this function if possible.
+		# http://docs.python.org/library/sqlite3.html#sqlite3.Connection.create_aggregate
                 class freqUQ:
                     def __init__(self):
                         self.list=[]
@@ -280,8 +458,8 @@ def bmVerify(results, filepath="", outdir = ""):
                             if dataS2[j][i].isdigit():
                                 dataS2[j][i] = x % int(dataS2[j][i])
 
-                conn = sqlite3.connect(":memory:")
-                #conn = sqlite3.connect("bmark2.sqlite3")
+                #conn = sqlite3.connect(":memory:")
+                conn = sqlite3.connect("combined.sqlite3")
                 conn.create_function("jarow", 2, jarow)
                 conn.create_function("errD", 2, lambda x,y: (x!=y) and 1 or None)
                 conn.create_aggregate("freqUQ", 1, freqUQ)
@@ -310,6 +488,10 @@ def bmVerify(results, filepath="", outdir = ""):
 		handle_dataS(c, exCom, uqB, uqS, fuzzy, fBnme, exAnd)
 
                 create_match_tables(c, fBnme, uqB, exCom, exAnd)
+                stmt = """create view results as select
+		          ErrUQ, uqS, uqSUB, uqB, Lastname,
+			  Firstname, Patent, City, State from dataM4;"""
+		c.executescript(stmt)
 
                 #print "Indices Done ... " + str(datetime.datetime.now())
 
@@ -325,4 +507,4 @@ if __name__ == "__main__":
         print bmVerify.__doc__
 
     else:
-            bmVerify(sys.argv[3:], sys.argv[1], sys.argv[2])
+        bmVerify(sys.argv[3:], sys.argv[1], sys.argv[2])
