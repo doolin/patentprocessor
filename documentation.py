@@ -1,6 +1,7 @@
 """
 Documentation
 Patentprocessor testing file
+
 """
 
 def inventor(self):
@@ -26,4 +27,5 @@ def assignee(self):
 
     """
     return
+
     
