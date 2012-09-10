@@ -421,6 +421,7 @@ def bmVerify(results, filepath="", outdir = ""):
                 #print "Start time: " + str(datetime.datetime.now())
 
 		# TODO: Move freqUQ out of this function if possible.
+		# http://docs.python.org/library/sqlite3.html#sqlite3.Connection.create_aggregate
                 class freqUQ:
                     def __init__(self):
                         self.list=[]
@@ -457,8 +458,8 @@ def bmVerify(results, filepath="", outdir = ""):
                             if dataS2[j][i].isdigit():
                                 dataS2[j][i] = x % int(dataS2[j][i])
 
-                conn = sqlite3.connect(":memory:")
-                #conn = sqlite3.connect("combined.sqlite3")
+                #conn = sqlite3.connect(":memory:")
+                conn = sqlite3.connect("combined.sqlite3")
                 conn.create_function("jarow", 2, jarow)
                 conn.create_function("errD", 2, lambda x,y: (x!=y) and 1 or None)
                 conn.create_aggregate("freqUQ", 1, freqUQ)
