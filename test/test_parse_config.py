@@ -35,9 +35,9 @@ class TestPatentConfig(unittest.TestCase):
         # valid directory, but no xml files
         self.assertTrue(exit_status == 0)
 
-        exit_status = os.system('python parse.py --patentroot /dev/null')
-        # specify invalid directory, should fail
-        self.assertTrue(exit_status != 0)
+        exit_status = os.system('python parse.py --patentroot /asdf')
+        # specify invalid directory, should not have any files, but still pass
+        self.assertTrue(exit_status == 0)
 
         # test a working, valid directory
         exit_status = os.system('python parse.py --patentroot %s' % (os.environ['PATENTROOT']))
