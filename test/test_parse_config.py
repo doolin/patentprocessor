@@ -4,6 +4,7 @@ import unittest
 import os
 import logging
 import sys
+import subprocess
 
 # Setup test files and logs
 dir = os.path.dirname(__file__)
@@ -21,6 +22,7 @@ class TestPatentConfig(unittest.TestCase):
     def setUp(self):
         # make sure we can call parse.py using the os module
         # for the purpose of testing command line arguments
+        self.null_out = open('/dev/null','wb')
         current_directory = os.getcwd()
         if not current_directory.endswith('test'):
             logging.error('Please run from the patentprocessor/test directory')
@@ -30,33 +32,43 @@ class TestPatentConfig(unittest.TestCase):
 
     def test_argparse_patentroot(self):
         # test that argparse is setting the variables correctly for patentroot
-        exit_status = os.system('python parse.py --patentroot %s' % (os.getcwd() + '/test/unittest/fixtures'))
+        exit_status = subprocess.call('python parse.py --patentroot %s' % \
+                (os.getcwd() + '/test/unittest/fixtures'), \
+                stdout=self.null_out, shell=True)
         # valid directory, but no xml files
         self.assertTrue(exit_status == 0)
 
-        exit_status = os.system('python parse.py --patentroot /dev/null')
-        # specify invalid directory, should fail
-        self.assertTrue(exit_status != 0)
+        exit_status = subprocess.call('python parse.py --patentroot /asdf', \
+                stdout=self.null_out, shell=True)
+        # specify invalid directory, should not have any files, but still pass
+        self.assertTrue(exit_status == 0)
 
         # test a working, valid directory
-        exit_status = os.system('python parse.py --patentroot %s' % (os.environ['PATENTROOT']))
+        exit_status = subprocess.call('python parse.py --patentroot %s' % \
+                (os.environ['PATENTROOT']), stdout=self.null_out, shell=True)
         # this should pass
         self.assertTrue(exit_status == 0)
 
     def test_argparse_regex(self):
         # test that argparse is setting the regular expression correctly
         # test valid regex on unittest/fixtures folder
-        exit_status = os.system("python parse.py --patentroot %s --xmlregex '201\d_\d.xml'" % (os.getcwd() + '/test/unittest/fixtures'))
+        exit_status = subprocess.call("python parse.py \
+                --patentroot %s --xmlregex '2012_\d.xml'" % \
+                (os.getcwd() + '/test/unittest/fixtures'), \
+                stdout=self.null_out, shell=True)
         self.assertTrue(exit_status == 0)
 
     def test_argparse_directory(self):
         # test that argparse is setting the variables correctly for directories
         # parse.py should not find any .xml files, but this should still pass
-        exit_status = os.system('python parse.py --patentroot %s' % (os.getcwd() + '/test/unittest'))
+        exit_status = subprocess.call('python parse.py --patentroot %s' % \
+                (os.getcwd() + '/test/unittest'), stdout=self.null_out, shell=True)
         self.assertTrue(exit_status == 0)
 
         # parse.py should concatentate the correct directory and find xml files
-        exit_status = os.system("python parse.py --patentroot %s --directory fixtures --xmlregex '201\d_\d.xml'" % (os.getcwd() + '/test/unittest'))
+        exit_status = subprocess.call("python parse.py --patentroot %s \
+                --directory fixtures --xmlregex '2012_\d.xml'" % \
+                (os.getcwd() + '/test/unittest'), stdout=self.null_out, shell=True)
         self.assertTrue(exit_status == 0)
 
         # TODO: make test for iterating through multiple directories
