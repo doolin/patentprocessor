@@ -1,3 +1,13 @@
+bmschema.txt
+dump.sql
+tmp*
+results*.txt
+.sass*
+.DS_*
+*~
+*.swp
+*.csv
+tmp/
 *.log
 invpat*.csv
 *.pyc

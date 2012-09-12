@@ -1,10 +1,21 @@
+#!/usr/bin/env python
+
 # TODO
 # Why are records over & underclumped? ie. Charles Linder 7475467, Nirmala Ramanujam 7570988, Edwin L. Thomas 7799416
 # Investigate "WEIRDNESS" output : Jaro-Winkler exception thrown on comparison between  and ROBERT BRUCE
 # Underclumping: unique records vs. total records
 
 
-import sqlite3, sys, csv, datetime;
+import sqlite3
+import csv
+import datetime;
+# http://docs.python.org/howto/argparse.html
+import argparse
+
+import sys
+sys.path.append( './lib/' )
+sys.path.append("lib")
+
 from fwork import *;
 
 def bmVerify(results, filepath="", outdir = ""):
@@ -26,10 +37,24 @@ def bmVerify(results, filepath="", outdir = ""):
         
         """
         for result in results:
-                uqB = "invnum_N"
+
+                #uqB = "Unique_Inventor_ID2"
+                #uqB = "final_1"
+                #uqB = "final_2"
+                #uqB = "final_3"
+                uqB = "final_4"
+                #uqB = "final_5"
+                #uqB = "final_6"
                 tblB = "invpat"
-                #fileS = "/home/ron/disambig/BM/DefTruth5.csv"
-                fileS = "/var/share/patentdata/benchmarks/DefTruth5.csv"
+                #fileS = "/home/doolin/src/patentbenchmarks/combined.csv"
+                #fileS = "/home/doolin/src/patentbenchmarks/DefTruth5.csv"
+                #fileS = "/home/doolin/src/patentbenchmarks/berkeley.csv"
+                fileS = "/home/doolin/src/patentbenchmarks/combined.csv"
+                #fileS = "/home/doolin/src/patentbenchmarks/pister.csv"
+                #fileS = "/home/doolin/src/patentbenchmarks/paulrgray.csv"
+                #fileS = "/home/doolin/src/patentbenchmarks/allbritton.csv"
+                #fileS = "/home/doolin/src/patentbenchmarks/siddhu.csv"
+                #fileS = "/var/share/patentdata/disambiguation/experiments/earth/berkeley/benchmark.csv"
                 fileB = filepath + "{result}.sqlite3".format(result=result)
                 output = outdir + "{result}_DT5.csv".format(result=result)
 
@@ -46,11 +71,16 @@ def bmVerify(results, filepath="", outdir = ""):
 
                 #MAKE THIS SO IT CAN ATTACH SQLITE3 FOR BENCHMARK
                 dataS = uniVert([x for x in csv.reader(open(fileS, "rb"))])
+
+		#print dataS
+
                 #1 = Variables, 2 = Type, 3 = Format (If necessary), 4 = Matching Type
                 tList = ["%s %s" % (dataS[0][i], x) for i,x in enumerate(dataS[1]) if  x != ""]
 
                 dataS2 = [dataS[0]]
                 dataS2.extend(dataS[4:])
+
+                #print dataS[2]
 
                 #Format if its necessary --> Basically for Patents..
                 for i,x in enumerate(dataS[2]):
@@ -60,6 +90,7 @@ def bmVerify(results, filepath="", outdir = ""):
                                 dataS2[j][i] = x % int(dataS2[j][i])
 
                 conn = sqlite3.connect(":memory:")
+                #conn = sqlite3.connect("benchmark.sqlite3")
                 conn.create_function("jarow", 2, jarow)
                 conn.create_function("errD", 2, lambda x,y: (x!=y) and 1 or None)
                 conn.create_aggregate("freqUQ", 1, freqUQ)
@@ -67,8 +98,12 @@ def bmVerify(results, filepath="", outdir = ""):
 
                 #FIGURE OUT WHICH ONES HAVE EXACT/FUZZY
                 exact = [dataS[0][i] for i,x in enumerate(dataS[3]) if x.upper()[0]=="E"]
+		print "Exact: ", exact
                 fuzzy = [dataS[0][i] for i,x in enumerate(dataS[3]) if x.upper()[0]=="F"]
+		print "Fuzzy: ", fuzzy
                 uqS =   [dataS[0][i] for i,x in enumerate(dataS[3]) if x.upper()[0]=="U"][0]
+
+
 
                 #CREATE INDEX, MERGE DATA BASED ON EXACTS
                 print "Creating indices... " + str(datetime.datetime.now())
@@ -147,7 +182,7 @@ def bmVerify(results, filepath="", outdir = ""):
                         SELECT  errD(a.ErrUQ, uqB) AS ErrUQ, b.*
                           FROM (SELECT uqS, freqUQ(uqB) as ErrUQ FROM dataM3 GROUP BY uqS) AS a
                     INNER JOIN  dataM3 AS b
-                            ON  a.uqS=b.uqS AND b.AppYearStr <= '2009' /*AND a.uqS not in (83, 85, 93)*/
+                            ON  a.uqS=b.uqS AND b.AppYear <= '2012' /*AND a.uqS not in (83, 85, 93)*/
                       ORDER BY  uqS, %s;
 
                     """ % (fBnme, uqB, exCom, exAnd, uqB, exCom))
@@ -160,11 +195,15 @@ def bmVerify(results, filepath="", outdir = ""):
                 writer.writerows(c.execute("SELECT * FROM dataM4").fetchall())
                 print "Printing results ..." + str(datetime.datetime.now())
                 rep = [list(x) for x in c.execute("SELECT ErrUQ, uqSUB FROM dataM4")]
+		#print "Rep: ", rep
                 orig = len([x for x in rep if x[1]!=None])
                 errm = sum([int(x[0]) for x in rep if x[0]!=None])
+		#print errm
                 u = 1.0*errm/orig
                 o = 1-(float(orig)/len(rep))
                 recall = 1.0 - u
+		# overclumping is lumping
+		# underclumping is splitting
                 print """
 
                 RESULTS ==================

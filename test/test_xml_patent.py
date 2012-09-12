@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 import unittest
 import sys
 import imp
@@ -26,10 +28,10 @@ valid_kind_types = ["A1", "A2", "A9", "B1", "B2", "B3", "B4", "B5",
 
 # Directory of test files and logs
 dir = os.path.dirname(__file__)
-folder = os.path.join(dir, 'unittest/')
-log_file = os.path.join(dir, 'unittest/log/xml-unit-test.log')
+folder = os.path.join(dir, 'fixtures/xml/')
+log_file = os.path.join(dir, 'unittest/unit-test.log')
 xml_files = [x for x in os.listdir(folder)
-             if re.match(r".*?patent.*?xml", x) != None] # Match fixtures
+             if re.match(r"ipg120327.one.xml", x) != None] # Match fixtures
 
 
 # Logging setup
@@ -327,7 +329,7 @@ class TestXMLPatent(unittest.TestCase):
             # Cit List
             for (cited_by, country, doc_number,
                  date, kind, name, reference) in parsed_fields.cit_list:
-                
+
                 country_string = "[<]references-cited[>](.*?)[<]country[>]"+country+"[<][/]country[>](.*?)[<][/]references-cited[>]"
                 doc_string = "[<]references-cited[>](.*?)[<]doc-number[>]"+doc_number+"[<][/]doc-number[>](.*?)[<][/]references-cited[>]"
                 kind_string = "[<]references-cited[>](.*?)[<]kind[>]"+kind+"[<][/]kind[>](.*?)[<][/]references-cited[>]"
@@ -410,7 +412,7 @@ class TestXMLPatent(unittest.TestCase):
         for i, xml_tuple in enumerate(parsed_xml): # xml_tuple = (xml_file, XMLpatent(xml))
             original_xml_string = open(folder + xml_tuple[0]).read() # rstrip('\t\n\r')
             parsed_fields = xml_tuple[1]
-        
+
             # Law list
 
             for (last_name, first_name, country, orgname) in parsed_fields.law_list:

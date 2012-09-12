@@ -45,6 +45,8 @@ def jarow(s1,s2):
         print "Jaro-Winkler exception thrown on comparison between " + s1 + " and " + s2
         return 0
 
+def tblExist(c, table):
+	    return c.execute("SELECT count(*) FROM sqlite_master WHERE tbl_name='%s'" % table).fetchone()[0]>0
 
 class uQvals:
     def __init__(self):
@@ -54,11 +56,6 @@ class uQvals:
     def finalize(self):
         out = list(set(self.dList))
         return len(out)>1 and "|".join(out) or ""
-
-
-def tblExist(c, table):
-    return c.execute("SELECT count(*) FROM sqlite_master WHERE tbl_name='%s'" % table).fetchone()[0]>0
-
 
 def uniVert(data):
     def uni(data):
@@ -103,6 +100,133 @@ def quickSQL(c, data, table="", header=False, typescan=50, typeList = []):
         c.executemany("INSERT INTO %s VALUES (%s)" % (table, ", ".join(["?"]*len(data[0]))), data[1:])
 
 
+####################################
+# Refactored quickSQL functions below
+
+def get_ctypes(x):
+    return { types.StringType:  "VARCHAR",
+             types.UnicodeType: "VARCHAR",
+             types.IntType:     "INTEGER",
+             types.FloatType:   "REAL"
+	   }[type(x)]
+
+def text_type(datatype):
+    return type(datatype)==types.StringType or type(datatype)==types.UnicodeType
+
+
+# The naming here is unfortunate with respect to how the
+# program logic works.
+def is_real(data):
+    lengthall = len(re.findall(r"[.]", data))
+    #print "length: ", lengthall
+    return lengthall
+
+
+# This function won't handle valid floating point notation.
+# Will fail on 1.23e45
+def is_all_digits(data):
+    return re.sub(r"[-,.]", "", data).isdigit()
+
+
+# TODO: There should be no reason to pass in the index i
+def get_ctype(typescan, data, i):
+
+	least = 2
+	ints = 1
+	length = min(typescan+1, len(data))
+
+	for j in range(1, length):
+
+	    if text_type(data[j][i]):
+
+		if re.sub(r"[-,.]", "", data[j][i]).isdigit():
+
+		    lengthall = is_real(data[j][i])
+
+		    if lengthall == 0:
+		        pass
+		    elif lengthall == 1:
+			ints = 0
+		    else:
+			least = 0;
+			# This break is unfortunate, prevents an easy refactoring of
+			# the conditional logic. General principal: try not to break
+			# out of loops from deeply nested conditionals.
+			break
+		else:
+		    least = 0;
+		    break
+
+        key = max(least-ints, 0)
+	#print "key: ", key
+	value =  {0:"VARCHAR", 1:"INTEGER", 2:"REAL"}[key]
+	#print "value: ", value
+	return value 
+
+
+def create_column_labels(x, typescan, data, i, header, tList):
+
+    cType = get_ctypes(x)
+
+    if type(typescan)==types.IntType and cType=="VARCHAR":
+        cType = get_ctype(typescan, data, i)
+
+    if header:
+	tList.append("%s %s" % (data[0][i], cType))
+    else:
+	# Create "fake" column labels v0, v1, v2,...
+	tList.append("v%d %s" % (i, cType))
+
+    return tList
+
+
+# TODO: Change to boolean return
+def have_schema_type(typeList, datatype):
+    value = str(typeList).upper().find("%s " % datatype.upper())
+    return value
+
+
+def create_schema(data, header, typescan, typeList):
+
+    tList = []
+    # Find out why this is spinning data[1] instead of data[0]
+    # Confusing.
+    for i,x in enumerate(data[1]):
+	if have_schema_type(typeList, data[0][i]) < 0:
+            tList = create_column_labels(x, typescan, data, i, header, tList)
+	else:
+	    #tList.extend([y for y in typeList if y.upper().find("%s " % data[0][i].upper())==0])
+	    # TODO: Check for an embedded override here on the schema
+	    tList.extend([y for y in typeList if have_schema_type(y, data[0][i]) == 0])
+
+    schema = ", ".join(tList)
+    return schema
+
+
+def quickSQL_create_table(c, data, header, table, typescan, typeList):
+    schema = create_schema(data, header, typescan, typeList)
+    c.execute("CREATE TABLE IF NOT EXISTS %s (%s)" % (table, schema))
+
+
+def quickSQL2(c, data, table="", header=False, typescan=50, typeList = []):
+
+    if table=="":
+	print "Table empty string"
+	sql_statement = "SELECT tbl_name FROM sqlite_master WHERE type='table' order by tbl_name"
+        table = "debug%d" % len([x[0] for x in c.execute(sql_statement) if len(re.findall(r"debug[0-9]+", x[0]))>0])
+    else:
+        if c.execute("SELECT count(*) FROM sqlite_master WHERE tbl_name='%s'" % table).fetchone()[0]>0:
+	    print "else block at beginning of function fired..."
+            return
+
+    quickSQL_create_table(c, data, header, table, typescan, typeList)
+    # TODO: Refactor into quickSQL_load_table(header, table, data)
+    if header==False:
+        c.executemany("INSERT INTO %s VALUES (%s)" % (table, ", ".join(["?"]*len(data[0]))), data)
+    else:
+        c.executemany("INSERT INTO %s VALUES (%s)" % (table, ", ".join(["?"]*len(data[0]))), data[1:])
+
+
 def tabFile(fname, delim="\t"):
 ##    tFile = [x.split("\t") for x in open(fname).read().split("\n")]
 ##    return [x for x in tFile if len(x)==len(tFile[0])]
@@ -114,7 +238,7 @@ def remspace(x):
     return re.sub(r" ", "", x)
 
 
-def ascit(x, strict=True):
+def ascit(x, strict=True, remove_plus=False):
     x = x.upper()
     #Solves that {UMLAUT OVER (A)}
     x = re.sub(r"[{].*?[(].*?[)].*?[}]", lambda(x):re.findall("[(](.*?)[)]", x.group())[0], x)
@@ -126,12 +250,14 @@ def ascit(x, strict=True):
         #remove periods, ampersand, etc
         ##x = re.sub(r"[!@#$%^&*.,(){}]", "", x)
         x = re.sub(r"[^A-Za-z0-9 ]", "", x)
-        # This version was in sedAdd.py
+        # This version was in sendAdd.py
         #x = re.sub(r"[^A-Za-z0-9 ]", " ", x)
 
     # This line was in the version of this function which was in the
     # senAdd file, but which wasn't used.
-    #x = re.sub(r"  +", " ", x)
+    # Also, a few lines above, this shows being dealt with anyway.
+    # if remove_plus:
+    #     x = re.sub(r"  +", " ", x)
 
     #remove duplicates
     x = re.sub(r"[ ,|-]{2,}", lambda(x):re.findall(r"[ ,|-]", x.group())[0], x)

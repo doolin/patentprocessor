@@ -1,2 +1,7 @@
+results.csv
+*.db
+tmp
+err
+*SQLite*
 fibotest.py
 *.sqlite3
