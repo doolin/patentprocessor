@@ -16,3 +16,5 @@ data/
 fibo.py
 NBER_asg
 loctbl
+latex/
+html/

@@ -28,6 +28,23 @@ class TestPatentConfig(unittest.TestCase):
             logging.error('Please run from the patentprocessor/test directory')
         # need a default value for later tests
         self.assertTrue(os.environ.has_key('PATENTROOT'))
+
+    def test_argparse_patentroot(self):
+        # test that argparse is setting the variables correctly for patentroot
+        os.chdir('..')
+        exit_status = os.system('python parse.py --patentroot %s' % (os.getcwd() + '/unittest/fixtures'))
+        # because of the default regex, this should fail
+        self.assertTrue(exit_status != 0)
+
+        exit_status = os.system('python parse.py --patentroot /dev/null')
+        # specify invalid directory, should fail
+        self.assertTrue(exit_status != 0)
+
+        # test a working, valid directory
+        exit_status = os.system('python parse.py --patentroot %s' % (os.environ['PATENTROOT']))
+        # this should pass
+        self.assertTrue(exit_status == 0)
+
         os.chdir('..')
 
     def test_argparse_patentroot(self):
