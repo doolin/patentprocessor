@@ -7,13 +7,13 @@ svg {
 
 #states path {
   fill: none;
-  stroke: #0f5;
+  stroke: #999;
   stroke-width: 1.5px;
 }
 
 #counties path {
   fill: #fff;
-  stroke: #f0f;
+  stroke: #ddd;
   stroke-width: .25px;
 }
 
