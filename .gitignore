@@ -1,3 +1,9 @@
+*.sqlite3
+html/
+latex/
+lib/
+*.pyc
+*.log
 .sass-cache
 .DS_*
 test/
