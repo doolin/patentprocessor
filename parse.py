@@ -17,6 +17,16 @@ from patXML import XMLPatent
 from patXML import uniasc
 from fwork  import *
 
+
+def list_files(directories, patentroot, xmlregex):
+    """
+    Returns listing of all files within all directories relative to patentroot
+    whose filenames match xmlregex
+    """
+    files = [directory+'/'+fi for directory in directories for fi in \
+            os.listdir(patentroot+'/'+directory) \
+            if re.match(xmlregex, fi, re.I) != None]
+
 # setup argparse
 parser = argparse.ArgumentParser(description=\
         'Specify source directory/directories for xml files to be parsed')
@@ -43,9 +53,7 @@ logging.basicConfig(filename=logfile, level=logging.DEBUG)
 t1 = datetime.datetime.now()
 
 #get a listing of all files within the directory that follow the naming pattern
-files = [directory+'/'+fi for directory in DIRECTORIES for fi in \
-        os.listdir(PATENTROOT+'/'+directory) \
-        if re.match(XMLREGEX, fi, re.I) != None]
+files = list_files(DIRECTORIES, PATENTROOT, XMLREGEX)
 print "Total files: %d" % (len(files))
 logging.info("Total files: %d" % (len(files)))
 
