@@ -144,6 +144,8 @@ class SQLPatent:
         conn.close()
 
     def dbTbl(self, tbl, c, legacy=True):
+        # When we update the table, we do not have to drop and then rebuild the
+        # index, because the index is updated along with the table
         c.execute("CREATE TABLE IF NOT EXISTS gXML ( week VARCHAR )")
         if tbl=="assignee":
             c.executescript("""
@@ -152,11 +154,6 @@ class SQLPatent:
                     City VARCHAR(10),       State VARCHAR(2),       Country VARCHAR(2),
                     Nationality VARCHAR(2), Residence VARCHAR(2),   AsgSeq INTEGER);
                 CREATE UNIQUE INDEX IF NOT EXISTS uqAsg ON assignee (Patent, AsgSeq);
-                DROP INDEX IF EXISTS idx_pata;
-                DROP INDEX IF EXISTS idx_patent;
-                DROP INDEX IF EXISTS idx_asgtyp;
-                DROP INDEX IF EXISTS idx_stt;
-                DROP INDEX IF EXISTS idx_cty;
                 """)
         elif tbl=="citation":
             c.executescript("""
@@ -165,9 +162,6 @@ class SQLPatent:
                     Cit_Kind VARCHAR(1),    Cit_Country VARCHAR(2), Citation VARCHAR(8),
                     Category VARCHAR(15),   CitSeq INTEGER);
                 CREATE UNIQUE INDEX IF NOT EXISTS uqCit ON citation (Patent, CitSeq);
-                DROP INDEX IF EXISTS idx_patc;
-                DROP INDEX IF EXISTS idx_patent;
-                DROP INDEX IF EXISTS idx_cit;
                 """)
         elif tbl=="class":
             c.executescript("""
@@ -175,9 +169,6 @@ class SQLPatent:
                     Patent VARCHAR(8),      Prim INTEGER,
                     Class VARCHAR(3),       SubClass VARCHAR(3));
                 CREATE UNIQUE INDEX IF NOT EXISTS uqClass ON class (Patent, Class, SubClass);
-                DROP INDEX IF EXISTS idx_patcs;
-                DROP INDEX IF EXISTS idx_patent;
-                DROP INDEX IF EXISTS idx_prim;
                 """)
         elif tbl=="inventor":
             c.executescript("""
@@ -187,10 +178,6 @@ class SQLPatent:
                     State VARCHAR(2),       Country VARCHAR(12),
                     Zipcode VARCHAR(5),     Nationality VARCHAR(2), InvSeq INTEGER);
                 CREATE UNIQUE INDEX IF NOT EXISTS uqInv ON inventor (Patent, InvSeq);
-                DROP INDEX IF EXISTS idx_pati;
-                DROP INDEX IF EXISTS idx_patent;
-                DROP INDEX IF EXISTS idx_stt;
-                DROP INDEX IF EXISTS idx_cty;
                 """)
         elif tbl=="patent": #add PatType VARCHAR(15)
             c.executescript("""
@@ -200,9 +187,6 @@ class SQLPatent:
                     GDate INTEGER,          GYear INTEGER,
                     AppDate INTEGER,        AppYear INTEGER, PatType VARCHAR(15) );
                 CREATE UNIQUE INDEX IF NOT EXISTS uqPat on patent (Patent);
-                DROP INDEX IF EXISTS idx_patent;
-                DROP INDEX IF EXISTS idx_ayr;
-                DROP INDEX IF EXISTS idx_gyr;
                 """)
         elif tbl=="patdesc":
             c.executescript("""
@@ -210,7 +194,6 @@ class SQLPatent:
                     Patent VARCHAR(8),
                     Abstract VARCHAR(50),   Title VARCHAR(20));
                 CREATE UNIQUE INDEX IF NOT EXISTS uqPatDesc ON patdesc (Patent);
-                DROP INDEX IF EXISTS idx_patent;
                 """)
         elif tbl=="lawyer":
             c.executescript("""
@@ -218,16 +201,12 @@ class SQLPatent:
                     Patent VARCHAR(8),      Firstname VARCHAR(15),  Lastname VARCHAR(15),
                     LawCountry VARCHAR(2),  OrgName VARCHAR(20),    LawSeq INTEGER);
                 CREATE UNIQUE INDEX IF NOT EXISTS uqLawyer ON lawyer (Patent, LawSeq);
-                DROP INDEX IF EXISTS idx_patl;
-                DROP INDEX IF EXISTS idx_patent;
                 """)
         elif tbl=="sciref":
             c.executescript("""
                 CREATE TABLE IF NOT EXISTS sciref (
                     Patent VARCHAR(8),      Descrip VARCHAR(20),    CitSeq INTEGER);
                 CREATE UNIQUE INDEX IF NOT EXISTS uqSciref ON sciref (Patent, CitSeq);
-                DROP INDEX IF EXISTS idx_patc;
-                DROP INDEX IF EXISTS idx_patent;
                 """)
         elif tbl=="usreldoc":
             c.executescript("""
@@ -236,10 +215,11 @@ class SQLPatent:
                     Country VARCHAR(2),     RelPatent VARCHAR(8),   Kind VARCHAR(2),
                     RelDate INTEGER,        Status VARCHAR(10));
                 CREATE UNIQUE INDEX IF NOT EXISTS uqUSRelDoc ON usreldoc (Patent, OrderSeq);
-                DROP INDEX IF EXISTS idx_pator;
-                DROP INDEX IF EXISTS idx_patent;
                 """)
 
+    # TODO: look at using callbacks to simplify this (alternative to putting it in XMLPatent)
+    # TODO: use a dispatch table {'foo' : fxn_to_operate_on_foo} so we can use dispatch['foo'](foo) or something
+    # TODO: test the callback system *and* the individual functions
     def tblBuild(self, patents, tbl, legacy=True):
         q = [] # creating the list of lists
         for x in patents:
