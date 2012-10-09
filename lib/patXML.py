@@ -249,7 +249,6 @@ class XMLPatent(object):
             self.tablecallbacks["inventor"]())
         conn.commit()
 
-
     def insert_patent(self):
         conn = sqlite3.connect("patent.sqlite3")
         c = conn.cursor()
