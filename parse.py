@@ -44,6 +44,7 @@ parser.add_argument('--xmlregex','-x', type=str, \
         nargs='?', default=r"ipg\d{6}.xml",\
         help='regex used to match xml files in each directory')
       
+# double check that varaibles are actually set
 if len(sys.argv)==1:
     parser.print_help()
     sys.exit(1)
