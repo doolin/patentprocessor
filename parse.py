@@ -59,6 +59,11 @@ def parallel_parse(filelist):
     pool = multiprocessing.Pool(multiprocessing.cpu_count())
     return list(itertools.chain(*pool.imap_unordered(parse_file, filelist)))
 
+    files = [directory+'/'+fi for directory in directories for fi in \
+            os.listdir(patentroot+'/'+directory) \
+            if re.match(xmlregex, fi, re.I) != None]
+    return files
+
 # setup argparse
 parser = argparse.ArgumentParser(description=\
         'Specify source directory/directories for xml files to be parsed')
@@ -118,6 +123,7 @@ t1 = datetime.datetime.now()
 
 #get a listing of all files within the directory that follow the naming pattern
 files = list_files(DIRECTORIES, PATENTROOT, XMLREGEX)
+print "Total files: %d" % (len(files))
 logging.info("Total files: %d" % (len(files)))
 
 # list of parsed xml strings
