@@ -89,7 +89,6 @@ parser.add_argument('--patentroot','-p', type=str, nargs='?',
 parser.add_argument('--xmlregex','-x', type=str, 
         nargs='?', default=r"ipg\d{6}.xml",
         help='regex used to match xml files in each directory')
-<<<<<<< HEAD
 parser.add_argument('--verbosity', '-v', type = int,
         nargs='?', default=0,
         help='Set the level of verbosity for the computation. The higher the \
@@ -105,9 +104,6 @@ if len(sys.argv)==1:
     parser.print_help()
     sys.exit(1)
 
-=======
-      
->>>>>>> keep cli interface consistent
 if len(sys.argv)==1:
     parser.print_help()
     sys.exit(1)
