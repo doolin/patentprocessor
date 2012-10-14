@@ -83,6 +83,10 @@ if len(sys.argv)==1:
     parser.print_help()
     sys.exit(1)
 
+if len(sys.argv)==1:
+    parser.print_help()
+    sys.exit(1)
+
 # parse arguments and assign values
 args = parser.parse_args()
 DIRECTORIES = args.directory
