@@ -21,6 +21,11 @@ from patXML import XMLPatent
 from patXML import uniasc
 from fwork  import *
 
+regex = re.compile(r"""
+ ([<][?]xml[ ]version.*?[>]       #all XML starts with ?xml
+.*?
+[<][/]us[-]patent[-]grant[>])    #and here is the end tag
+""", re.I+re.S+re.X)
 
 def list_files(directories, patentroot, xmlregex):
     """
