@@ -34,7 +34,7 @@ def list_files(directories, patentroot, xmlregex):
     """
     files = [directory+'/'+fi for directory in directories for fi in \
             os.listdir(patentroot+'/'+directory) \
-            if re.match(xmlregex, fi, re.I) != None]
+            if re.search(xmlregex, fi, re.I) != None]
 
 def parse_file(filename):
     parsed_xmls = []
