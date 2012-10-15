@@ -64,6 +64,18 @@ def parallel_parse(filelist):
             if re.match(xmlregex, fi, re.I) != None]
     return files
 
+def parse_file(filename):
+    parsed_xmls = []
+    size = os.stat(filename).st_size
+    with open(filename,'r') as f:
+        with contextlib.closing(mmap.mmap(f.fileno(), size, access=mmap.ACCESS_READ)) as m:
+            parsed_xmls.extend(regex.findall(m))
+    return parsed_xmls
+
+def parallel_parse(filelist):
+    pool = multiprocessing.Pool(multiprocessing.cpu_count())
+    return list(itertools.chain(*pool.imap_unordered(parse_file, filelist)))
+
 # setup argparse
 parser = argparse.ArgumentParser(description=\
         'Specify source directory/directories for xml files to be parsed')
