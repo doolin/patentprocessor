@@ -103,8 +103,12 @@ print "Total files: %d" % (len(files))
 logging.info("Total files: %d" % (len(files)))
 
 # list of parsed xml strings
+<<<<<<< HEAD
 parsed_xmls = parallel_parse(files)
 logging.info("   - Total Patents: %d" % (len(parsed_xmls)))
+=======
+parsed_xmls = []
+>>>>>>> add framework for parallel parsing
 
 tables = ["assignee", "citation", "class", "inventor", "patent",\
         "patdesc", "lawyer", "sciref", "usreldoc"]
