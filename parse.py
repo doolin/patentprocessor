@@ -53,6 +53,18 @@ def parallel_parse(filelist):
             if re.match(xmlregex, fi, re.I) != None]
     return files
 
+def parse_file(filename):
+    parsed_xmls = []
+    size = os.stat(filename).st_size
+    with open(filename,'r') as f:
+        with contextlib.closing(mmap.mmap(f.fileno(), size, access=mmap.ACCESS_READ)) as m:
+            parsed_xmls.extend(regex.findall(m))
+    return parsed_xmls
+
+def parallel_parse(filelist):
+    pool = multiprocessing.Pool(multiprocessing.cpu_count())
+    return list(itertools.chain(*pool.imap_unordered(parse_file, filelist)))
+
 # setup argparse
 parser = argparse.ArgumentParser(description=\
         'Specify source directory/directories for xml files to be parsed')
@@ -77,7 +89,7 @@ parser.add_argument('--verbosity', '-v', type = int,
 # if any variables have been set by the user
 specified = [arg for arg in sys.argv if arg.startswith('-')]
 nonverbose = [opt for opt in specified if '-v' not in opt]
-if len(nonverbose)==0:
+if len(sys.argv)==1:
     parser.print_help()
     sys.exit(1)
 
@@ -105,7 +117,6 @@ logging.info("Total files: %d" % (len(files)))
 
 # list of parsed xml strings
 parsed_xmls = parallel_parse(files)
-
 logging.info("   - Total Patents: %d" % (len(parsed_xmls)))
 
 tables = ["assignee", "citation", "class", "inventor", "patent",\
