@@ -34,23 +34,7 @@ def list_files(directories, patentroot, xmlregex):
     files = [patentroot+'/'+directory+'/'+fi for directory in directories for fi in \
             os.listdir(patentroot+'/'+directory) \
             if re.search(xmlregex, fi, re.I) != None]
-    return files
-
-def parse_file(filename):
-    parsed_xmls = []
-    size = os.stat(filename).st_size
-    with open(filename,'r') as f:
-        with contextlib.closing(mmap.mmap(f.fileno(), size, access=mmap.ACCESS_READ)) as m:
-            parsed_xmls.extend(regex.findall(m))
-    return parsed_xmls
-
-def parallel_parse(filelist):
-    pool = multiprocessing.Pool(multiprocessing.cpu_count())
-    return list(itertools.chain(*pool.imap_unordered(parse_file, filelist)))
-
-    files = [directory+'/'+fi for directory in directories for fi in \
-            os.listdir(patentroot+'/'+directory) \
-            if re.search(xmlregex, fi, re.I) != None]
+    print files
     return files
 
 def parse_file(filename):
@@ -123,6 +107,17 @@ tables = ["assignee", "citation", "class", "inventor", "patent",\
         "patdesc", "lawyer", "sciref", "usreldoc"]
 total_count = 0
 total_patents = 0
+for filenum, filename in enumerate(files):
+    print " > Regular Expression: %s" % filename
+    XMLs = re.findall(
+            r"""
+                ([<][?]xml[ ]version.*?[>]       #all XML starts with ?xml
+                .*?
+                [<][/]us[-]patent[-]grant[>])    #and here is the end tag
+             """,
+            open(files[filenum]).read(), re.I + re.S + re.X)
+    print "   - Total Patents: %d" % (len(XMLs))
+    logging.info("   - Total Patents: %d" % (len(XMLs)))
 
 for filename in parsed_xmls:
 
