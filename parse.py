@@ -32,7 +32,7 @@ def list_files(directories, patentroot, xmlregex):
     Returns listing of all files within all directories relative to patentroot
     whose filenames match xmlregex
     """
-    files = [directory+'/'+fi for directory in directories for fi in \
+    files = [patentroot+'/'+directory+'/'+fi for directory in directories for fi in \
             os.listdir(patentroot+'/'+directory) \
             if re.search(xmlregex, fi, re.I) != None]
 
@@ -98,7 +98,7 @@ for filenum, filename in enumerate(files):
                 .*?
                 [<][/]us[-]patent[-]grant[>])    #and here is the end tag
              """,
-            open(PATENTROOT+"/"+files[filenum]).read(), re.I + re.S + re.X)
+            open(files[filenum]).read(), re.I + re.S + re.X)
     print "   - Total Patents: %d" % (len(XMLs))
     logging.info("   - Total Patents: %d" % (len(XMLs)))
 
