@@ -9,6 +9,7 @@ import re
 import mmap
 import contextlib
 import multiprocessing
+import itertools
 
 import sys
 sys.path.append( '.' )
@@ -30,6 +31,18 @@ def list_files(directories, patentroot, xmlregex):
             os.listdir(patentroot+'/'+directory) \
             if re.match(xmlregex, fi, re.I) != None]
 
+def parse_file(filename):
+    parsed_xmls = []
+    size = os.stat(filename).st_size
+    with open(filename,'r') as f:
+        with contextlib.closing(mmap.mmap(f.fileno(), size, access=mmap.ACCESS_READ)) as m:
+            parsed_xmls.extend(regex.findall(m))
+    return parsed_xmls
+
+def parallel_parse(filelist):
+    pool = multiprocessing.Pool(multiprocessing.cpu_count())
+    return list(itertools.chain(*pool.imap_unordered(parse_file, filelist)))
+
 # setup argparse
 parser = argparse.ArgumentParser(description=\
         'Specify source directory/directories for xml files to be parsed')
@@ -44,7 +57,7 @@ parser.add_argument('--xmlregex','-x', type=str, \
         nargs='?', default=r"ipg\d{6}.xml",\
         help='regex used to match xml files in each directory')
       
-# double check that varaibles are actually set
+# double check that variables are actually set
 if len(sys.argv)==1:
     parser.print_help()
     sys.exit(1)
@@ -64,6 +77,9 @@ t1 = datetime.datetime.now()
 files = list_files(DIRECTORIES, PATENTROOT, XMLREGEX)
 print "Total files: %d" % (len(files))
 logging.info("Total files: %d" % (len(files)))
+
+# list of parsed xml strings
+parsed_xmls = []
 
 tables = ["assignee", "citation", "class", "inventor", "patent",\
         "patdesc", "lawyer", "sciref", "usreldoc"]
