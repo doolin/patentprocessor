@@ -50,7 +50,7 @@ def parallel_parse(filelist):
 
     files = [directory+'/'+fi for directory in directories for fi in \
             os.listdir(patentroot+'/'+directory) \
-            if re.match(xmlregex, fi, re.I) != None]
+            if re.search(xmlregex, fi, re.I) != None]
     return files
 
 def parse_file(filename):
