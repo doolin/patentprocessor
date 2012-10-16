@@ -51,15 +51,15 @@ def parallel_parse(filelist):
 # setup argparse
 parser = argparse.ArgumentParser(description=\
         'Specify source directory/directories for xml files to be parsed')
-parser.add_argument('--directory','-d', type=str, nargs='+', default='',\
+parser.add_argument('--directory','-d', type=str, nargs='+', default='',
         help='comma separated list of directories relative to $PATENTROOT that \
         parse.py will search for .xml files')
-parser.add_argument('--patentroot','-p', type=str, nargs='?',\
+parser.add_argument('--patentroot','-p', type=str, nargs='?',
         default=os.environ['PATENTROOT'] \
-        if os.environ.has_key('PATENTROOT') else '/',\
+        if os.environ.has_key('PATENTROOT') else '/',
         help='root directory of all patent files/directories')
-parser.add_argument('--xmlregex','-x', type=str, \
-        nargs='?', default=r"ipg\d{6}.xml",\
+parser.add_argument('--xmlregex','-x', type=str, 
+        nargs='?', default=r"ipg\d{6}.xml",
         help='regex used to match xml files in each directory')
       
 # double check that variables are actually set
