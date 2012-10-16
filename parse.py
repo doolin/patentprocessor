@@ -152,17 +152,6 @@ xmlclasses = [AssigneeXML, CitationXML, ClassXML, InventorXML, \
 
 total_count = 0
 total_patents = 0
-for filenum, filename in enumerate(files):
-    print " > Regular Expression: %s" % filename
-    XMLs = re.findall(
-            r"""
-                ([<][?]xml[ ]version.*?[>]       #all XML starts with ?xml
-                .*?
-                [<][/]us[-]patent[-]grant[>])    #and here is the end tag
-             """,
-            open(files[filenum]).read(), re.I + re.S + re.X)
-    print "   - Total Patents: %d" % (len(XMLs))
-    logging.info("   - Total Patents: %d" % (len(XMLs)))
 
 for filename in parsed_xmls:
 
