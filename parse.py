@@ -84,32 +84,25 @@ print "Total files: %d" % (len(files))
 logging.info("Total files: %d" % (len(files)))
 
 # list of parsed xml strings
-parsed_xmls = []
+parsed_xmls = parallel_parse(files)
+
+print "   - Total Patents: %d" % (len(parsed_xmls))
+logging.info("   - Total Patents: %d" % (len(parsed_xmls)))
 
 tables = ["assignee", "citation", "class", "inventor", "patent",\
         "patdesc", "lawyer", "sciref", "usreldoc"]
 total_count = 0
 total_patents = 0
-for filenum, filename in enumerate(files):
-    print " > Regular Expression: %s" % filename
-    XMLs = re.findall(
-            r"""
-                ([<][?]xml[ ]version.*?[>]       #all XML starts with ?xml
-                .*?
-                [<][/]us[-]patent[-]grant[>])    #and here is the end tag
-             """,
-            open(files[filenum]).read(), re.I + re.S + re.X)
-    print "   - Total Patents: %d" % (len(XMLs))
-    logging.info("   - Total Patents: %d" % (len(XMLs)))
 
+for filename in parsed_xmls:
 
     xmllist = []
     count = 0
     patents = 0
 
-    for i, x in enumerate(XMLs):
+    for i, x in enumerate(parsed_xmls):
         try:
-            xmllist.append(XMLPatent(x))
+            xmllist.append(XMLPatent(x))   #TODO: this is the slow part (parallelize)
             patents += 1
         except Exception as inst:
             #print type(inst)
