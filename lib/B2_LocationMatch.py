@@ -78,7 +78,7 @@ if not(tblExist(c, "locMerge")):
          LEFT JOIN  loc.typos AS b
                 ON  a.CityY=b.City AND a.StateY=b.State AND a.CtryY=b.Country;
         DROP TABLE  temp;
-        DROP TABLE  temp2;                
+        DROP TABLE  temp2;
         """)
 
     print datetime.datetime.now()
@@ -102,7 +102,7 @@ if not(tblExist(c, "locMerge")):
          LEFT JOIN  loc.typos AS b
                 ON  a.CityY=b.City AND a.StateY=b.State AND a.CtryY=b.Country;
         DROP TABLE  temp;
-        DROP TABLE  temp2;                
+        DROP TABLE  temp2;
         """)
 
     c.executescript("""
@@ -147,7 +147,7 @@ c.executescript("""
     CREATE TABLE IF NOT EXISTS locMerge (
         Mtch INTEGER,
         Val FLOAT,          Cnt INTEGER,
-        
+
         City VARCHAR,       State VARCHAR,
         Country VARCHAR,    Zipcode VARCHAR,
 
@@ -207,7 +207,7 @@ print "Loc =", c.execute("select count(*) from loc").fetchone()[0]
 for scnt in range(-1, c.execute("select max(sep_cnt(city)) from loc").fetchone()[0]+1):
     sep = scnt
     print "------", scnt, "------"
-    
+
     ##DOMESTIC
     replace_loc("""
         SELECT  11,
@@ -420,7 +420,7 @@ INNER JOIN  loc.gnsloc AS b
 ##DOMESTIC ZIPCODE
 replace_loc("""
     SELECT  31,
-            a.cnt as cnt, 
+            a.cnt as cnt,
             a.city as CityA, a.state as StateA, a.country as CountryA, a.zipcode as ZipcodeA,
             b.City, b.State, 'US', b.zipcode, b.lat, b.long
       FROM  (SELECT  *, (SEP_WRD(zipcode,0)+0) as Zip2
