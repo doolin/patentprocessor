@@ -18,6 +18,8 @@ def sep_wrd(word, seq):
         else:
             return ""
 
+print "Working from B2_LocationMatch..."
+
 conn = sqlite3.connect("hashTbl.sqlite3")
 c = conn.cursor()
 
