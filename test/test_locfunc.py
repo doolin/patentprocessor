@@ -8,7 +8,6 @@
 # handling code, so hitting these unit tests helps
 # ensure that the bug wasn't part of that problem.
 
-#cityctry(city, ctry, ret="city")
 
 # `locfunc.py` will probably be renamed to something a little
 # more suggestive as to its purpose.
