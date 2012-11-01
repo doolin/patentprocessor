@@ -261,9 +261,9 @@ for scnt in range(-1, c.execute("select max(sep_cnt(city)) from loc").fetchone()
         SELECT  21,
                 a.cnt as cnt, 
                 a.city as CityA, a.state as StateA, a.country as CountryA, a.zipcode as ZipcodeA,
-                b.full_name_nd, "", b.cc1, "", b.lat, b.long
+                b.full_name_nd_ro, "", b.cc1, "", b.lat, b.long
           FROM  loc AS a INNER JOIN loc.gnsloc AS b
-            ON  SEP_WRD(a.City, %d)=b.full_name AND a.country=b.cc1
+            ON  SEP_WRD(a.City, %d)=b.full_name_ro AND a.country=b.cc1
          WHERE  SEP_CNT(a.City)>=%d AND a.City!=""
         """ % (sep, scnt))
 
@@ -272,9 +272,9 @@ for scnt in range(-1, c.execute("select max(sep_cnt(city)) from loc").fetchone()
         SELECT  21,
                 a.cnt as cnt, 
                 a.city as CityA, a.state as StateA, a.country as CountryA, a.zipcode as ZipcodeA,
-                b.full_name_nd, "", b.cc1, "", b.lat, b.long
+                b.full_name_nd_ro, "", b.cc1, "", b.lat, b.long
           FROM  loc AS a INNER JOIN loc.gnsloc AS b
-            ON  SEP_WRD(a.City, %d)=b.full_name_nd AND a.country=b.cc1
+            ON  SEP_WRD(a.City, %d)=b.full_name_nd_ro AND a.country=b.cc1
          WHERE  SEP_CNT(a.City)>=%d AND a.City!="";
         """ % (sep, scnt))
 
@@ -283,7 +283,7 @@ for scnt in range(-1, c.execute("select max(sep_cnt(city)) from loc").fetchone()
         SELECT  21,
                 a.cnt as cnt, 
                 a.city as CityA, a.state as StateA, a.country as CountryA, a.zipcode as ZipcodeA,
-                b.full_name_nd, "", b.cc1, "", b.lat, b.long
+                b.full_name_nd_ro, "", b.cc1, "", b.lat, b.long
           FROM  loc AS a INNER JOIN loc.gnsloc AS b
             ON  SEP_WRD(a.City, %d)=b.short_form AND a.country=b.cc1
          WHERE  SEP_CNT(a.City)>=%d AND a.City!="";
@@ -294,32 +294,32 @@ for scnt in range(-1, c.execute("select max(sep_cnt(city)) from loc").fetchone()
         SELECT  21,
                 a.cnt as cnt, 
                 a.city as CityA, a.state as StateA, a.country as CountryA, a.zipcode as ZipcodeA,
-                b.full_name_nd, "", b.cc1, "", b.lat, b.long
+                b.full_name_nd_ro, "", b.cc1, "", b.lat, b.long
           FROM  loc AS a INNER JOIN loc.gnsloc AS b
-            ON  BLK_SPLIT(SEP_WRD(a.City, %d))=b.sort_name AND a.country=b.cc1
+            ON  BLK_SPLIT(SEP_WRD(a.City, %d))=b.sort_name_ro AND a.country=b.cc1
          WHERE  SEP_CNT(a.City)>=%d AND a.City!="";
         """ % (sep, scnt))
 
     ##FOREIGN COUNTRY FIRST3 (JARO WINKLER)
     replace_loc("""
-        SELECT  (20+jarow(BLK_SPLIT(SEP_WRD(a.City, %d)), b.sort_name)) AS Jaro,
+        SELECT  (20+jarow(BLK_SPLIT(SEP_WRD(a.City, %d)), b.sort_name_ro)) AS Jaro,
                 a.cnt as cnt, 
                 a.city as CityA, a.state as StateA, a.country as CountryA, a.zipcode as ZipcodeA,
-                b.full_name_nd, "", b.cc1, "", b.lat, b.long
+                b.full_name_nd_ro, "", b.cc1, "", b.lat, b.long
           FROM  loc AS a INNER JOIN loc.gnsloc AS b
-            ON  SUBSTR(BLK_SPLIT(SEP_WRD(a.City, %d)),1,3)=b.sort_name AND a.country=b.cc1
+            ON  SUBSTR(BLK_SPLIT(SEP_WRD(a.City, %d)),1,3)=b.sort_name_ro AND a.country=b.cc1
          WHERE  jaro>%s AND SEP_CNT(a.City)>=%d AND a.City!=""
       ORDER BY  a.City, a.Country, jaro;
         """ % (sep, sep, "20.92", scnt))
 
     ##FOREIGN COUNTRY LAST4 (JARO WINKLER)
     replace_loc("""
-        SELECT  (20+jarow(BLK_SPLIT(SEP_WRD(a.City, %d)), b.sort_name)) AS Jaro,
+        SELECT  (20+jarow(BLK_SPLIT(SEP_WRD(a.City, %d)), b.sort_name_ro)) AS Jaro,
                 a.cnt as cnt, 
                 a.city as CityA, a.state as StateA, a.country as CountryA, a.zipcode as ZipcodeA,
-                b.full_name_nd, "", b.cc1, "", b.lat, b.long
+                b.full_name_nd_ro, "", b.cc1, "", b.lat, b.long
           FROM  loc AS a INNER JOIN loc.gnsloc AS b
-            ON  REV_WRD(BLK_SPLIT(SEP_WRD(a.City, %d)),4)=b.sort_name AND a.country=b.cc1
+            ON  REV_WRD(BLK_SPLIT(SEP_WRD(a.City, %d)),4)=b.sort_name_ro AND a.country=b.cc1
          WHERE  jaro>%s AND SEP_CNT(a.City)>=%d AND a.City!=""
       ORDER BY  a.City, a.Country, jaro;
         """ % (sep, sep, "20.90", scnt))
@@ -368,12 +368,12 @@ replace_loc("""
     SELECT  25,
             a.cnt as cnt, 
             a.city as CityA, a.state as StateA, a.country as CountryA, a.zipcode as ZipcodeA,
-            b.full_name_nd, '' as state, b.cc1, '' as zip, b.lat, b.long
+            b.full_name_nd_ro, '' as state, b.cc1, '' as zip, b.lat, b.long
       FROM  (SELECT  *
                FROM  loc
               WHERE  NCity IS NOT NULL) AS a
 INNER JOIN  loc.gnsloc AS b
-        ON  a.NCity=b.full_name AND a.NCountry=b.cc1;
+        ON  a.NCity=b.full_name_ro AND a.NCountry=b.cc1;
     """)
 
 ##FOREIGN FULL ND (2nd LAYER)
@@ -381,12 +381,12 @@ replace_loc("""
     SELECT  25,
             a.cnt as cnt, 
             a.city as CityA, a.state as StateA, a.country as CountryA, a.zipcode as ZipcodeA,
-            b.full_name_nd, '' as state, b.cc1, '' as zip, b.lat, b.long
+            b.full_name_nd_ro, '' as state, b.cc1, '' as zip, b.lat, b.long
       FROM  (SELECT  *
                FROM  loc
               WHERE  NCity IS NOT NULL) AS a
 INNER JOIN  loc.gnsloc AS b
-        ON  a.NCity=b.full_name_nd AND a.NCountry=b.cc1;
+        ON  a.NCity=b.full_name_nd_ro AND a.NCountry=b.cc1;
     """)
 
 ##FOREIGN NO SPACE (2nd LAYER)
@@ -394,25 +394,25 @@ replace_loc("""
     SELECT  25,
             a.cnt as cnt, 
             a.city as CityA, a.state as StateA, a.country as CountryA, a.zipcode as ZipcodeA,
-            b.full_name_nd, '' as state, b.cc1, '' as zip, b.lat, b.long
+            b.full_name_nd_ro, '' as state, b.cc1, '' as zip, b.lat, b.long
       FROM  (SELECT  *
                FROM  loc
               WHERE  NCity IS NOT NULL) AS a
 INNER JOIN  loc.gnsloc AS b
-        ON  BLK_SPLIT(a.NCity)=b.sort_name AND a.NCountry=b.cc1;
+        ON  BLK_SPLIT(a.NCity)=b.sort_name_ro AND a.NCountry=b.cc1;
     """)
 
 ##FOREIGN COUNTRY FIRST3 (2nd, JARO WINKLER)
 replace_loc("""
-    SELECT  24+jarow(BLK_SPLIT(a.NCity), b.sort_name) AS Jaro,
+    SELECT  24+jarow(BLK_SPLIT(a.NCity), b.sort_name_ro) AS Jaro,
             a.cnt as cnt, 
             a.city as CityA, a.state as StateA, a.country as CountryA, a.zipcode as ZipcodeA,
-            b.full_name_nd, '' as state, b.cc1, '' as zip, b.lat, b.long
+            b.full_name_nd_ro, '' as state, b.cc1, '' as zip, b.lat, b.long
       FROM  (SELECT  *
                FROM  loc
               WHERE  NCity IS NOT NULL) AS a
 INNER JOIN  loc.gnsloc AS b
-        ON  SUBSTR(BLK_SPLIT(a.NCity),1,3)=b.sort_name AND a.Ncountry=b.cc1
+        ON  SUBSTR(BLK_SPLIT(a.NCity),1,3)=b.sort_name_ro AND a.Ncountry=b.cc1
      WHERE  jaro>%s 
   ORDER BY  a.NCity, a.NCountry, jaro;
     """ % "24.95")

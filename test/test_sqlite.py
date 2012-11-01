@@ -33,7 +33,7 @@ class TestSQLite(unittest.TestCase):
         elif file.split(".")[-1] == "csv" or type == "csv":
             os.system("echo '{data}' >> {file}".\
                 format(data=data, file=file))
-            
+
     def setUp(self):
         self.removeFile("test.db")
         self.removeFile("test.csv")

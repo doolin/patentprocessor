@@ -1,33 +1,56 @@
 #!/usr/bin/env python
+
 import logging
+# http://docs.python.org/howto/argparse.html
+import argparse
+import os
+import datetime
+import re
+
 import sys
 sys.path.append( '.' )
 sys.path.append( './lib/' )
 import shutil
+
 from patXML import SQLPatent
 from patXML import XMLPatent
 from patXML import uniasc
 from fwork  import *
-import os, datetime, re
 
-# TODO: implement as a command line option
-flder = '/var/share/patentdata/patents/test/18'
-#flder = '/var/share/patentdata/patents/2007'
-#logfile = flder + "/" + 'xml-parsing.log'
+# setup argparse
+parser = argparse.ArgumentParser(description=\
+        'Specify source directory/directories for xml files to be parsed')
+parser.add_argument('--directory','-d', type=str, nargs='+', default='',\
+        help='comma separated list of directories relative to $PATENTROOT that \
+        parse.py will search for .xml files')
+parser.add_argument('--patentroot','-p', type=str, nargs='?',\
+        default=os.environ['PATENTROOT'] \
+        if os.environ.has_key('PATENTROOT') else '/',\
+        help='root directory of all patent files/directories')
+parser.add_argument('--xmlregex','-x', type=str, \
+        nargs='?', default=r"ipg\d{6}.xml",\
+        help='regex used to match xml files in each directory')
+
+# parse arguments and assign values
+args = parser.parse_args()
+DIRECTORIES = args.directory
+XMLREGEX = args.xmlregex
+PATENTROOT = args.patentroot
+
 logfile = "./" + 'xml-parsing.log'
 logging.basicConfig(filename=logfile, level=logging.DEBUG)
 
 t1 = datetime.datetime.now()
 
 #get a listing of all files within the directory that follow the naming pattern
-files = [x for x in os.listdir(flder)
-         #if re.match(r"ip[a-z]{2}[0-9]{6,8}[.]xml", x, re.I)!=None]
-         #if re.match(r"ipg\d{6}.one.xml", x, re.I)!=None]
-         if re.match(r"ipg\d{6}.xml", x, re.I)!=None]
+files = [directory+'/'+fi for directory in DIRECTORIES for fi in \
+        os.listdir(PATENTROOT+'/'+directory) \
+        if re.match(XMLREGEX, fi, re.I) != None]
 print "Total files: %d" % (len(files))
 logging.info("Total files: %d" % (len(files)))
 
-tables = ["assignee", "citation", "class", "inventor", "patent", "patdesc", "lawyer", "sciref", "usreldoc"]
+tables = ["assignee", "citation", "class", "inventor", "patent",\
+        "patdesc", "lawyer", "sciref", "usreldoc"]
 total_count = 0
 total_patents = 0
 for filenum, filename in enumerate(files):
@@ -38,7 +61,7 @@ for filenum, filename in enumerate(files):
                 .*?
                 [<][/]us[-]patent[-]grant[>])    #and here is the end tag
              """,
-            open(flder+"/"+files[filenum]).read(), re.I + re.S + re.X)
+            open(PATENTROOT+"/"+files[filenum]).read(), re.I + re.S + re.X)
     print "   - Total Patents: %d" % (len(XMLs))
     logging.info("   - Total Patents: %d" % (len(XMLs)))
 
@@ -52,12 +75,12 @@ for filenum, filename in enumerate(files):
             xmllist.append(XMLPatent(x))
             patents += 1
         except Exception as inst:
-            print type(inst)
+            #print type(inst)
             logging.error(type(inst))
             print "  - Error: %s (%d)  %s" % (filename, i, x[175:200])
             logging.error("  - Error: %s (%d)  %s" % (filename, i, x[175:200]))
             count += 1
-        print xmllist
+        #print xmllist
 
     print "   - number of patents:", len(xmllist), datetime.datetime.now()-t1
     logging.info("   - number of patents: %d %s ", len(xmllist), datetime.datetime.now()-t1)
@@ -70,7 +93,7 @@ for filenum, filename in enumerate(files):
         # Cut the chaining here to better parameterize the call, allowing
         # the databases to be built in place
         # (/var/share/patentdata/patents/<year>)
-        # outdb = flder + "/" + table
+        # outdb = PATENTROOT + "/" + table
         q = SQLPatent().tblBuild(xmllist, tbl=table)
         SQLPatent().dbBuild(q, tbl=table, week=filename)
         #SQLPatent().dbBuild(q=SQLPatent().tblBuild(xmllist, tbl=table), tbl=table, week=filename)
@@ -85,5 +108,5 @@ for table in tables:
 
 #for table in tables:
 #    filename = table + ".sqlite3"
-#    shutil.move(filename,flder)
+#    shutil.move(filename,PATENTROOT)
 

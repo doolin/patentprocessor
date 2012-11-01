@@ -281,6 +281,7 @@ class SQLPatent:
 
 class XMLPatent:
     def __init__(self, XMLString, debug=False):
+	debug=False
         #XMLString conversion so tags are all lower
         XMLString = re.sub(r"<[/]?[A-Za-z-]+?[ >]", lambda x: x.group().lower(), XMLString)
 ##        XMLString = re.sub(r"(?<![</A-Za-z-])[/]?[A-Za-z-]+?>", lambda x: "<"+x.group().lower(), XMLString)

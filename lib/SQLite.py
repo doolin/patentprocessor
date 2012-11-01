@@ -25,7 +25,7 @@ def MySQL_cfg(cfg=None, title=None):
 
 
 class SQLite:
-    """ 
+    """
     The following is a wrapper for sqlite3, a commonly used library for creating
     transportable relational databases
      * Syntax can be found @ http://www.sqlite.org
@@ -33,7 +33,7 @@ class SQLite:
      * Can pass db, tbl to most parameters with **kwargs
     """
     def __init__(self, path=":memory:", db=None, tbl="main", output=False):
-        """ 
+        """
         Creates and opens a database connection for
         "path" and default the table to "tbl"
 
@@ -54,7 +54,7 @@ class SQLite:
         self.output = output
 
     def __del__(self):
-        """ 
+        """
         Destructor running similar to a Garbage Collector
         """
         self.close()
@@ -62,7 +62,7 @@ class SQLite:
     #-------------------------------------HIDDEN METHODS
 
     def _getSelf(self, field=None, **kwargs):
-        """ 
+        """
         GETS basic SELF defined variables (ie. self.tbl)
 
         Args:
@@ -98,7 +98,7 @@ class SQLite:
             return list
 
     def _dbAdd(self, **kwargs):
-        """ 
+        """
         IF db exists, db.tbl ELSE tbl
         """
         db, tbl = self._getSelf(field=["db", "tbl"], **kwargs)
@@ -109,7 +109,7 @@ class SQLite:
         return str
 
     def _decode(self, list):
-        """ 
+        """
         TODO: Is this necessary?  What does this really do?
         """
         try:
@@ -118,7 +118,7 @@ class SQLite:
             return list
 
     def _keyList(self, key, lower=False, **kwargs):
-        """ 
+        """
         Convert key to List of keys if string or if "keys"
         """
         if "keys" in kwargs: #2012/07/01 to depreciate "keys"
@@ -130,7 +130,7 @@ class SQLite:
         return key
 
     def _sqlmasterScan(self, var, type, lookup=None, db=None, seq=None):
-        """ 
+        """
         Returns a list of items that exist within the database.
         *since SQLite is not case sensitive, lowercases everything
 
@@ -170,7 +170,7 @@ class SQLite:
             return lookup.lower() in list
 
     def _baseIndex(self, idx=None, **kwargs):
-        """ 
+        """
         Boils down a Index to its most basic form. ie. table (keys)
 
         Args:
@@ -214,7 +214,7 @@ class SQLite:
     #-------------------------------------BACKGROUND FX
 
     def close(self):
-        """ 
+        """
         Initiates a final commit (assumption, we want to commit data)
         Closes the appropriate cursors and connections 
         *chosen not to TEST this method
@@ -238,21 +238,21 @@ class SQLite:
             """) #"""
 
     def chgTbl(self, tbl):
-        """ 
+        """
         Allows a user to change their default table
         *chosen not to TEST this method
         """
         self.tbl = tbl
 
     def commit(self):
-        """ 
+        """
         Alias to self.conn.commit()
         *chosen not to TEST this method
         """
         self.conn.commit()
 
     def vacuum(self):
-        """ 
+        """
         Databases expand with records.  This command compresses them to their
         smallest states.
         *chosen not to TEST this method
@@ -262,14 +262,30 @@ class SQLite:
 
     #-------------------------------------TABLE MANIPULATION
 
-    def add(self, key=None, **kwargs):
-        """ 
+    # The original definition of add, used by `clean.py`.
+    # TODO: Fix clean.py and delete this function
+    def add(self, key, typ="", table=None):
+        import types
+        table = self.getTbl(table)
+        if type(key) != types.ListType:
+            key = [key]
+        for k in key:
+            try:
+                self.c.execute("ALTER TABLE %s ADD COLUMN %s %s" % (table, k, typ))
+            except:
+                pass
+
+    # The add function was changed on June 30, and this new definition won't
+    # work with the call in clean.py
+    # TODO: Reconcile the calling function with the new definition.
+    def add_new(self, key=None, **kwargs):
+        """
         Allows one the ability to add columns to SQLite table
         **update 2012/06/30: 
           removed the typ variable
-          now key should be a dictionary type       
+          now key should be a dictionary type
           will deprecaite key=None to just key
-        
+
         Args:
           key: {key: value} <==> synonym is keys
             input can be list, tuple, str, unicode, dict
@@ -292,15 +308,15 @@ class SQLite:
                     ALTER TABLE {table} ADD COLUMN {name} {type}
                     """.format(table=self._dbAdd(
                         db=db, tbl=tbl), name=k, type=v)) #"""
-    
+
     def drop(self, key=None, **kwargs):
-        """ 
+        """
         Allows one the ability to drop columns in SQLite table
         This function doesn't exist in SQLite.  Better to do this earlier as it requires SQL.
         **update 2012/06/30: 
             modified default "keys" to "key"
             will deprecaite they "keys" option over time and require key
-        
+
         Args:
           key: list of column keys to remove <==> synonym is keys
             input can be list, tuple, str, unicode
@@ -325,7 +341,7 @@ class SQLite:
             sql = re.sub("[\n\t]", "", sql)
             schema = re.findall("[(].*[)]", sql, re.S)[0][1:-1]
             sql = sql.replace(schema, "{schema}")
-           
+
             schema = [s.strip() for s in schema.split(",")]
             schCsv = [csv.reader(StringIO.StringIO(s)).next()
                          for s in schema]
@@ -361,7 +377,7 @@ class SQLite:
                 self.c.execute(sql)
 
     def delete(self, key=None, **kwargs):
-        """ 
+        """
         Equivalent to DROP table 
         Args:
           key: string or list of tables
@@ -371,7 +387,7 @@ class SQLite:
             self.c.execute("DROP TABLE IF EXISTS {tbl}".format(tbl=k))
 
     def index(self, key=None, index=None, unique=False, combo=False, **kwargs):
-        """ 
+        """
         Creates an index on the table.
 
         Args:
@@ -429,7 +445,7 @@ class SQLite:
             type="index", lookup=lookup, db=db, seq=seq)
 
     #-------------------------------------REPORTS
-       
+
     def columns(self, lower=False, lookup=None, **kwargs):
         """ 
         Basic report that showcases columns
@@ -459,7 +475,7 @@ class SQLite:
             return list
 
     def count(self, **kwargs):
-        """ 
+        """
         Basic report with time and date
 
         Args:
@@ -496,14 +512,14 @@ class SQLite:
         db, tbl = self._getSelf(field=["db", "tbl"], **kwargs)
         if type(field).__name__ in ("list", "tuple"):
             field = ",".join(field)
- 
+
         query = ["SELECT", field, "FROM", self._dbAdd(db=db, tbl=tbl)]
         if random:
             query.append("ORDER BY random()")
         if limit:
             query.extend(["LIMIT", str(limit)])
         query = " ".join(query)
-        
+
         if not self.tables(lookup=tbl, db=db):
             return []
         elif iter:
@@ -702,7 +718,7 @@ class SQLite:
 
 
     def addSQL(self, data, header=False, field=None, ignore=True, errlog=None, **kwargs):
-        """ 
+        """
         This serves as a convenience function to INSERT
 
         Args:
@@ -726,7 +742,7 @@ class SQLite:
             self.insert(data=data, field=field, header=header, ignore=ignore, errlog=errlog)
 
     def merge(self, key, on, tableFrom, keyType=None, **kwargs):
-        """ 
+        """
         *Will come back to this function
 
         Matches the on variables from two tables and updates the key values
@@ -774,7 +790,7 @@ class SQLite:
                    huggleMe(key, idx=1), huggleMe(on, idx=1), self._dbAdd(db=db, tbl=tableFrom), huggleMe(on, idx=1))) #"""
         self.index(keys=[x[0] for x in on], tbl="TblA", index='idx_temp_TblA')
         self.index(keys=[x[1] for x in on], tbl="TblB", index='idx_temp_TblB')
-        
+
         sqlS = "UPDATE %s SET %s WHERE %s" % (tbl, huggleMe(key, tail="=?"), huggleMe(on, tail="=?", inner=" AND "))
         sqlV = "SELECT %s, %s FROM TblA AS a INNER JOIN TblB AS b ON %s" % (
             huggleMe(key, idx=1, head="b."), huggleMe(on, idx=1, head="b."),
@@ -787,12 +803,12 @@ class SQLite:
         for x in [idxT, idxF]:
             if x!=None:
                 self.c.execute("DROP INDEX %s" % x)
-        
+
     # STOPPED AT THIS POINT
-    
+
     # DEPRECIATE THIS FUNCTION?
     def quickSQL(self, data, override=False, header=False, allVars=False, typescan=50, typeList=[], **kwargs):
-        """ 
+        """
             allVars => Make all variables VARCHARS (IGNORE BUILDING TYPE)
         """
         import re, types
@@ -809,6 +825,7 @@ class SQLite:
                 headLst.append(re.sub("[()!@$%^&*'-]+", "", x).replace(" ", "_").replace("?", ""))
                 if headLst[-1] in headLst[:-1]:
                     headLst[-1]+=str(headLst[:-1].count(headLst[-1])+1)
+
         tList = []
         for i,x in enumerate(data[1]):
             if str(typeList).upper().find("%s " % data[0][i].upper())<0:
@@ -816,6 +833,7 @@ class SQLite:
                 if type(typescan)==types.IntType and cType=="VARCHAR":
                     least = 2
                     ints = 1
+
                     for j in range(1, min(typescan+1, len(data))):
                         if type(data[j][i])==types.StringType or type(data[j][i])==types.UnicodeType:
                             if re.sub(r"[-,.]", "", data[j][i]).isdigit():
@@ -823,17 +841,20 @@ class SQLite:
                                 elif len(re.findall(r"[.]", data[j][i]))==1: ints = 0
                                 else: least = 0; break
                             else: least = 0; break
+
                     cType = {0:"VARCHAR", 1:"INTEGER", 2:"REAL"}[max(least-ints, 0)]
+
                 if header:
                     if allVars:
                         tList.append("%s" % (headLst[i],))
-                    else:                    
+                    else:
                         tList.append("%s %s" % (headLst[i], cType))
                 else:
                     if allVars:
                         tList.append("v%d" % (i,))
-                    else:                    
+                    else:
                         tList.append("v%d %s" % (i, cType))
+
             else:
                 tList.extend([y for y in typeList if y.upper().find("%s " % data[0][i].upper())==0])
 
@@ -842,7 +863,8 @@ class SQLite:
             self.c.executemany("INSERT INTO %s VALUES (%s)" % (table, ", ".join(["?"]*len(data[0]))), data)
         else:
             self.c.executemany("INSERT INTO %s VALUES (%s)" % (table, ", ".join(["?"]*len(data[0]))), data[1:])
-        self.conn.commit()            
+        self.conn.commit()
+
 
     #----- OUTPUTS -----#
 
@@ -873,7 +895,7 @@ class SQLite:
         Add additional integer field names by using the intList
         Add additional varList.  This allows you to specify whatever you want.
             Format: [["name", "format"]]
-        
+
         Full = True (input data)
         """
         textList = [x.lower() for x in textList]
@@ -883,7 +905,7 @@ class SQLite:
             varList = zip(*varList)
             varList[0] = [x.lower() for x in varList[0]]
         cfg = MySQL_cfg(cfg)
-        
+
         import MySQLdb, re, types, unicodedata, sys, datetime
         if not table:
             table = self.tbl
@@ -907,7 +929,7 @@ class SQLite:
                 return "REAL";
             else:
                 return type
-        
+
         mconn = MySQLdb.connect(host=cfg['host'], user=cfg['user'], passwd=cfg['passwd'], db=cfg['db'])
         mc = mconn.cursor()
         #get column and types for fields
@@ -941,7 +963,7 @@ class SQLite:
                 val = self.c.fetchone()
                 if not val:
                     break
-                
+
                 insert = [(type(x)==types.UnicodeType or type(x)==types.StringType) and
                           unicodedata.normalize('NFKD', unicode(x)).encode('ascii', 'ignore') or x for x in val]
                 try:
@@ -960,7 +982,7 @@ class SQLite:
 ##                    mc.execute("INSERT IGNORE INTO %s VALUES (%s)" % (tableTo, ", ".join(["%s"]*len(cols))), insert)
 ##                except:
 ##                    print i+1,val
-        
+
         mc.close()
         mconn.close()
 
@@ -1002,4 +1024,4 @@ class SQLite:
         tab.eList = self.c.execute("SELECT * FROM ed0").fetchall()
         tab.elst = self.columns(table="ed0", output=False)[2:]
         s = senGraph.senGraph(tab, "vertex")
-        return s        
+        return s
