@@ -9,10 +9,9 @@ import htmlentitydefs
 import datetime
 from xml.sax import make_parser, handler, parseString, saxutils
 
-
-
 # Utility Patents can have 1+ claims, 
 # http://www.uspto.gov/web/offices/pac/mpep/s1502.html
+# Inserting separately
 
 # Global Variables
 handlers = dict()
@@ -47,11 +46,10 @@ class Claims():
           print "found error", e
           logging.error("\n\nError at Patent: %d" % (i+1))
           logging.error(xml)
-      
+      print "Processed:", i+1, "Patents!"
           
     def handle_special_entities(self, s):
       return re.sub(r'&.*?;'," ", s)
-      
 
     def store_claims(self, claims):
       claim_list.append(claims)
@@ -64,7 +62,7 @@ class Claim(handler.ContentHandler):
 
     def __init__(self):
         claim_list = []
-        self.claims = ""
+        self.claims = []
         self.patent = None
         self.b110tag = False
         self.dnumtag = False
@@ -121,10 +119,11 @@ class Claim(handler.ContentHandler):
             self.patent = content
         if (self.cltag and self.clmtag and self.paratag and 
             self.ptexttag and self.pdattag):
-            self.claims += content
+            self.claims.append((self.patent, content))
 
     def endDocument(self):
-        claim_list.append((self.patent, self.claims))
+        for cl in self.claims:
+            claim_list.append(cl)
         
 
 class Claims_SQL():
@@ -170,7 +169,6 @@ handlers["file"]()
 handlers["claims"]()
 handlers["db_init"]("claims.sqlite3") # Change to be CLI argument later
 handlers["insert_claims"](claim_list) 
-
 
 print "end time:", datetime.datetime.now()-t1
       
