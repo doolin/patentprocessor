@@ -50,4 +50,8 @@ which compares the linked results database with a (specially formatted) CSV file
 a list of inventor-patent instances which have been verified by direct communication with
 each inventor.
 
+----
+
+[Contributors](https://github.com/apneadiving/Google-Maps-for-Rails/graphs/contributors)
+
 
