@@ -52,6 +52,6 @@ each inventor.
 
 ----
 
-[Contributors](https://github.com/apneadiving/Google-Maps-for-Rails/graphs/contributors)
+[Contributors](https://github.com/doolin/patentprocessor/graphs/contributors)
 
 
