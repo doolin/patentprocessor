@@ -57,13 +57,11 @@ class TestClaimDriver(unittest.TestCase):
         assert(self.claim_list)
 
     def test_claims_parse_patent_number(self):
-        self.c.handle_file(test_patent_one)
         self.c.handle_claims()
         self.claim_list = self.c.return_claims()
         assert(self.claim_list[0][0] == "D0456588")
 
     def test_claims_parse_claim(self):
-        self.c.handle_file(test_patent_one)
         self.c.handle_claims()
         self.claim_list = self.c.return_claims()     
         assert(self.claim_list[0][1] == claim_string)
@@ -74,7 +72,15 @@ class TestClaimDriver(unittest.TestCase):
         assert(not self.sq.con)
         assert(not self.sq.cursor)
 
-    def test_sql_creation(self):
+    def test_sql_claims(self):
+        self.claim_list = self.c.return_claims()
+        self.sq.initialize_con_database(":memory:")
+        self.sq.insert_claims(self.claim_list)
+        
+    def test_sql_claims_patent_number(self):
+        pass
+        
+        
         
         
 
