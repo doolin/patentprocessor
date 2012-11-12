@@ -17,8 +17,16 @@ test_patent_hundred = "pg020507hundred.xml"
 claim_string = "We claim the ornamental design for a garment, as shown and described."
 
 # For ten patents
-claim_string_10_1 = ""
-
+claim_string_10_1 = "The ornamental design for the surface pattern for a portion of a knitted garment, as shown and described."
+claim_string_10_2 = "The ornamental design for an article of apparel, as shown and described."
+claim_string_10_3 = "The ornamental design of a human body pulsating jacket, as shown and described."
+claim_string_10_4 = "The ornamental design for a hula skirt of fabric, as shown and described."
+claim_string_10_5 = "The ornamental design of an apron, as shown and described."
+claim_string_10_6 = "The ornamental design for a hat, as shown and described."
+claim_string_10_7 = "The ornamental design for a hat which can serve as a megaphone, as shown and described."
+claim_string_10_8 = "The ornamental design for a kicking shoe attachment, as shown and described."
+claim_string_10_9 = "The ornamental design for a shoe upper, as shown and described."
+claim_string_10_10 = "The ornamental design for a sock, as shown and described."
 
 class TestClaimDriver(unittest.TestCase):
 
@@ -99,12 +107,10 @@ class TestClaimDriver(unittest.TestCase):
     def test_sql_claims(self):
         import claim_driver
         claim_driver.claim_list = []
-
         self.c.handle_file(test_patent_one)
         self.c.handle_claims(self.ch)
         self.claim_list = self.c.return_claims()
         self.sq.initialize_con_database(":memory:")
-
         self.sq.insert_claims(self.claim_list)
         self.sq.cursor.execute("SELECT * FROM claims;")
         row_data = self.sq.cursor.fetchall()
@@ -129,7 +135,6 @@ class TestClaimDriver(unittest.TestCase):
         claim_driver.claim_list = []
         self.c_ten.reset_claims()
         self.ch_ten.reset_claims()
-
         self.c_ten.handle_file(test_patent_ten)
         self.c_ten.handle_claims(self.ch_ten)
         self.claim_list_ten = self.c_ten.return_claims()
@@ -149,11 +154,12 @@ class TestClaimDriver(unittest.TestCase):
     def test_claims_parse_claim_ten(self):
         import claim_driver
         claim_driver.claim_list = []
-
         self.c_ten.handle_file(test_patent_ten)
         self.c_ten.handle_claims(self.ch_ten)
         self.claim_list_ten = self.c_ten.return_claims()
+        print self.claim_list_ten
         assert(len(self.claim_list_ten) == 10)
+        
     
 
 
