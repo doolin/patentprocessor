@@ -140,7 +140,7 @@ class Claims_SQL():
     self.cursor = None
     
   def initialize_con_database(self, con_db_name):
-    # Set Up SQL Connectionss
+    # Set Up SQL Connections
     # Database to connect to
     self.con = sql.connect(con_db_name)
     self.cursor = self.con.cursor()   

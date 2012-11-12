@@ -6,8 +6,8 @@ import StringIO
 import logging
 import htmlentitydefs
 import datetime
-from claim_driver import Claims, Claim, Claims_SQL
 import sqlite3 as sql
+from claim_driver import Claims, Claim, Claims_SQL
 from xml.sax import make_parser, handler, parseString, saxutils
 
 # Utility Patents can have 1+ claims, 
@@ -25,14 +25,12 @@ filename = sys.argv[1]
 
 # For Claim parsing
 t1 = datetime.datetime.now()
-
 c = Claims()
 ch = Claim()
 handlers["file"] = c.handle_file
 handlers["claims"] = c.handle_claims
 
 # To insert claims into SQL
-
 sq = Claims_SQL()
 handlers["db_init"] = sq.initialize_con_database
 handlers["insert_claims"] = sq.insert_claims

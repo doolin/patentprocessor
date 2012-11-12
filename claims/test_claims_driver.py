@@ -1,14 +1,10 @@
 #! /usr/bin/env python
 
 import unittest
-import re
-import os
-import sys
-import logging
 from claim_driver import *
 from test_claims_data import *
 
-
+# Unit tests for test_claim_driver.py
 
 class TestClaimDriver(unittest.TestCase):
 
@@ -17,21 +13,22 @@ class TestClaimDriver(unittest.TestCase):
     #########################
     
     def setUp(self):
+        # Claims() instance for 1, 10, 100 patents
         self.c = Claims()
         self.c_ten = Claims()
         self.c_hun = Claims()
-
+        # Claim() instance for 1, 10, 100 patents
         self.ch = Claim()
         self.ch_ten = Claim()
         self.ch_hun = Claim()
-
-        self.claim_list = []
-        self.claim_list_ten = []
-        self.claim_list_hun = []
-
+        # Claim_SQL() instance for 1, 10, 100 patents
         self.sq = Claims_SQL()
         self.sq_ten = Claims_SQL()
         self.sq_hun = Claims_SQL()
+        # claim_list instance for 1, 10, 100 patents
+        self.claim_list = []
+        self.claim_list_ten = []
+        self.claim_list_hun = []
 
     def test_claims_init_sanity(self):
         # Tests init of Claims() works as intended
@@ -132,14 +129,12 @@ class TestClaimDriver(unittest.TestCase):
         assert(self.claim_list_ten[8][0] == "D0456597")
         assert(self.claim_list_ten[9][0] == "D0456598")
 
-
     def test_claims_parse_claim_ten(self):
         import claim_driver
         claim_driver.claim_list = []
         self.c_ten.handle_file(test_patent_ten)
         self.c_ten.handle_claims(self.ch_ten)
         self.claim_list_ten = self.c_ten.return_claims()
-        # print self.claim_list_ten
         assert(len(self.claim_list_ten) == 10)
         assert(self.claim_list_ten[0][1] == claim_string_10_1)
         assert(self.claim_list_ten[1][1] == claim_string_10_2)
@@ -151,8 +146,38 @@ class TestClaimDriver(unittest.TestCase):
         assert(self.claim_list_ten[7][1] == claim_string_10_8)
         assert(self.claim_list_ten[8][1] == claim_string_10_9)
         assert(self.claim_list_ten[9][1] == claim_string_10_10)
-        
- 
+
+    def test_sql_claims(self):
+        import claim_driver
+        claim_driver.claim_list = []
+        self.c_ten.handle_file(test_patent_ten)
+        self.c_ten.handle_claims(self.ch_ten)
+        self.claim_list_ten = self.c_ten.return_claims()
+        self.sq_ten.initialize_con_database(":memory:")
+        self.sq_ten.insert_claims(self.claim_list_ten)
+        self.sq_ten.cursor.execute("SELECT * FROM claims;")
+        row_data = self.sq_ten.cursor.fetchall()
+        assert(len(row_data) == 10)
+        assert(row_data[0][0] == "D0456589" and
+               row_data[0][1] == claim_string_10_1)
+        assert(row_data[1][0] == "D0456590" and
+               row_data[1][1] == claim_string_10_2)
+        assert(row_data[2][0] == "D0456591" and
+               row_data[2][1] == claim_string_10_3)
+        assert(row_data[3][0] == "D0456592" and
+               row_data[3][1] == claim_string_10_4)
+        assert(row_data[4][0] == "D0456593" and
+               row_data[4][1] == claim_string_10_5)
+        assert(row_data[5][0] == "D0456594" and
+               row_data[5][1] == claim_string_10_6)
+        assert(row_data[6][0] == "D0456595" and
+               row_data[6][1] == claim_string_10_7)
+        assert(row_data[7][0] == "D0456596" and
+               row_data[7][1] == claim_string_10_8)
+        assert(row_data[8][0] == "D0456597" and
+               row_data[8][1] == claim_string_10_9)
+        assert(row_data[9][0] == "D0456598" and
+               row_data[9][1] == claim_string_10_10)
 
 if __name__ == '__main__':
     unittest.main()
