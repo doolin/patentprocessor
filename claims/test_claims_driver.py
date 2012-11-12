@@ -104,6 +104,8 @@ class TestClaimDriver(unittest.TestCase):
     ########################
 
     def test_claims_parse_ten(self):
+        import claim_driver
+        claim_driver.claim_list = []
         self.c_ten.handle_file(test_patent_ten)
         self.c_ten.handle_claims(self.ch_ten)
         self.claim_list_ten = self.c_ten.return_claims()
