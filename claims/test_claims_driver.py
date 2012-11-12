@@ -20,14 +20,22 @@ class TestClaimDriver(unittest.TestCase):
         self.c = Claims()
         self.claim_list = []
 
-    def test_claims_init(self):
+    def test_claims_init_sanity(self):
         # Tests init of Claims() works as intended
         # Namely, to see if c.XMLs == []
         assert(not self.c.XMLs)
 
-    def test_claims_parse(self):
+    def test_claims_handle_file(self):
         self.c.handle_file(test_patent_one)
-   
+        # self.c.XMLs should be the xml passed in to be
+        # parsed at this point
+        assert(self.c.XMLs)
+
+    def test_remove_special_entities(self):
+        special_entity_string = "&.*?;"
+        special_entity_string = self.c.handle_special_entities(special_entity_string)
+        # Special characters should be removed
+        assert(not special_entity_string)
 
         
 
