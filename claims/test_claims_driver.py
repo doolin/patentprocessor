@@ -16,6 +16,9 @@ test_patent_hundred = "pg020507hundred.xml"
 # For one patent
 claim_string = "We claim the ornamental design for a garment, as shown and described."
 
+# For ten patents
+claim_string_10_1 = ""
+
 
 class TestClaimDriver(unittest.TestCase):
 
@@ -64,17 +67,25 @@ class TestClaimDriver(unittest.TestCase):
         assert(self.c.XMLs)
 
     def test_claims_parse(self):
+        import claim_driver
+        claim_driver.claim_list = []
         self.c.handle_file(test_patent_one)
         self.c.handle_claims(self.ch)
         self.claim_list = self.c.return_claims()
         assert(self.claim_list)
 
     def test_claims_parse_patent_number(self):
+        import claim_driver
+        claim_driver.claim_list = []
+        self.c.handle_file(test_patent_one)
         self.c.handle_claims(self.ch)
         self.claim_list = self.c.return_claims()
         assert(self.claim_list[0][0] == "D0456588")
 
     def test_claims_parse_claim(self):
+        import claim_driver
+        claim_driver.claim_list = []
+        self.c.handle_file(test_patent_one)
         self.c.handle_claims(self.ch)
         self.claim_list = self.c.return_claims()     
         assert(self.claim_list[0][1] == claim_string)
@@ -113,16 +124,37 @@ class TestClaimDriver(unittest.TestCase):
         self.claim_list_ten = self.c_ten.return_claims()
         assert(self.claim_list_ten)
 
-#    def test_claims_parse_patent_number_ten(self):
-#        self.c_ten.handle_claims()
-#        self.claim_list_ten = self.c_ten.return_claims()
-#        # assert(self.claim_list[0][0] == "D0456588")
+    def test_claims_parse_patent_number_ten(self):
+        import claim_driver
+        claim_driver.claim_list = []
+        self.c_ten.reset_claims()
+        self.ch_ten.reset_claims()
 
-#    def test_claims_parse_claim_ten(self):
-#        self.c_ten.handle_claims()
-#        self.claim_list_ten = self.c_ten.return_claims()     
-#        # assert(self.claim_list[0][1] == claim_string)
-#    
+        self.c_ten.handle_file(test_patent_ten)
+        self.c_ten.handle_claims(self.ch_ten)
+        self.claim_list_ten = self.c_ten.return_claims()
+        assert(len(self.claim_list_ten) == 10)
+        assert(self.claim_list_ten[0][0] == "D0456589")
+        assert(self.claim_list_ten[1][0] == "D0456590")
+        assert(self.claim_list_ten[2][0] == "D0456591")
+        assert(self.claim_list_ten[3][0] == "D0456592")
+        assert(self.claim_list_ten[4][0] == "D0456593")
+        assert(self.claim_list_ten[5][0] == "D0456594")
+        assert(self.claim_list_ten[6][0] == "D0456595")
+        assert(self.claim_list_ten[7][0] == "D0456596")
+        assert(self.claim_list_ten[8][0] == "D0456597")
+        assert(self.claim_list_ten[9][0] == "D0456598")
+
+
+    def test_claims_parse_claim_ten(self):
+        import claim_driver
+        claim_driver.claim_list = []
+
+        self.c_ten.handle_file(test_patent_ten)
+        self.c_ten.handle_claims(self.ch_ten)
+        self.claim_list_ten = self.c_ten.return_claims()
+        assert(len(self.claim_list_ten) == 10)
+    
 
 
 if __name__ == '__main__':
