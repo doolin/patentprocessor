@@ -16,7 +16,6 @@ from xml.sax import make_parser, handler, parseString, saxutils
 
 # Global Variables
 handlers = dict()
-#claim_list = []
 logfile = "./" + 'claim-parsing.log'
 open(logfile, "wb")
 logging.basicConfig(filename=logfile, level=logging.DEBUG)
