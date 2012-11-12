@@ -21,7 +21,13 @@ class TestClaimDriver(unittest.TestCase):
         self.claim_list = []
 
     def test_claims_init(self):
+        # Tests init of Claims() works as intended
+        # Namely, to see if c.XMLs == []
         assert(not self.c.XMLs)
+
+    def test_claims_parse(self):
+        self.c.handle_file(test_patent_one)
+   
 
         
 

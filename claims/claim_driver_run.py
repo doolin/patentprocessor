@@ -19,6 +19,7 @@ handlers = dict()
 logfile = "./" + 'claim-parsing.log'
 open(logfile, "wb")
 logging.basicConfig(filename=logfile, level=logging.DEBUG)
+filename = sys.argv[1]
 
 # Register Callbacks
 
@@ -34,7 +35,7 @@ handlers["claims"] = c.handle_claims
 sq = Claims_SQL()
 handlers["db_init"] = sq.initialize_con_database
 handlers["insert_claims"] = sq.insert_claims
-handlers["file"]()
+handlers["file"](filename)
 handlers["claims"]()
 handlers["db_init"]("claims.sqlite3") # Change to be CLI argument later
 

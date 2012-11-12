@@ -11,15 +11,17 @@ from xml.sax import make_parser, handler, parseString, saxutils
 
 claim_list = []
 
+
+
 # Claims class for setting up files
 class Claims():
 
     def __init__(self):
       self.XMLs = []
      
-    def handle_file(self):
+    def handle_file(self, filename):
       print "Setting up XML files to be parsed..."
-      with open(sys.argv[1], 'U') as filename: 
+      with open(filename, "U") as filename: 
         self.XMLs = re.findall(
             r"""
                 ([<]PATDOC.*?[>]       #all XML starts with ?xml
@@ -42,7 +44,7 @@ class Claims():
     def handle_special_entities(self, s):
       # Currently removing all special characters
       # But this needs to change. 
-      return re.sub(r'&.*?;'," ", s)
+      return re.sub(r'&.*?;',"", s)
 
     def store_claims(self, claims):
       claim_list.append(claims)
