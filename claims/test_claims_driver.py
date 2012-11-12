@@ -38,19 +38,6 @@ class TestClaimDriver(unittest.TestCase):
         # Special characters should be removed
         assert(not special_entity_string)
 
-#    def test_claim_store(self):
-#        self.c.store_claims("claim1")
-#        self.c.store_claims("claim2")
-#        self.c.store_claims("claim3")
-#        self.c.store_claims("claim4")
-#        from claim_driver import claim_list as cl
-#        assert(cl[0] == "claim1")
-#        assert(cl[1] == "claim2")
-#        assert(cl[2] == "claim3")
-#        assert(cl[3] == "claim4")
-#        # Reset claims
-#        cl = []
-
     #######################
     # Test for One Patent #
     #######################
@@ -86,6 +73,12 @@ class TestClaimDriver(unittest.TestCase):
     def test_sql_patent_init_sanity(self):
         assert(not self.sq.con)
         assert(not self.sq.cursor)
+
+    def test_sql_creation(self):
+        
+        
+
+    
         
         
         
