@@ -3,10 +3,10 @@
 import sys
 import re
 import StringIO
-import sqlite3 as sql
 import logging
 import htmlentitydefs
 import datetime
+import sqlite3 as sql
 from xml.sax import make_parser, handler, parseString, saxutils
 
 # Utility Patents can have 1+ claims, 
@@ -20,7 +20,7 @@ logfile = "./" + 'claim-parsing.log'
 open(logfile, "wb")
 logging.basicConfig(filename=logfile, level=logging.DEBUG)
 
-
+# Claims class for setting up files
 class Claims():
 
     def __init__(self):
@@ -57,7 +57,8 @@ class Claims():
     def print_claims(self):
       for claims in claim_list:
         print "current claim is:", claims 
-        
+
+# Claim class to handle SAX Parsing
 class Claim(handler.ContentHandler):
 
     def __init__(self):
@@ -125,7 +126,7 @@ class Claim(handler.ContentHandler):
         for cl in self.claims:
             claim_list.append(cl)
         
-
+# SQL Class to handle cursors, database creation
 class Claims_SQL():
 
   def __init__(self):
