@@ -55,6 +55,8 @@ class TestClaimDriver(unittest.TestCase):
     # Test for One Patent #
     #######################
 
+    # Parsing
+
     def test_claims_handle_file(self):
         self.c.handle_file(test_patent_one)
         # self.c.XMLs should be the xml passed in to be
@@ -79,7 +81,12 @@ class TestClaimDriver(unittest.TestCase):
         self.claim_list = self.c.return_claims()     
         assert(self.claim_list[0][1] == claim_string)
 
-    def test_sql_patent(self):
+    # SQL
+
+    def test_sql_patent_init_sanity(self):
+        assert(not self.sq.con)
+        assert(not self.sq.cursor)
+        
         
         
         
