@@ -13,6 +13,7 @@ test_patent_one = "pg020507one.xml"
 test_patent_ten = "pg020507ten.xml"
 test_patent_hundred = "pg020507hundred.xml"
 
+# For one patent
 claim_string = "We claim the ornamental design for a garment, as shown and described."
 
 
@@ -76,24 +77,11 @@ class TestClaimDriver(unittest.TestCase):
         self.claim_list = self.c.return_claims()
         self.sq.initialize_con_database(":memory:")
         self.sq.insert_claims(self.claim_list)
-        
-    def test_sql_claims_patent_number(self):
-        pass
-        
-        
-        
-        
-
-    
-        
-        
-        
-        
-        
-
-        
-
-
+        self.sq.cursor.execute("SELECT * FROM claims;")
+        row_data = self.sq.cursor.fetchall()
+        assert(len(row_data) == 1)
+        assert(row_data[0][0] == "D0456588")
+        assert(row_data[0][1] == claim_string)
 
 
 if __name__ == '__main__':
