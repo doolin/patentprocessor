@@ -11,8 +11,6 @@ from xml.sax import make_parser, handler, parseString, saxutils
 
 claim_list = []
 
-
-
 # Claims class for setting up files
 class Claims():
 
@@ -20,7 +18,7 @@ class Claims():
       self.XMLs = []
      
     def handle_file(self, filename):
-      print "Setting up XML files to be parsed..."
+      # print "Setting up XML files to be parsed..."
       with open(filename, "U") as filename: 
         self.XMLs = re.findall(
             r"""
@@ -29,17 +27,18 @@ class Claims():
                 [<][/]PATDOC[>])    #and here is the end tag
              """, filename.read(),  re.I + re.S + re.X)
              
-    def handle_claims(self):
+    def handle_claims(self, content_handler):
+      i = 0
       for i, xml in enumerate(self.XMLs):
         try:
-          if (i%1000 == 0):
-            print "Parsing Patent:", i
-          parseString(self.handle_special_entities(xml), Claim())
+          #if (i%1000 == 0):
+          # print "Parsing Patent:", i
+          parseString(self.handle_special_entities(xml), content_handler)
         except Exception as e:
           print "found error", e
           logging.error("\n\nError at Patent: %d" % (i+1))
           logging.error(xml)
-      print "Processed:", i+1, "Patents!"
+      # print "Processed:", i+1, "Patents!"
           
     def handle_special_entities(self, s):
       # Currently removing all special characters
@@ -52,6 +51,12 @@ class Claims():
     def print_claims(self):
       for claims in claim_list:
         print "current claim is:", claims 
+
+    def return_claims(self):
+      return claim_list
+
+    def reset_claims(self):
+      claim_list = []
 
 # Claim class to handle SAX Parsing
 class Claim(handler.ContentHandler):
@@ -120,6 +125,12 @@ class Claim(handler.ContentHandler):
     def endDocument(self):
         for cl in self.claims:
             claim_list.append(cl)
+        self.claims = []
+
+    def reset_claims(self):
+        claim_list = []
+        self.claims = []
+        
         
 # SQL Class to handle cursors, database creation
 class Claims_SQL():

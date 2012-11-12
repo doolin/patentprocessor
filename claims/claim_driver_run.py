@@ -27,6 +27,7 @@ filename = sys.argv[1]
 t1 = datetime.datetime.now()
 
 c = Claims()
+ch = Claim()
 handlers["file"] = c.handle_file
 handlers["claims"] = c.handle_claims
 
@@ -36,7 +37,7 @@ sq = Claims_SQL()
 handlers["db_init"] = sq.initialize_con_database
 handlers["insert_claims"] = sq.insert_claims
 handlers["file"](filename)
-handlers["claims"]()
+handlers["claims"](ch)
 handlers["db_init"]("claims.sqlite3") # Change to be CLI argument later
 
 from claim_driver import claim_list
