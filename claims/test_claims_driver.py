@@ -11,22 +11,25 @@ class TestClaimDriver(unittest.TestCase):
     #########################
     # Basic Tests and Setup #
     #########################
-    
+
     def setUp(self):
         # Claims() instance for 1, 10, 100 patents
-        self.c = Claims()
+        self.c     = Claims()
         self.c_ten = Claims()
         self.c_hun = Claims()
+
         # Claim() instance for 1, 10, 100 patents
-        self.ch = Claim()
+        self.ch     = Claim()
         self.ch_ten = Claim()
         self.ch_hun = Claim()
+
         # Claim_SQL() instance for 1, 10, 100 patents
-        self.sq = Claims_SQL()
+        self.sq     = Claims_SQL()
         self.sq_ten = Claims_SQL()
         self.sq_hun = Claims_SQL()
+
         # claim_list instance for 1, 10, 100 patents
-        self.claim_list = []
+        self.claim_list     = []
         self.claim_list_ten = []
         self.claim_list_hun = []
 
