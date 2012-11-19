@@ -39,7 +39,6 @@ handlers["claims"](ch)
 handlers["db_init"]("claims.sqlite3") # Change to be CLI argument later
 
 from claim_driver import claim_list
-handlers["insert_claims"](claim_list) 
+handlers["insert_claims"](claim_list)
 
 print "end time:", datetime.datetime.now()-t1
-      
