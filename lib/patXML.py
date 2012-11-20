@@ -296,9 +296,6 @@ class SQLPatent:
         for x in patents:
             q.extend(callbacks[tbl](x))
         return q
-    # TODO: look at using callbacks to simplify this (alternative to putting it in XMLPatent)
-    # TODO: use a dispatch table {'foo' : fxn_to_operate_on_foo} so we can use dispatch['foo'](foo) or something
-    # TODO: test the callback system *and* the individual functions
 
 class XMLPatent:
     def __init__(self, XMLString, debug=False):
