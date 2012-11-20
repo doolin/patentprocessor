@@ -69,7 +69,11 @@ parser.add_argument('--verbosity', '-v', type = int,
         = error, 1 = warning, 2 = info, 3 = debug')
       
 # double check that variables are actually set
-if len(sys.argv)==1:
+# we ignore the verbosity argument when determining
+# if any variables have been set by the user
+specified = [arg for arg in sys.argv if arg.startswith('-')]
+nonverbose = [opt for opt in specified if '-v' not in opt]
+if len(nonverbose)==0:
     parser.print_help()
     sys.exit(1)
 
@@ -78,9 +82,15 @@ args = parser.parse_args()
 DIRECTORIES = args.directory
 XMLREGEX = args.xmlregex
 PATENTROOT = args.patentroot
+# adjust verbosity levels based on specified input
+logging_levels = {0: logging.ERROR,
+                  1: logging.WARNING,
+                  2: logging.INFO,
+                  3: logging.DEBUG}
+VERBOSITY = logging_levels[args.verbosity]
 
 logfile = "./" + 'xml-parsing.log'
-logging.basicConfig(filename=logfile, level=logging.DEBUG)
+logging.basicConfig(filename=logfile, level=VERBOSITY)
 
 t1 = datetime.datetime.now()
 
