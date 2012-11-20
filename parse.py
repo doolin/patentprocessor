@@ -96,13 +96,11 @@ t1 = datetime.datetime.now()
 
 #get a listing of all files within the directory that follow the naming pattern
 files = list_files(DIRECTORIES, PATENTROOT, XMLREGEX)
-print "Total files: %d" % (len(files))
 logging.info("Total files: %d" % (len(files)))
 
 # list of parsed xml strings
 parsed_xmls = parallel_parse(files)
 
-print "   - Total Patents: %d" % (len(parsed_xmls))
 logging.info("   - Total Patents: %d" % (len(parsed_xmls)))
 
 tables = ["assignee", "citation", "class", "inventor", "patent",\
@@ -123,14 +121,11 @@ for filename in parsed_xmls:
         except Exception as inst:
             #print type(inst)
             logging.error(type(inst))
-            print "  - Error: %s (%d)  %s" % (filename, i, x[175:200])
             logging.error("  - Error: %s (%d)  %s" % (filename, i, x[175:200]))
             count += 1
         #print xmllist
 
-    print "   - number of patents:", len(xmllist), datetime.datetime.now()-t1
     logging.info("   - number of patents: %d %s ", len(xmllist), datetime.datetime.now()-t1)
-    print "   - number of errors: ", count
     logging.info( "   - number of errors: %d", count)
     total_count += count
     total_patents += patents
@@ -144,7 +139,6 @@ for filename in parsed_xmls:
         SQLPatent().dbBuild(q, tbl=table, week=filename)
         #SQLPatent().dbBuild(q=SQLPatent().tblBuild(xmllist, tbl=table), tbl=table, week=filename)
 
-    print "   -", datetime.datetime.now()-t1
     logging.info("   - %s", datetime.datetime.now()-t1)
     logging.info("   - total errors: %d", total_count)
     logging.info("   - total patents: %d", total_patents)
