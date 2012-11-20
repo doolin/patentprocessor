@@ -291,47 +291,14 @@ class SQLPatent:
                 CREATE UNIQUE INDEX IF NOT EXISTS uqUSRelDoc ON usreldoc (Patent, OrderSeq);
                 """)
 
-    # TODO: look at using callbacks to simplify this (alternative to putting it in XMLPatent)
-    # TODO: use a dispatch table {'foo' : fxn_to_operate_on_foo} so we can use dispatch['foo'](foo) or something
-    # TODO: test the callback system *and* the individual functions
     def tblBuild(self, patents, tbl, legacy=True):
         q = [] # creating the list of lists
         for x in patents:
-            if tbl=="assignee":
-                for i,y in enumerate(x.asg_list):
-                    if y[0]==0:
-                        q.extend([[x.patent, y[2], y[1], y[4], y[5], y[6], y[7], y[8], i]])
-                    else:
-                        q.extend([[x.patent, "00", "%s, %s" % (y[2], y[1]), y[4], y[5], y[6], y[7], y[8], i]])
-            elif tbl=="citation":
-                cit_list = [y for y in x.cit_list if y[1]!=""]
-                for i,y in enumerate(cit_list):
-                    q.extend([[x.patent, y[3], y[5], y[4], y[1], y[2], y[0], i]])
-            elif tbl=="class":
-                for i,y in enumerate(x.classes):
-                    q.extend([[x.patent, (i==0)*1, y[0], y[1]]])
-            elif tbl=="inventor":
-                for i,y in enumerate(x.inv_list):
-                    q.extend([[x.patent, y[1], y[0], y[2], y[3], y[4], y[5], y[6], y[8], i]])
-            elif tbl=="patent":
-                q.extend([[x.patent, x.kind, x.clm_num, x.code_app, x.patent_app, x.date_grant, x.date_grant[:4], x.date_app, x.date_app[:4], x.pat_type]]) #add x.pat_type
-            elif tbl=="patdesc":
-                q.extend([[x.patent, x.abstract, x.invention_title]])
-            elif tbl=="lawyer":
-                for i,y in enumerate(x.law_list):
-                    q.extend([[x.patent, y[1], y[0], y[2], y[3], i]])
-            elif tbl=="sciref":
-                cit_list = [y for y in x.cit_list if y[1]==""]
-                for i,y in enumerate(cit_list):
-                    q.extend([[x.patent, y[-1], i]])
-            elif tbl=="usreldoc":
-                for i,y in enumerate(x.rel_list):
-                    if y[1]==1:
-                        q.extend([[x.patent, y[0], y[1], y[3], y[2], y[4], y[5], y[6]]])
-                    else:
-                        q.extend([[x.patent, y[0], y[1], y[3], y[2], y[4], "", ""]])
-
+            q.extend(callbacks[tbl](x))
         return q
+    # TODO: look at using callbacks to simplify this (alternative to putting it in XMLPatent)
+    # TODO: use a dispatch table {'foo' : fxn_to_operate_on_foo} so we can use dispatch['foo'](foo) or something
+    # TODO: test the callback system *and* the individual functions
 
 class XMLPatent:
     def __init__(self, XMLString, debug=False):
