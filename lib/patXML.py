@@ -6,6 +6,80 @@ import copy
 ##import scipy as sp
 import unicodedata
 
+
+# callback structure for tblBuild
+callbacks = {
+    'assignee': build_assignee,
+    'citation': build_citation,
+    'class': build_class,
+    'inventor': build_inventor,
+    'patent': build_patent,
+    'patdesc': build_patdesc,
+    'lawyer': build_lawyer,
+    'sciref': build_sciref,
+    'usreldoc': build_usreldoc
+    }
+
+"""
+Each of the following build_* methods takes in a [patent], which is an
+XMLPatent object, and returns a list of the fields to be inserted into the sql
+tables using the SQLPatent object.
+"""
+def build_assignee(patent):
+    ack = []
+    for i,y in enumerate(patent.asg_list):
+        if not y[0]:
+            ack.extend([[patent.patent, y[2], y[1], y[4], y[5], y[7], y[8], i]])
+        else:
+            ack.extend([[patent.patent, "00", "%s, %s" % (y[2], y[1]), y[4], y[5], y[6], y[7], y[8], i]])
+    return ack
+
+def build_citation(patent):
+    ack = []
+    for i,y in enumerate([x for x in patent.cit_list if x[1] != ""]):
+        ack.extend([[patent.patent, y[3], y[5], y[4], y[1], y[2], y[0], i]])
+    return ack
+
+def build_class(patent):
+    ack = []
+    for i,y in enumerate(patent.classes):
+        ack.extend([[patent.patent, (i==0)*1, y[0], y[1]]])
+    return ack
+
+def build_inventor(patent):
+    ack = []
+    for i,y in enumerate(patent.inv_list):
+        ack.extend([[patent.patent, y[1], y[0], y[2], y[3], y[4], y[5], y[6], y[8], i]])
+    return ack
+
+def build_patent(patent):
+    return [[patent.patent, patent.kind, patent.clm_num, patent.code_app, patent.patent_app, patent.date_grant, patent.date_grant[:4], patent.date_app, patent.date_app[:4], patent.pat_type]]
+
+def build_patdesc(patent):
+    return [[patent.patent, patent.abstract, patent.invention_title]]
+
+def build_lawyer(patent):
+    ack = []
+    for i,y in enumerate(patent.law_list):
+        ack.extend([[patent.patent, y[1], y[0], y[2], y[3], i]])
+    return ack
+
+def build_sciref(patent):
+    ack = []
+    for i,y in enumerate([y for y in patent.cit_list if y[1] == ""]):
+        ack.extend([[patent.patent, y[-1], i]])
+    return ack
+
+def build_usreldoc(patent):
+    ack = []
+    for i,y in enumerate(patent.rel_list):
+        if y[1] == 1:
+            ack.extend([[patent.patent, y[0], y[1], y[3], y[2], y[4], y[5], y[6]]])
+        else:
+            ack.extend([[patent.patent, y[0], y[1], y[3], y[2], y[4], "", ""]])
+    return ack
+    
+
 def uniasc(x, form='NFKD', action='replace', debug=False):
     # unicode to ascii format
     if debug:
