@@ -7,19 +7,6 @@ import copy
 import unicodedata
 
 
-# callback structure for tblBuild
-callbacks = {
-    'assignee': build_assignee,
-    'citation': build_citation,
-    'class': build_class,
-    'inventor': build_inventor,
-    'patent': build_patent,
-    'patdesc': build_patdesc,
-    'lawyer': build_lawyer,
-    'sciref': build_sciref,
-    'usreldoc': build_usreldoc
-    }
-
 """
 Each of the following build_* methods takes in a [patent], which is an
 XMLPatent object, and returns a list of the fields to be inserted into the sql
@@ -79,6 +66,19 @@ def build_usreldoc(patent):
             ack.extend([[patent.patent, y[0], y[1], y[3], y[2], y[4], "", ""]])
     return ack
     
+# callback structure for tblBuild
+callbacks = {
+    'assignee': build_assignee,
+    'citation': build_citation,
+    'class': build_class,
+    'inventor': build_inventor,
+    'patent': build_patent,
+    'patdesc': build_patdesc,
+    'lawyer': build_lawyer,
+    'sciref': build_sciref,
+    'usreldoc': build_usreldoc
+    }
+
 
 def uniasc(x, form='NFKD', action='replace', debug=False):
     # unicode to ascii format
