@@ -99,7 +99,6 @@ t1 = datetime.datetime.now()
 
 #get a listing of all files within the directory that follow the naming pattern
 files = list_files(DIRECTORIES, PATENTROOT, XMLREGEX)
-print "Total files: %d" % (len(files))
 logging.info("Total files: %d" % (len(files)))
 
 # list of parsed xml strings
