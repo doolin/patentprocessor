@@ -62,6 +62,11 @@ parser.add_argument('--patentroot','-p', type=str, nargs='?',
 parser.add_argument('--xmlregex','-x', type=str, 
         nargs='?', default=r"ipg\d{6}.xml",
         help='regex used to match xml files in each directory')
+parser.add_argument('--verbosity', '-v', type = int,
+        nargs='?', default=0,
+        help='Set the level of verbosity for the computation. The higher the \
+        verbosity level, the less restrictive the print policy. 0 (default) \
+        = error, 1 = warning, 2 = info, 3 = debug')
       
 # double check that variables are actually set
 if len(sys.argv)==1:
