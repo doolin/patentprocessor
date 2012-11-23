@@ -56,6 +56,10 @@ class XMLPatent(object):
     in here to assist in the carry-over of parsing the xml fields
     """
     def __allHTML__(self, xmldoc, tagList):
+        """
+        Replaces the html tags for everything returned by __tagName__(taglist)
+        with nothing
+        """
         for x in self.__tagNme__(xmldoc, tagList, iHTML=False):
             return re.sub(r"<[/]?%s( .*?)?>" % (tagList[-1]), "", x.toxml())
         return ""
@@ -76,6 +80,11 @@ class XMLPatent(object):
             return rc
 
     def __tagSplit__(self, xmldoc, xmlList, tagList, baseList=[], idx=0, blank=False, iHTML=True, debug=False):
+        """
+        For each item in the list of xml tags returned by tagName, we treat each tag's contents
+        as its own xml doc and search it for a list of xml tags. Everyything is appended together
+        and returned
+        """
         d_list = []
         for x in self.__tagNme__(xmldoc, tagList=xmlList, iHTML=False):
             record = copy.copy(baseList)
@@ -99,7 +108,7 @@ class XMLPatent(object):
         For each item, we then iterate through all xmldocs we passed in (usually one?)
         and append the tag we wanted to an xmllist.
         We have empty strings if the tag was not found, and always return a flat list.
-        Returns:
+        **Returns:
         if the iHTML flag is set, we do the innerHTML method on the xmllist, otherwise
         we just return the xmllist.
         """
