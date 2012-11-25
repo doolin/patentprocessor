@@ -115,14 +115,12 @@ for filename in parsed_xmls:
 
     for i, x in enumerate(parsed_xmls):
         try:
-            xmllist.append(XMLPatent(x))   #TODO: this is the slow part (parallelize)
+            xmllist.append(XMLPatent(x))
             patents += 1
         except Exception as inst:
-            #print type(inst)
             logging.error(type(inst))
             logging.error("  - Error: %s (%d)  %s" % (filename, i, x[175:200]))
             count += 1
-        #print xmllist
 
     logging.info("   - number of patents: %d %s ", len(xmllist), datetime.datetime.now()-t1)
     logging.info( "   - number of errors: %d", count)
