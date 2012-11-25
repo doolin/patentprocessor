@@ -166,7 +166,7 @@ class XMLPatent(object):
             ack.extend([[self, y[1], y[0], y[2], y[3], y[4], y[5], y[6], y[8], i]])
         return ack
 
-    def build_self(self):
+    def build_patent(self):
         return [[self, self.kind, self.clm_num, self.code_app, self_app, self.date_grant, self.date_grant[:4], self.date_app, self.date_app[:4], self.pat_type]]
 
     def build_patdesc(self):
