@@ -16,7 +16,6 @@ sys.path.append( '.' )
 sys.path.append( './lib/' )
 import shutil
 
-from patXML import SQLPatent
 from patXML import XMLPatent
 from patXML import uniasc
 from fwork  import *
@@ -135,18 +134,8 @@ for filename in parsed_xmls:
         # the databases to be built in place
         # (/var/share/patentdata/patents/<year>)
         # outdb = PATENTROOT + "/" + table
-        q = SQLPatent().tblBuild(xmllist, tbl=table)
-        SQLPatent().dbBuild(q, tbl=table, week=filename)
-        #SQLPatent().dbBuild(q=SQLPatent().tblBuild(xmllist, tbl=table), tbl=table, week=filename)
+        x.insertcallbacks[table]()
 
     logging.info("   - %s", datetime.datetime.now()-t1)
     logging.info("   - total errors: %d", total_count)
     logging.info("   - total patents: %d", total_patents)
-
-for table in tables:
-    SQLPatent().dbFinal(tbl=table)
-
-#for table in tables:
-#    filename = table + ".sqlite3"
-#    shutil.move(filename,PATENTROOT)
-
