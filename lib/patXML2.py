@@ -154,6 +154,7 @@ class XMLPatent(object):
             """)
         c.executemany("""INSERT OR IGNORE INTO %s VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)""" % tbl, \
             self.tablecallbacks["assignee"]())
+        conn.commit()
     
     def insert_citation(self):
         conn = sqlite3.connect("citation.sqlite3")
@@ -167,6 +168,7 @@ class XMLPatent(object):
             """)
         c.executemany("""INSERT OR IGNORE INTO %s VALUES (?, ?, ?, ?, ?, ?, ?, ?)""" % tbl, \
             self.tablecallbacks["citation"]())
+        conn.commit()
 
     def insert_class(self):
         conn = sqlite3.connect("class.sqlite3")
@@ -179,6 +181,7 @@ class XMLPatent(object):
             """)
         c.executemany("""INSERT OR IGNORE INTO %s VALUES (?, ?, ?, ?)""" % tbl, \
             self.tablecallbacks["class"]())
+        conn.commit()
 
     def insert_inventor(self):
         conn = sqlite3.connect("inventor.sqlite3")
@@ -193,6 +196,7 @@ class XMLPatent(object):
             """)
         c.executemany("""INSERT OR IGNORE INTO %s VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""" % tbl, \
             self.tablecallbacks["inventor"]())
+        conn.commit()
 
 
     def insert_patent(self):
@@ -208,6 +212,7 @@ class XMLPatent(object):
             """)
         c.executemany("""INSERT OR IGNORE INTO %s VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""" % tbl, \
             self.tablecallbacks["patent"]())
+        conn.commit()
 
     def insert_patdesc(self):
         conn = sqlite3.connect("patdesc.sqlite3")
@@ -220,6 +225,7 @@ class XMLPatent(object):
             """)
         c.executemany("""INSERT OR IGNORE INTO %s VALUES (?, ?, ?)""" % tbl, \
             self.tablecallbacks["patdesc"]())
+        conn.commit()
 
 
     def insert_lawyer(self):
@@ -233,6 +239,7 @@ class XMLPatent(object):
             """)
         c.executemany("""INSERT OR IGNORE INTO %s VALUES (?, ?, ?, ?, ?, ?)""" % tbl, \
             self.tablecallbacks["lawyer"]())
+        conn.commit()
 
 
     def insert_sciref(self):
@@ -245,6 +252,7 @@ class XMLPatent(object):
             """)
         c.executemany("""INSERT OR IGNORE INTO %s VALUES (?, ?, ?)""" % tbl, \
             self.tablecallbacks["sciref"]())
+        conn.commit()
 
 
     def insert_usreldoc(self):
@@ -259,6 +267,7 @@ class XMLPatent(object):
             """)
         c.executemany("""INSERT OR IGNORE INTO %s VALUES (?, ?, ?, ?, ?, ?, ?, ?)""" % tbl, \
             self.tablecallbacks["usreldoc"]())
+        conn.commit()
 
 
     """
