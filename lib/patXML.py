@@ -8,6 +8,57 @@ import sqlite3
 import copy
 import unicodedata
 
+def uniasc(x, form='NFKD', action='replace', debug=False):
+    # unicode to ascii format
+    if debug:
+        print x
+    return unicodedata.normalize(form, x).encode('ascii', action)
+
+
+def ron_d(xml, itr=0, defList=[], cat="", debug=False):
+    xmlcopy = []
+    if itr==0:
+        pass
+    else:
+        xmlist = copy.copy(defList)
+        for x in xml.childNodes:
+            if x.nodeName[0] != "#":
+                if debug:
+                    print x.nodeName
+                if xmlist.count(cat+x.nodeName)==0 and \
+                   len(re.findall("[A-Z0-9]", innerHTML(x), re.I))>0:
+                    xmlist.append(cat+x.nodeName)
+                xmlist.extend(ron_d(x, itr-1, cat=cat+x.nodeName+"|", debug=debug))
+
+        xmlcopy = copy.copy(xmlist)
+        for x in xmlist:
+            if xmlcopy.count(x)>1:
+                xmlcopy.remove(x)
+        xmlcopy.sort()
+    return xmlcopy 
+
+
+def innerHTML(dom_element):
+    #if blank return nothing as well!
+    if dom_element == '':
+        return ''
+    else:
+        rc = ""
+        for node in dom_element.childNodes:
+            if node.nodeType == node.TEXT_NODE:
+                rc = rc + node.data
+        return rc
+
+
+def XMLstruct(strList, debug=False):
+    xmlstruct = []
+    for i,x in enumerate(strList):
+        if debug and i%(max(1, len(strList)/20))==0:
+            print i
+        xmlstruct = ron_d(minidom.parseString(x), 10, defList=xmlstruct)
+    return xmlstruct
+
+
 
 class XMLPatent(object):
     """
