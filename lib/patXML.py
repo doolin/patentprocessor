@@ -1,360 +1,293 @@
 from xml.dom import minidom
 from types import *
-import datetime, csv, os, re, sqlite3
+import datetime
+import csv
+import os
+import re
+import sqlite3
 import copy
-##import numpy as np
-##import scipy as sp
 import unicodedata
 
 
-"""
-Each of the following build_* methods takes in a [patent], which is an
-XMLPatent object, and returns a list of the fields to be inserted into the sql
-tables using the SQLPatent object.
-"""
-def build_assignee(patent):
-    ack = []
-    for i,y in enumerate(patent.asg_list):
-        if not y[0]:
-            ack.extend([[patent.patent, y[2], y[1], y[4], y[5], y[7], y[8], i]])
-        else:
-            ack.extend([[patent.patent, "00", "%s, %s" % (y[2], y[1]), y[4], y[5], y[6], y[7], y[8], i]])
-    return ack
+class XMLPatent(object):
+    """
+    Base class for handling parsing of xml fields
+    """
 
-def build_citation(patent):
-    ack = []
-    for i,y in enumerate([x for x in patent.cit_list if x[1] != ""]):
-        ack.extend([[patent.patent, y[3], y[5], y[4], y[1], y[2], y[0], i]])
-    return ack
-
-def build_class(patent):
-    ack = []
-    for i,y in enumerate(patent.classes):
-        ack.extend([[patent.patent, (i==0)*1, y[0], y[1]]])
-    return ack
-
-def build_inventor(patent):
-    ack = []
-    for i,y in enumerate(patent.inv_list):
-        ack.extend([[patent.patent, y[1], y[0], y[2], y[3], y[4], y[5], y[6], y[8], i]])
-    return ack
-
-def build_patent(patent):
-    return [[patent.patent, patent.kind, patent.clm_num, patent.code_app, patent.patent_app, patent.date_grant, patent.date_grant[:4], patent.date_app, patent.date_app[:4], patent.pat_type]]
-
-def build_patdesc(patent):
-    return [[patent.patent, patent.abstract, patent.invention_title]]
-
-def build_lawyer(patent):
-    ack = []
-    for i,y in enumerate(patent.law_list):
-        ack.extend([[patent.patent, y[1], y[0], y[2], y[3], i]])
-    return ack
-
-def build_sciref(patent):
-    ack = []
-    for i,y in enumerate([y for y in patent.cit_list if y[1] == ""]):
-        ack.extend([[patent.patent, y[-1], i]])
-    return ack
-
-def build_usreldoc(patent):
-    ack = []
-    for i,y in enumerate(patent.rel_list):
-        if y[1] == 1:
-            ack.extend([[patent.patent, y[0], y[1], y[3], y[2], y[4], y[5], y[6]]])
-        else:
-            ack.extend([[patent.patent, y[0], y[1], y[3], y[2], y[4], "", ""]])
-    return ack
-    
-# callback structure for tblBuild
-callbacks = {
-    'assignee': build_assignee,
-    'citation': build_citation,
-    'class': build_class,
-    'inventor': build_inventor,
-    'patent': build_patent,
-    'patdesc': build_patdesc,
-    'lawyer': build_lawyer,
-    'sciref': build_sciref,
-    'usreldoc': build_usreldoc
-    }
-
-
-def uniasc(x, form='NFKD', action='replace', debug=False):
-    # unicode to ascii format
-    if debug:
-        print x
-    return unicodedata.normalize(form, x).encode('ascii', action)
-
-
-def ron_d(xml, itr=0, defList=[], cat="", debug=False):
-    xmlcopy = []
-    if itr==0:
-        pass
-    else:
-        xmlist = copy.copy(defList)
-        for x in xml.childNodes:
-            if x.nodeName[0] != "#":
-                if debug:
-                    print x.nodeName
-                if xmlist.count(cat+x.nodeName)==0 and \
-                   len(re.findall("[A-Z0-9]", innerHTML(x), re.I))>0:
-                    xmlist.append(cat+x.nodeName)
-                xmlist.extend(ron_d(x, itr-1, cat=cat+x.nodeName+"|", debug=debug))
-
-        xmlcopy = copy.copy(xmlist)
-        for x in xmlist:
-            if xmlcopy.count(x)>1:
-                xmlcopy.remove(x)
-        xmlcopy.sort()
-    return xmlcopy 
-
-
-def innerHTML(dom_element):
-    #if blank return nothing as well!
-    if dom_element == '':
-        return ''
-    else:
-        rc = ""
-        for node in dom_element.childNodes:
-            if node.nodeType == node.TEXT_NODE:
-                rc = rc + node.data
-        return rc
-
-
-def XMLstruct(strList, debug=False):
-    xmlstruct = []
-    for i,x in enumerate(strList):
-        if debug and i%(max(1, len(strList)/20))==0:
-            print i
-        xmlstruct = ron_d(minidom.parseString(x), 10, defList=xmlstruct)
-    return xmlstruct
-
-
-class SQLPatent:
-
-    def dbBuild(self, q, tbl, week=0, legacy=True):
-##        if legacy:
-##            table = os.path.isfile(tbl+"_l.sqlite3")
-##            conn = sqlite3.connect(tbl+"_l.sqlite3")
-##        else:
-        table = os.path.isfile("%s.sqlite3" % tbl)
-        conn = sqlite3.connect("%s.sqlite3" % tbl)
-        c = conn.cursor()
-        ##c.execute("PRAGMA synchronous = 0")
-        self.dbTbl(tbl=tbl, c=c, legacy=legacy)
-
-        if c.execute("SELECT count(*) FROM gXML WHERE week=?", (week,)).fetchone()[0]==0:
-            #INSERT STUFF
-            if tbl=="assignee":
-                c.executemany("""INSERT OR IGNORE INTO %s VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)""" % tbl, q)
-                # q is the list of lists
-            elif tbl=="citation":
-                c.executemany("""INSERT OR IGNORE INTO %s VALUES (?, ?, ?, ?, ?, ?, ?, ?)""" % tbl, q)
-            elif tbl=="class":
-                c.executemany("""INSERT OR IGNORE INTO %s VALUES (?, ?, ?, ?)""" % tbl, q)
-            elif tbl=="inventor":
-                c.executemany("""INSERT OR IGNORE INTO %s VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""" % tbl, q)
-            elif tbl=="patent":
-                c.executemany("""INSERT OR IGNORE INTO %s VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""" % tbl, q) #add one more ?
-            elif tbl=="patdesc":
-                c.executemany("""INSERT OR IGNORE INTO %s VALUES (?, ?, ?)""" % tbl, q)
-            elif tbl=="lawyer":
-                c.executemany("""INSERT OR IGNORE INTO %s VALUES (?, ?, ?, ?, ?, ?)""" % tbl, q)
-            elif tbl=="sciref":
-                c.executemany("""INSERT OR IGNORE INTO %s VALUES (?, ?, ?)""" % tbl, q)
-            elif tbl=="usreldoc":
-                c.executemany("""INSERT OR IGNORE INTO %s VALUES (?, ?, ?, ?, ?, ?, ?, ?)""" % tbl, q)
-            c.execute("INSERT INTO gXML VALUES (?)", (week,))
-
-        conn.commit()
-        c=None
-        conn=None
-
-    def dbFinal(self, tbl, legacy=True):
-        conn = sqlite3.connect("%s.sqlite3" % tbl)
-        c = conn.cursor()
-        if tbl=="assignee":
-##            c.execute("CREATE INDEX IF NOT EXISTS idx_pata ON %s (Patent, AsgSeq)" % tbl)
-            c.execute("CREATE INDEX IF NOT EXISTS idx_patent ON %s (Patent)" % tbl)
-            c.execute("CREATE INDEX IF NOT EXISTS idx_asg    ON %s (Assignee)" % tbl)
-            c.execute("CREATE INDEX IF NOT EXISTS idx_asgtyp ON %s (AsgType)" % tbl)
-            c.execute("CREATE INDEX IF NOT EXISTS idx_stt ON %s (State)" % tbl)
-            c.execute("CREATE INDEX IF NOT EXISTS idx_cty ON %s (Country)" % tbl)
-        elif tbl=="citation":
-##            print "[citation] to be continued..."
-            c.execute("CREATE INDEX IF NOT EXISTS idx_patc ON %s (Patent, Citation)" % tbl)
-            c.execute("CREATE INDEX IF NOT EXISTS idx_patent ON %s (Patent)" % tbl)
-            c.execute("CREATE INDEX IF NOT EXISTS idx_cit ON %s (Citation)" % tbl)
-        elif tbl=="class":
-##            c.execute("CREATE INDEX IF NOT EXISTS idx_patcs ON %s (Patent, Class, SubClass)" % tbl)
-            c.execute("CREATE INDEX IF NOT EXISTS idx_patent ON %s (Patent)" % tbl)
-            c.execute("CREATE INDEX IF NOT EXISTS idx_prim ON %s (Prim)" % tbl)
-            c.execute("CREATE INDEX IF NOT EXISTS idx_cls  ON %s (Class)" % tbl)
-            c.execute("CREATE INDEX IF NOT EXISTS idx_scls ON %s (SubClass)" % tbl)
-            c.execute("CREATE INDEX IF NOT EXISTS idx_cscl ON %s (Class,SubClass)" % tbl)
-        elif tbl=="inventor":
-##            c.execute("CREATE INDEX IF NOT EXISTS idx_pati ON %s (Patent, InvSeq)" % tbl)
-            c.execute("CREATE INDEX IF NOT EXISTS idx_patent ON %s (Patent)" % tbl)
-            c.execute("CREATE INDEX IF NOT EXISTS idx_stt ON %s (State)" % tbl)
-            c.execute("CREATE INDEX IF NOT EXISTS idx_cty ON %s (Country)" % tbl)
-        elif tbl=="patent":
-            c.execute("CREATE INDEX IF NOT EXISTS idx_patent ON %s (Patent)" % tbl)
-            c.execute("CREATE INDEX IF NOT EXISTS idx_ayr ON %s (AppYear)" % tbl)
-            c.execute("CREATE INDEX IF NOT EXISTS idx_gyr ON %s (GYear)" % tbl)
-        elif tbl=="patdesc":
-            c.execute("CREATE INDEX IF NOT EXISTS idx_patent ON %s (Patent)" % tbl)
-        elif tbl=="lawyer":
-            c.execute("CREATE INDEX IF NOT EXISTS idx_patl ON %s (Patent, LawSeq)" % tbl)
-            c.execute("CREATE INDEX IF NOT EXISTS idx_patent ON %s (Patent)" % tbl)
-        elif tbl=="sciref":
-##            c.execute("CREATE INDEX IF NOT EXISTS idx_patc ON %s (Patent, CitSeq)" % tbl)
-            c.execute("CREATE INDEX IF NOT EXISTS idx_patent ON %s (Patent)" % tbl)
-        elif tbl=="usreldoc":
-##            c.execute("CREATE INDEX IF NOT EXISTS idx_pator ON %s (Patent, OrderSeq, RelPatent)" % tbl)
-            c.execute("CREATE INDEX IF NOT EXISTS idx_patent ON %s (Patent)" % tbl)
-            c.execute("CREATE INDEX IF NOT EXISTS idx_relpat ON %s (RelPatent)" % tbl)
-        c.close()
-        conn.close()
-
-    def dbTbl(self, tbl, c, legacy=True):
-        # When we update the table, we do not have to drop and then rebuild the
-        # index, because the index is updated along with the table
-        c.execute("CREATE TABLE IF NOT EXISTS gXML ( week VARCHAR )")
-        if tbl=="assignee":
-            c.executescript("""
-                CREATE TABLE IF NOT EXISTS assignee (
-                    Patent VARCHAR(8),      AsgType INTEGER,        Assignee VARCHAR(30),
-                    City VARCHAR(10),       State VARCHAR(2),       Country VARCHAR(2),
-                    Nationality VARCHAR(2), Residence VARCHAR(2),   AsgSeq INTEGER);
-                CREATE UNIQUE INDEX IF NOT EXISTS uqAsg ON assignee (Patent, AsgSeq);
-                """)
-        elif tbl=="citation":
-            c.executescript("""
-                CREATE TABLE IF NOT EXISTS citation (
-                    Patent VARCHAR(8),      Cit_Date INTEGER,       Cit_Name VARCHAR(10),
-                    Cit_Kind VARCHAR(1),    Cit_Country VARCHAR(2), Citation VARCHAR(8),
-                    Category VARCHAR(15),   CitSeq INTEGER);
-                CREATE UNIQUE INDEX IF NOT EXISTS uqCit ON citation (Patent, CitSeq);
-                """)
-        elif tbl=="class":
-            c.executescript("""
-                CREATE TABLE IF NOT EXISTS class (
-                    Patent VARCHAR(8),      Prim INTEGER,
-                    Class VARCHAR(3),       SubClass VARCHAR(3));
-                CREATE UNIQUE INDEX IF NOT EXISTS uqClass ON class (Patent, Class, SubClass);
-                """)
-        elif tbl=="inventor":
-            c.executescript("""
-                CREATE TABLE IF NOT EXISTS inventor (
-                    Patent VARCHAR(8),      Firstname VARCHAR(15),  Lastname VARCHAR(15),
-                    Street VARCHAR(15),     City VARCHAR(10),
-                    State VARCHAR(2),       Country VARCHAR(12),
-                    Zipcode VARCHAR(5),     Nationality VARCHAR(2), InvSeq INTEGER);
-                CREATE UNIQUE INDEX IF NOT EXISTS uqInv ON inventor (Patent, InvSeq);
-                """)
-        elif tbl=="patent": #add PatType VARCHAR(15)
-            c.executescript("""
-                CREATE TABLE IF NOT EXISTS patent (
-                    Patent VARCHAR(8),      Kind VARCHAR(3),        Claims INTEGER,
-                    AppType INTEGER,        AppNum VARCHAR(8),
-                    GDate INTEGER,          GYear INTEGER,
-                    AppDate INTEGER,        AppYear INTEGER, PatType VARCHAR(15) );
-                CREATE UNIQUE INDEX IF NOT EXISTS uqPat on patent (Patent);
-                """)
-        elif tbl=="patdesc":
-            c.executescript("""
-                CREATE TABLE IF NOT EXISTS patdesc (
-                    Patent VARCHAR(8),
-                    Abstract VARCHAR(50),   Title VARCHAR(20));
-                CREATE UNIQUE INDEX IF NOT EXISTS uqPatDesc ON patdesc (Patent);
-                """)
-        elif tbl=="lawyer":
-            c.executescript("""
-                CREATE TABLE IF NOT EXISTS lawyer (
-                    Patent VARCHAR(8),      Firstname VARCHAR(15),  Lastname VARCHAR(15),
-                    LawCountry VARCHAR(2),  OrgName VARCHAR(20),    LawSeq INTEGER);
-                CREATE UNIQUE INDEX IF NOT EXISTS uqLawyer ON lawyer (Patent, LawSeq);
-                """)
-        elif tbl=="sciref":
-            c.executescript("""
-                CREATE TABLE IF NOT EXISTS sciref (
-                    Patent VARCHAR(8),      Descrip VARCHAR(20),    CitSeq INTEGER);
-                CREATE UNIQUE INDEX IF NOT EXISTS uqSciref ON sciref (Patent, CitSeq);
-                """)
-        elif tbl=="usreldoc":
-            c.executescript("""
-                CREATE TABLE IF NOT EXISTS usreldoc (
-                    Patent VARCHAR(8),      DocType VARCHAR(10),    OrderSeq INTEGER,
-                    Country VARCHAR(2),     RelPatent VARCHAR(8),   Kind VARCHAR(2),
-                    RelDate INTEGER,        Status VARCHAR(10));
-                CREATE UNIQUE INDEX IF NOT EXISTS uqUSRelDoc ON usreldoc (Patent, OrderSeq);
-                """)
-
-    def tblBuild(self, patents, tbl, legacy=True):
-        q = [] # creating the list of lists
-        for x in patents:
-            q.extend(callbacks[tbl](x))
-        return q
-
-class XMLPatent:
-    def __init__(self, XMLString, debug=False):
-	debug=False
-        #XMLString conversion so tags are all lower
-        XMLString = re.sub(r"<[/]?[A-Za-z-]+?[ >]", lambda x: x.group().lower(), XMLString)
-##        XMLString = re.sub(r"(?<![</A-Za-z-])[/]?[A-Za-z-]+?>", lambda x: "<"+x.group().lower(), XMLString)
-        xmldoc = minidom.parseString(XMLString)
-        #patent related detail
-        #  patent number, kind, date_grant, date_app, country, pat_type
-        if debug:
-            print "  - country, patent, kind, date_grant"
+    def __init__(self, xmlstring):
+        """
+        [xmlstring]: string containing xml document. Should be provided by 
+        parse.py
+        """
+        # lowercase all tags
+        self.xmlstring = re.sub(r"<[/]?[A-Za-z-]+?[ >]", lambda x: x.group().lower(), xmlstring)
+        # store the minidom parsed xml doc
+        self.xmldoc = minidom.parseString(self.xmlstring)
+        
+        # country, patent, kind, date_grant
         self.country, self.patent, self.kind, self.date_grant = self.__tagNme__(xmldoc, ["publication-reference", ["country", "doc-number", "kind", "date"]])
-        if debug:
-            print "  - pat_type"
+        # pat_type
         self.pat_type = self.__tagNme__(xmldoc, ["application-reference"], iHTML=False)[0].attributes["appl-type"].value
-        if debug:
-            print "  - date_app, country_app, patent_app"
+        # date_app, country_app, patent_app
         self.date_app, self.country_app, self.patent_app = self.__tagNme__(xmldoc, ["application-reference", ["date", "country", "doc-number"]])
-        if debug:
-            print "  - code_app"
+        # code_app
         self.code_app = self.__tagNme__(xmldoc, ["us-application-series-code"])
-        if debug:
-            print "  - clm_num"
+        # clm_num
         self.clm_num = self.__tagNme__(xmldoc, ["number-of-claims"])
-        if debug:
-            print "  - classes"
+        # classes
         self.classes = [[x[:3].replace(' ',''), x[3:].replace(' ','')] for x in self.__tagNme__(xmldoc, ["classification-national", ["main-classification", "further-classification"]], idx=1, listType=True)]
-
-        if debug:
-            print "  - abstract"
+        # abstract
         self.abstract = self.__allHTML__(xmldoc, ["abstract", "p"])
-        if debug:
-            print "  - invention_title"
+        # invention_title
         self.invention_title = self.__allHTML__(xmldoc, ["invention-title"])
-
-        if debug:
-            print "  - asg_list"
+        # asg_list
         self.asg_list = self.__asg_detail__(self.__tagNme__(xmldoc, ["assignees", "assignee"], iHTML=False))
-        if debug:
-            print "  - cit_list"
+        # cit_list
         self.cit_list = self.__cit_detail__(self.__tagNme__(xmldoc, ["references-cited", "citation"], iHTML=False))
-        if debug:
-            print "  - rel_list"
+        # rel_list
         self.rel_list = self.__rel_detail__(self.__tagNme__(xmldoc, ["us-related-documents"], iHTML=False))
-
-        if debug:
-            print "  - inv_list"
+        # inv_list
         self.inv_list = self.__tagSplit__(xmldoc, ["parties", "applicant"], [["addressbook", ["last-name", "first-name"]], ["addressbook", "address", ["street", "city", "state", "country", "postcode"]], [["nationality", "residence"], "country"]], blank=True)
-        if debug:
-            print "  - law_list"
+        # law_list
         self.law_list = self.__tagSplit__(xmldoc, ["parties", "agents", "agent"], [["addressbook", ["last-name", "first-name", "country", "orgname"]]], blank=True)
 
+        """
+        Callback structure to handle the build_table specifics
+        """
+        self.tablecallbacks = {
+            'assignee': self.build_assignee,
+            'citation': self.build_citation,
+            'class': self.build_class,
+            'inventor': self.build_inventor,
+            'patent': self.build_patent,
+            'patdesc': self.build_patdesc,
+            'lawyer': self.build_lawyer,
+            'sciref': self.build_sciref,
+            'usreldoc': self.build_usreldoc
+            }
+
+        """
+        Callback structure for inserting patent into table
+        """
+        self.insertcallbacks = {
+            'assignee': self.insert_assignee,
+            'citation': self.insert_citation,
+            'class': self.insert_class,
+            'inventor': self.insert_inventor,
+            'patent': self.insert_patent,
+            'patdesc': self.insert_patdesc,
+            'lawyer': self.insert_lawyer,
+            'sciref': self.insert_sciref,
+            'usreldoc': self.insert_usreldoc
+        }
+
+
+    def build_table(self, tablename):
+        """
+        Return list of requisite fields for inserting this patent into [tablename]
+        """
+        return self.tablecallbacks[tablename]()
+
+    def build_assignee(self):
+        ack = []
+        for i,y in enumerate(self.asg_list):
+            if not y[0]:
+                ack.extend([[self, y[2], y[1], y[4], y[5], y[7], y[8], i]])
+            else:
+                ack.extend([[self, "00", "%s, %s" % (y[2], y[1]), y[4], y[5], y[6], y[7], y[8], i]])
+        return ack
+
+    def build_citation(self):
+        ack = []
+        for i,y in enumerate([x for x in self.cit_list if x[1] != ""]):
+            ack.extend([[self, y[3], y[5], y[4], y[1], y[2], y[0], i]])
+        return ack
+
+    def build_class(self):
+        ack = []
+        for i,y in enumerate(self.classes):
+            ack.extend([[self, (i==0)*1, y[0], y[1]]])
+        return ack
+
+    def build_inventor(self):
+        ack = []
+        for i,y in enumerate(self.inv_list):
+            ack.extend([[self, y[1], y[0], y[2], y[3], y[4], y[5], y[6], y[8], i]])
+        return ack
+
+    def build_self(self):
+        return [[self, self.kind, self.clm_num, self.code_app, self_app, self.date_grant, self.date_grant[:4], self.date_app, self.date_app[:4], self.pat_type]]
+
+    def build_patdesc(self):
+        return [[self, self.abstract, self.invention_title]]
+
+    def build_lawyer(self):
+        ack = []
+        for i,y in enumerate(self.law_list):
+            ack.extend([[self, y[1], y[0], y[2], y[3], i]])
+        return ack
+
+    def build_sciref(self):
+        ack = []
+        for i,y in enumerate([y for y in self.cit_list if y[1] == ""]):
+            ack.extend([[self, y[-1], i]])
+        return ack
+
+    def build_usreldoc(self):
+        ack = []
+        for i,y in enumerate(self.rel_list):
+            if y[1] == 1:
+                ack.extend([[self, y[0], y[1], y[3], y[2], y[4], y[5], y[6]]])
+            else:
+                ack.extend([[self, y[0], y[1], y[3], y[2], y[4], "", ""]])
+        return ack
+
+    def insert_assignee(self):
+        conn = sqlite3.connect("assignee.sqlite3")
+        c = conn.cursor()
+        c.executescript("""
+            CREATE TABLE IF NOT EXISTS assignee (
+                Patent VARCHAR(8),      AsgType INTEGER,        Assignee VARCHAR(30),
+                City VARCHAR(10),       State VARCHAR(2),       Country VARCHAR(2),
+                Nationality VARCHAR(2), Residence VARCHAR(2),   AsgSeq INTEGER);
+            CREATE UNIQUE INDEX IF NOT EXISTS uqAsg ON assignee (Patent, AsgSeq);
+            """)
+        c.executemany("""INSERT OR IGNORE INTO %s VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)""" % tbl, \
+            self.tablecallbacks["assignee"]())
+        conn.commit()
+    
+    def insert_citation(self):
+        conn = sqlite3.connect("citation.sqlite3")
+        c = conn.cursor()
+        c.executescript("""
+            CREATE TABLE IF NOT EXISTS citation (
+                Patent VARCHAR(8),      Cit_Date INTEGER,       Cit_Name VARCHAR(10),
+                Cit_Kind VARCHAR(1),    Cit_Country VARCHAR(2), Citation VARCHAR(8),
+                Category VARCHAR(15),   CitSeq INTEGER);
+            CREATE UNIQUE INDEX IF NOT EXISTS uqCit ON citation (Patent, CitSeq);
+            """)
+        c.executemany("""INSERT OR IGNORE INTO %s VALUES (?, ?, ?, ?, ?, ?, ?, ?)""" % tbl, \
+            self.tablecallbacks["citation"]())
+        conn.commit()
+
+    def insert_class(self):
+        conn = sqlite3.connect("class.sqlite3")
+        c = conn.cursor()
+        c.executescript("""
+            CREATE TABLE IF NOT EXISTS class (
+                Patent VARCHAR(8),      Prim INTEGER,
+                Class VARCHAR(3),       SubClass VARCHAR(3));
+            CREATE UNIQUE INDEX IF NOT EXISTS uqClass ON class (Patent, Class, SubClass);
+            """)
+        c.executemany("""INSERT OR IGNORE INTO %s VALUES (?, ?, ?, ?)""" % tbl, \
+            self.tablecallbacks["class"]())
+        conn.commit()
+
+    def insert_inventor(self):
+        conn = sqlite3.connect("inventor.sqlite3")
+        c = conn.cursor()
+        c.executescript("""
+            CREATE TABLE IF NOT EXISTS inventor (
+                Patent VARCHAR(8),      Firstname VARCHAR(15),  Lastname VARCHAR(15),
+                Street VARCHAR(15),     City VARCHAR(10),
+                State VARCHAR(2),       Country VARCHAR(12),
+                Zipcode VARCHAR(5),     Nationality VARCHAR(2), InvSeq INTEGER);
+            CREATE UNIQUE INDEX IF NOT EXISTS uqInv ON inventor (Patent, InvSeq);
+            """)
+        c.executemany("""INSERT OR IGNORE INTO %s VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""" % tbl, \
+            self.tablecallbacks["inventor"]())
+        conn.commit()
+
+
+    def insert_patent(self):
+        conn = sqlite3.connect("patent.sqlite3")
+        c = conn.cursor()
+        c.executescript("""
+            CREATE TABLE IF NOT EXISTS patent (
+                Patent VARCHAR(8),      Kind VARCHAR(3),        Claims INTEGER,
+                AppType INTEGER,        AppNum VARCHAR(8),
+                GDate INTEGER,          GYear INTEGER,
+                AppDate INTEGER,        AppYear INTEGER, PatType VARCHAR(15) );
+            CREATE UNIQUE INDEX IF NOT EXISTS uqPat on patent (Patent);
+            """)
+        c.executemany("""INSERT OR IGNORE INTO %s VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""" % tbl, \
+            self.tablecallbacks["patent"]())
+        conn.commit()
+
+    def insert_patdesc(self):
+        conn = sqlite3.connect("patdesc.sqlite3")
+        c = conn.cursor()
+        c.executescript("""
+            CREATE TABLE IF NOT EXISTS patdesc (
+                Patent VARCHAR(8),
+                Abstract VARCHAR(50),   Title VARCHAR(20));
+            CREATE UNIQUE INDEX IF NOT EXISTS uqPatDesc ON patdesc (Patent);
+            """)
+        c.executemany("""INSERT OR IGNORE INTO %s VALUES (?, ?, ?)""" % tbl, \
+            self.tablecallbacks["patdesc"]())
+        conn.commit()
+
+
+    def insert_lawyer(self):
+        conn = sqlite3.connect("lawyer.sqlite3")
+        c = conn.cursor()
+        c.executescript("""
+            CREATE TABLE IF NOT EXISTS lawyer (
+                Patent VARCHAR(8),      Firstname VARCHAR(15),  Lastname VARCHAR(15),
+                LawCountry VARCHAR(2),  OrgName VARCHAR(20),    LawSeq INTEGER);
+            CREATE UNIQUE INDEX IF NOT EXISTS uqLawyer ON lawyer (Patent, LawSeq);
+            """)
+        c.executemany("""INSERT OR IGNORE INTO %s VALUES (?, ?, ?, ?, ?, ?)""" % tbl, \
+            self.tablecallbacks["lawyer"]())
+        conn.commit()
+
+
+    def insert_sciref(self):
+        conn = sqlite3.connect("sciref.sqlite3")
+        c = conn.cursor()
+        c.executescript("""
+            CREATE TABLE IF NOT EXISTS sciref (
+                Patent VARCHAR(8),      Descrip VARCHAR(20),    CitSeq INTEGER);
+            CREATE UNIQUE INDEX IF NOT EXISTS uqSciref ON sciref (Patent, CitSeq);
+            """)
+        c.executemany("""INSERT OR IGNORE INTO %s VALUES (?, ?, ?)""" % tbl, \
+            self.tablecallbacks["sciref"]())
+        conn.commit()
+
+
+    def insert_usreldoc(self):
+        conn = sqlite3.connect("usreldoc.sqlite3")
+        c = conn.cursor()
+        c.executescript("""
+            CREATE TABLE IF NOT EXISTS usreldoc (
+                Patent VARCHAR(8),      DocType VARCHAR(10),    OrderSeq INTEGER,
+                Country VARCHAR(2),     RelPatent VARCHAR(8),   Kind VARCHAR(2),
+                RelDate INTEGER,        Status VARCHAR(10));
+            CREATE UNIQUE INDEX IF NOT EXISTS uqUSRelDoc ON usreldoc (Patent, OrderSeq);
+            """)
+        c.executemany("""INSERT OR IGNORE INTO %s VALUES (?, ?, ?, ?, ?, ?, ?, ?)""" % tbl, \
+            self.tablecallbacks["usreldoc"]())
+        conn.commit()
+
+
+    """
+    These are all methods from the old XMLPatent class. I'm keeping them
+    in here to assist in the carry-over of parsing the xml fields
+    """
     def __allHTML__(self, xmldoc, tagList):
+        """
+        Replaces the html tags for everything returned by __tagName__(taglist)
+        with nothing
+        """
         for x in self.__tagNme__(xmldoc, tagList, iHTML=False):
             return re.sub(r"<[/]?%s( .*?)?>" % (tagList[-1]), "", x.toxml())
         return ""
 
     def __innerHTML__(self, dom_element):
+        """
+        Gets the text out of all child nodes for a certain
+        dom_element
+        """
         #if blank return nothing as well!
         if dom_element == '':
             return ''
@@ -366,6 +299,11 @@ class XMLPatent:
             return rc
 
     def __tagSplit__(self, xmldoc, xmlList, tagList, baseList=[], idx=0, blank=False, iHTML=True, debug=False):
+        """
+        For each item in the list of xml tags returned by tagName, we treat each tag's contents
+        as its own xml doc and search it for a list of xml tags. Everyything is appended together
+        and returned
+        """
         d_list = []
         for x in self.__tagNme__(xmldoc, tagList=xmlList, iHTML=False):
             record = copy.copy(baseList)
@@ -379,6 +317,20 @@ class XMLPatent:
         return d_list
 
     def __tagNme__(self, xmldoc, tagList, idx=0, listType=False, blank=False, iHTML=True, debug=False):
+        """
+        takes in the xml.minidom parsed xml document [xmldoc] and a list of tags [tagList]
+        [tagList] may sometimes be a list of lists?
+        We iterate the taglist, searching another level deeper into the xml doc with each
+        iteration. In tagList, index 0 is the first level of the xmldoc, index 1 is the list
+        of all tags we look for at the level right under all the tags we found at index 0,
+        and so on.
+        For each item, we then iterate through all xmldocs we passed in (usually one?)
+        and append the tag we wanted to an xmllist.
+        We have empty strings if the tag was not found, and always return a flat list.
+        **Returns:
+        if the iHTML flag is set, we do the innerHTML method on the xmllist, otherwise
+        we just return the xmllist.
+        """
         xmldoc = [xmldoc]
         for i,x in enumerate(tagList):
             if type(x) is not ListType:
