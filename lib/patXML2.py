@@ -127,6 +127,124 @@ class XMLPatent(object):
                 ack.extend([[self, y[0], y[1], y[3], y[2], y[4], "", ""]])
         return ack
 
+    def insert_assignee(self):
+        conn = sqlite3.connect("assignee.sqlite3")
+        c = conn.cursor()
+        c.executescript("""
+            CREATE TABLE IF NOT EXISTS assignee (
+                Patent VARCHAR(8),      AsgType INTEGER,        Assignee VARCHAR(30),
+                City VARCHAR(10),       State VARCHAR(2),       Country VARCHAR(2),
+                Nationality VARCHAR(2), Residence VARCHAR(2),   AsgSeq INTEGER);
+            CREATE UNIQUE INDEX IF NOT EXISTS uqAsg ON assignee (Patent, AsgSeq);
+            """)
+        c.executemany("""INSERT OR IGNORE INTO %s VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)""" % tbl, \
+            self.tablecallbacks["assignee"]())
+    
+    def insert_citation(self):
+        conn = sqlite3.connect("citation.sqlite3")
+        c = conn.cursor()
+        c.executescript("""
+            CREATE TABLE IF NOT EXISTS citation (
+                Patent VARCHAR(8),      Cit_Date INTEGER,       Cit_Name VARCHAR(10),
+                Cit_Kind VARCHAR(1),    Cit_Country VARCHAR(2), Citation VARCHAR(8),
+                Category VARCHAR(15),   CitSeq INTEGER);
+            CREATE UNIQUE INDEX IF NOT EXISTS uqCit ON citation (Patent, CitSeq);
+            """)
+        c.executemany("""INSERT OR IGNORE INTO %s VALUES (?, ?, ?, ?, ?, ?, ?, ?)""" % tbl, \
+            self.tablecallbacks["citation"]())
+
+    def insert_class(self):
+        conn = sqlite3.connect("class.sqlite3")
+        c = conn.cursor()
+        c.executescript("""
+            CREATE TABLE IF NOT EXISTS class (
+                Patent VARCHAR(8),      Prim INTEGER,
+                Class VARCHAR(3),       SubClass VARCHAR(3));
+            CREATE UNIQUE INDEX IF NOT EXISTS uqClass ON class (Patent, Class, SubClass);
+            """)
+        c.executemany("""INSERT OR IGNORE INTO %s VALUES (?, ?, ?, ?)""" % tbl, \
+            self.tablecallbacks["class"]())
+
+    def insert_inventor(self):
+        conn = sqlite3.connect("inventor.sqlite3")
+        c = conn.cursor()
+        c.executescript("""
+            CREATE TABLE IF NOT EXISTS inventor (
+                Patent VARCHAR(8),      Firstname VARCHAR(15),  Lastname VARCHAR(15),
+                Street VARCHAR(15),     City VARCHAR(10),
+                State VARCHAR(2),       Country VARCHAR(12),
+                Zipcode VARCHAR(5),     Nationality VARCHAR(2), InvSeq INTEGER);
+            CREATE UNIQUE INDEX IF NOT EXISTS uqInv ON inventor (Patent, InvSeq);
+            """)
+        c.executemany("""INSERT OR IGNORE INTO %s VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""" % tbl, \
+            self.tablecallbacks["inventor"]())
+
+
+    def insert_patent(self):
+        conn = sqlite3.connect("patent.sqlite3")
+        c = conn.cursor()
+        c.executescript("""
+            CREATE TABLE IF NOT EXISTS patent (
+                Patent VARCHAR(8),      Kind VARCHAR(3),        Claims INTEGER,
+                AppType INTEGER,        AppNum VARCHAR(8),
+                GDate INTEGER,          GYear INTEGER,
+                AppDate INTEGER,        AppYear INTEGER, PatType VARCHAR(15) );
+            CREATE UNIQUE INDEX IF NOT EXISTS uqPat on patent (Patent);
+            """)
+        c.executemany("""INSERT OR IGNORE INTO %s VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""" % tbl, \
+            self.tablecallbacks["patent"]())
+
+    def insert_patdesc(self):
+        conn = sqlite3.connect("patdesc.sqlite3")
+        c = conn.cursor()
+        c.executescript("""
+            CREATE TABLE IF NOT EXISTS patdesc (
+                Patent VARCHAR(8),
+                Abstract VARCHAR(50),   Title VARCHAR(20));
+            CREATE UNIQUE INDEX IF NOT EXISTS uqPatDesc ON patdesc (Patent);
+            """)
+        c.executemany("""INSERT OR IGNORE INTO %s VALUES (?, ?, ?)""" % tbl, \
+            self.tablecallbacks["patdesc"]())
+
+
+    def insert_lawyer(self):
+        conn = sqlite3.connect("lawyer.sqlite3")
+        c = conn.cursor()
+        c.executescript("""
+            CREATE TABLE IF NOT EXISTS lawyer (
+                Patent VARCHAR(8),      Firstname VARCHAR(15),  Lastname VARCHAR(15),
+                LawCountry VARCHAR(2),  OrgName VARCHAR(20),    LawSeq INTEGER);
+            CREATE UNIQUE INDEX IF NOT EXISTS uqLawyer ON lawyer (Patent, LawSeq);
+            """)
+        c.executemany("""INSERT OR IGNORE INTO %s VALUES (?, ?, ?, ?, ?, ?)""" % tbl, \
+            self.tablecallbacks["lawyer"]())
+
+
+    def insert_sciref(self):
+        conn = sqlite3.connect("sciref.sqlite3")
+        c = conn.cursor()
+        c.executescript("""
+            CREATE TABLE IF NOT EXISTS sciref (
+                Patent VARCHAR(8),      Descrip VARCHAR(20),    CitSeq INTEGER);
+            CREATE UNIQUE INDEX IF NOT EXISTS uqSciref ON sciref (Patent, CitSeq);
+            """)
+        c.executemany("""INSERT OR IGNORE INTO %s VALUES (?, ?, ?)""" % tbl, \
+            self.tablecallbacks["sciref"]())
+
+
+    def insert_usreldoc(self):
+        conn = sqlite3.connect("usreldoc.sqlite3")
+        c = conn.cursor()
+        c.executescript("""
+            CREATE TABLE IF NOT EXISTS usreldoc (
+                Patent VARCHAR(8),      DocType VARCHAR(10),    OrderSeq INTEGER,
+                Country VARCHAR(2),     RelPatent VARCHAR(8),   Kind VARCHAR(2),
+                RelDate INTEGER,        Status VARCHAR(10));
+            CREATE UNIQUE INDEX IF NOT EXISTS uqUSRelDoc ON usreldoc (Patent, OrderSeq);
+            """)
+        c.executemany("""INSERT OR IGNORE INTO %s VALUES (?, ?, ?, ?, ?, ?, ?, ?)""" % tbl, \
+            self.tablecallbacks["usreldoc"]())
+
 
     """
     These are all methods from the old XMLPatent class. I'm keeping them
