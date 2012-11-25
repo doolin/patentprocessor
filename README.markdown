@@ -49,7 +49,14 @@ manually perform the following:
 
 ## Processing patents
 
-`preprocess.sh` to get started.
+There are two ways to get started:
+
+* `preprocess.sh` to get started. This will run the preprocessor on any files
+  contained in the PATENTROOT directory (defaults to the root directory)
+
+* run `parse.py` directly to customize which directories are processed and
+  which regex is used to process the files. Run `parse.py -h` to see the
+  relevant command-line options.
 
 
 ## Disambiguating
