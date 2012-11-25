@@ -66,6 +66,21 @@ class XMLPatent(object):
             'usreldoc': self.build_usreldoc
             }
 
+        """
+        Callback structure for inserting patent into table
+        """
+        self.insertcallbacks = {
+            'assignee': self.insert_assignee,
+            'citation': self.insert_citation,
+            'class': self.insert_class,
+            'inventor': self.insert_inventor,
+            'patent': self.insert_patent,
+            'patdesc': self.insert_patdesc,
+            'lawyer': self.insert_lawyer,
+            'sciref': self.insert_sciref,
+            'usreldoc': self.insert_usreldoc
+        }
+
 
     def build_table(self, tablename):
         """
