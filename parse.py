@@ -118,7 +118,7 @@ for filename in parsed_xmls:
 
     for i, x in enumerate(parsed_xmls):
         try:
-            xmllist.append(XMLPatent(x))   #TODO: this is the slow part (parallelize)
+            xmllist.append(XMLPatent(x))
             patents += 1
         except Exception as inst:
             logging.error(type(inst))
