@@ -203,7 +203,7 @@ class XMLPatent(object):
                 Nationality VARCHAR(2), Residence VARCHAR(2),   AsgSeq INTEGER);
             CREATE UNIQUE INDEX IF NOT EXISTS uqAsg ON assignee (Patent, AsgSeq);
             """)
-        c.executemany("""INSERT OR IGNORE INTO %s VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)""" % tbl, \
+        c.executemany("""INSERT OR IGNORE INTO assignee VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)""",  \
             self.tablecallbacks["assignee"]())
         conn.commit()
     
@@ -217,7 +217,7 @@ class XMLPatent(object):
                 Category VARCHAR(15),   CitSeq INTEGER);
             CREATE UNIQUE INDEX IF NOT EXISTS uqCit ON citation (Patent, CitSeq);
             """)
-        c.executemany("""INSERT OR IGNORE INTO %s VALUES (?, ?, ?, ?, ?, ?, ?, ?)""" % tbl, \
+        c.executemany("""INSERT OR IGNORE INTO citation VALUES (?, ?, ?, ?, ?, ?, ?, ?)""" , \
             self.tablecallbacks["citation"]())
         conn.commit()
 
@@ -230,7 +230,7 @@ class XMLPatent(object):
                 Class VARCHAR(3),       SubClass VARCHAR(3));
             CREATE UNIQUE INDEX IF NOT EXISTS uqClass ON class (Patent, Class, SubClass);
             """)
-        c.executemany("""INSERT OR IGNORE INTO %s VALUES (?, ?, ?, ?)""" % tbl, \
+        c.executemany("""INSERT OR IGNORE INTO class VALUES (?, ?, ?, ?)""" , \
             self.tablecallbacks["class"]())
         conn.commit()
 
@@ -245,7 +245,7 @@ class XMLPatent(object):
                 Zipcode VARCHAR(5),     Nationality VARCHAR(2), InvSeq INTEGER);
             CREATE UNIQUE INDEX IF NOT EXISTS uqInv ON inventor (Patent, InvSeq);
             """)
-        c.executemany("""INSERT OR IGNORE INTO %s VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""" % tbl, \
+        c.executemany("""INSERT OR IGNORE INTO inventor VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""" , \
             self.tablecallbacks["inventor"]())
         conn.commit()
 
@@ -261,7 +261,7 @@ class XMLPatent(object):
                 AppDate INTEGER,        AppYear INTEGER, PatType VARCHAR(15) );
             CREATE UNIQUE INDEX IF NOT EXISTS uqPat on patent (Patent);
             """)
-        c.executemany("""INSERT OR IGNORE INTO %s VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""" % tbl, \
+        c.executemany("""INSERT OR IGNORE INTO patent VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""" , \
             self.tablecallbacks["patent"]())
         conn.commit()
 
@@ -274,7 +274,7 @@ class XMLPatent(object):
                 Abstract VARCHAR(50),   Title VARCHAR(20));
             CREATE UNIQUE INDEX IF NOT EXISTS uqPatDesc ON patdesc (Patent);
             """)
-        c.executemany("""INSERT OR IGNORE INTO %s VALUES (?, ?, ?)""" % tbl, \
+        c.executemany("""INSERT OR IGNORE INTO patdesc VALUES (?, ?, ?)""" , \
             self.tablecallbacks["patdesc"]())
         conn.commit()
 
@@ -288,7 +288,7 @@ class XMLPatent(object):
                 LawCountry VARCHAR(2),  OrgName VARCHAR(20),    LawSeq INTEGER);
             CREATE UNIQUE INDEX IF NOT EXISTS uqLawyer ON lawyer (Patent, LawSeq);
             """)
-        c.executemany("""INSERT OR IGNORE INTO %s VALUES (?, ?, ?, ?, ?, ?)""" % tbl, \
+        c.executemany("""INSERT OR IGNORE INTO lawyer VALUES (?, ?, ?, ?, ?, ?)""" , \
             self.tablecallbacks["lawyer"]())
         conn.commit()
 
@@ -301,7 +301,7 @@ class XMLPatent(object):
                 Patent VARCHAR(8),      Descrip VARCHAR(20),    CitSeq INTEGER);
             CREATE UNIQUE INDEX IF NOT EXISTS uqSciref ON sciref (Patent, CitSeq);
             """)
-        c.executemany("""INSERT OR IGNORE INTO %s VALUES (?, ?, ?)""" % tbl, \
+        c.executemany("""INSERT OR IGNORE INTO sciref VALUES (?, ?, ?)""" , \
             self.tablecallbacks["sciref"]())
         conn.commit()
 
@@ -316,7 +316,7 @@ class XMLPatent(object):
                 RelDate INTEGER,        Status VARCHAR(10));
             CREATE UNIQUE INDEX IF NOT EXISTS uqUSRelDoc ON usreldoc (Patent, OrderSeq);
             """)
-        c.executemany("""INSERT OR IGNORE INTO %s VALUES (?, ?, ?, ?, ?, ?, ?, ?)""" % tbl, \
+        c.executemany("""INSERT OR IGNORE INTO usreldoc VALUES (?, ?, ?, ?, ?, ?, ?, ?)""" , \
             self.tablecallbacks["usreldoc"]())
         conn.commit()
 
