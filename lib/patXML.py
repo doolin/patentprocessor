@@ -143,7 +143,7 @@ class XMLPatent(object):
         ack = []
         for i,y in enumerate(self.asg_list):
             if not y[0]:
-                ack.extend([[self.patent, y[2], y[1], y[4], y[5], y[7], y[8], i]])
+                ack.extend([[self.patent, y[2], y[1], y[4], y[5], y[6], y[7], y[8], i]])
             else:
                 ack.extend([[self.patent, "00", "%s, %s" % (y[2], y[1]), y[4], y[5], y[6], y[7], y[8], i]])
         return ack
