@@ -127,12 +127,9 @@ for filename in parsed_xmls:
     total_count += count
     total_patents += patents
 
-    for table in tables:
-        # Cut the chaining here to better parameterize the call, allowing
-        # the databases to be built in place
-        # (/var/share/patentdata/patents/<year>)
-        # outdb = PATENTROOT + "/" + table
-        x.insertcallbacks[table]()
+    for patent in xmllist:
+        for table in tables:
+            patent.insertcallbacks[table]()
 
     logging.info("   - %s", datetime.datetime.now()-t1)
     logging.info("   - total errors: %d", total_count)
