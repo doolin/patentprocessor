@@ -143,54 +143,54 @@ class XMLPatent(object):
         ack = []
         for i,y in enumerate(self.asg_list):
             if not y[0]:
-                ack.extend([[self, y[2], y[1], y[4], y[5], y[7], y[8], i]])
+                ack.extend([[self.patent, y[2], y[1], y[4], y[5], y[7], y[8], i]])
             else:
-                ack.extend([[self, "00", "%s, %s" % (y[2], y[1]), y[4], y[5], y[6], y[7], y[8], i]])
+                ack.extend([[self.patent, "00", "%s, %s" % (y[2], y[1]), y[4], y[5], y[6], y[7], y[8], i]])
         return ack
 
     def build_citation(self):
         ack = []
         for i,y in enumerate([x for x in self.cit_list if x[1] != ""]):
-            ack.extend([[self, y[3], y[5], y[4], y[1], y[2], y[0], i]])
+            ack.extend([[self.patent, y[3], y[5], y[4], y[1], y[2], y[0], i]])
         return ack
 
     def build_class(self):
         ack = []
         for i,y in enumerate(self.classes):
-            ack.extend([[self, (i==0)*1, y[0], y[1]]])
+            ack.extend([[self.patent, (i==0)*1, y[0], y[1]]])
         return ack
 
     def build_inventor(self):
         ack = []
         for i,y in enumerate(self.inv_list):
-            ack.extend([[self, y[1], y[0], y[2], y[3], y[4], y[5], y[6], y[8], i]])
+            ack.extend([[self.patent, y[1], y[0], y[2], y[3], y[4], y[5], y[6], y[8], i]])
         return ack
 
     def build_patent(self):
-        return [[self, self.kind, self.clm_num, self.code_app, self_app, self.date_grant, self.date_grant[:4], self.date_app, self.date_app[:4], self.pat_type]]
+        return [[self.patent, self.kind, self.clm_num, self.code_app, self.patent_app, self.date_grant, self.date_grant[:4], self.date_app, self.date_app[:4], self.pat_type]]
 
     def build_patdesc(self):
-        return [[self, self.abstract, self.invention_title]]
+        return [[self.patent, self.abstract, self.invention_title]]
 
     def build_lawyer(self):
         ack = []
         for i,y in enumerate(self.law_list):
-            ack.extend([[self, y[1], y[0], y[2], y[3], i]])
+            ack.extend([[self.patent, y[1], y[0], y[2], y[3], i]])
         return ack
 
     def build_sciref(self):
         ack = []
         for i,y in enumerate([y for y in self.cit_list if y[1] == ""]):
-            ack.extend([[self, y[-1], i]])
+            ack.extend([[self.patent, y[-1], i]])
         return ack
 
     def build_usreldoc(self):
         ack = []
         for i,y in enumerate(self.rel_list):
             if y[1] == 1:
-                ack.extend([[self, y[0], y[1], y[3], y[2], y[4], y[5], y[6]]])
+                ack.extend([[self.patent, y[0], y[1], y[3], y[2], y[4], y[5], y[6]]])
             else:
-                ack.extend([[self, y[0], y[1], y[3], y[2], y[4], "", ""]])
+                ack.extend([[self.patent, y[0], y[1], y[3], y[2], y[4], "", ""]])
         return ack
 
     def insert_assignee(self):
