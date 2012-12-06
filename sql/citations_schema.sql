@@ -1,5 +1,6 @@
 
-/** Citations in the SQLite3 files are
+/**
+ * Citations in the SQLite3 files are
  * split. This table covers years 2000
  * through 2010. Schemas for other years
  * are identical.
