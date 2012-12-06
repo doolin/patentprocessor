@@ -3,17 +3,23 @@
 Schema Description
 ------------------------
 
-Patent:   8 character alphanumeric identification assigned by the USTPO
-Citation: Grant date of cited patent. As of 2012/12/06, the date value
-          stored in the database may be reassign the day to the first of
-          each month rather than the day upon which the cited patent
-          was granted.
-Cit_Date: Patent grant date cited by defined Patent
-Cit_Name: Patent primary inventor surname cited by defined patent
-Cit_Kind: Patent kind codes (defined in Appendix 2) cited by defined patent
-Cit_Name: Lastname of primary inventor of the cited patent
-Category: Cited source of patent (Cited by examiner, other)
-Cit_Name: LastnameSeqNumber Citation sequence (0 = first citation)
+Patent:      8 character alphanumeric identification assigned by the USTPO
+Citation:    Grant number for cited patent.
+Cit_Date:    Grant date of cited patent. As of 2012/12/06, the date value
+             stored in the database may be reassign the day to the first of
+             each month rather than the day upon which the cited patent
+             was granted.
+Cit_Name:    Primary inventor last name on cited patent.
+Cit_Kind:    Patent kind codes (defined in Appendix 2) cited by defined patent
+             Many empty fields, candidate for removal from schema.
+Cit_Country: Not documented. Many fields are empty. Good candidate for
+             removal from schema.
+Category:    Cited source of patent (Cited by examiner, other).
+             Apparently not widely stored, good candidate for removal
+             from schema.
+citseq:      Position of cited patent in sequence (0 = first citation).
+             Apparently not widely stored. Good candidate for removal
+             from schema.
 */
 
 /**
