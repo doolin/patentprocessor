@@ -1,3 +1,17 @@
+/**
+ *
+Schema Description
+------------------------
+
+Patent:   8 character alphanumeric identification assigned by the USTPO
+Citation: Patent that is cited by the defined patent.
+Cit_Date: Patent grant date cited by defined Patent
+Cit_Name: Patent primary inventor surname cited by defined patent
+Cit_Kind: Patent kind codes (defined in Appendix 2) cited by defined patent
+Cit_Name: Lastname of primary inventor of the cited patent
+Category: Cited source of patent (Cited by examiner, other)
+Cit_Name: LastnameSeqNumber Citation sequence (0 = first citation)
+*/
 
 /**
  * Citations in the SQLite3 files are
@@ -58,17 +72,3 @@ citation is to design patent #540507.
 
 */
 
-/**
- *
-Variable TypeDescription
-------------------------
-
-Patent:   8 character alphanumeric identification assigned by the USTPO 
-Citation: Patent that is cited by thehe defined patent.
-Cit_Date: Patent grant date cited by defined PatentText8ent
-Cit_Name: Patent primary inventor surname cited by defined patentnt
-Cit_Kind: Patent kind codes (defined in Appendix 2) cited by defined patent
-Cit_Name: Lastname of primary inventor of the cited patentntent
-Category: Cited source of patent (Cited by examiner, other)
-Cit_Name: LastnameSeqNumberCitation sequence (0 = first citation)
-*/
