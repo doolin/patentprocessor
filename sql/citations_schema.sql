@@ -38,8 +38,12 @@ CREATE TABLE citation00_10 (
   Cit_Country VARCHAR(2),
   Citation    VARCHAR(8),
   Category    VARCHAR(15),
+<<<<<<< HEAD
   CitSeq      INTEGER
 );
+=======
+  CitSeq      INTEGER);
+>>>>>>> cleaned up formatting for easier reading
 
 
 CREATE UNIQUE INDEX idx_idx1 ON citation00_10 (patent,citation);
