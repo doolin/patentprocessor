@@ -22,32 +22,6 @@ CREATE INDEX idx_idx3 ON citation00_10 (patent);
 -- More information
 /**
  *
-USPTO XML | Citations
-<references-cited>
-<citation>
-<patcit num="00001">
-<document-id>
-                ……
-<doc-number>D20662</doc-number>
-                ……
-</document-id>
-</patcit>
-        ……
-</citation>
-    ……
-<citation>
-<patcit num="00038">
-<document-id>
-                ……
-<doc-number>D540507</doc-number>
-                ……
-</document-id>
-</patcit>
-        ……
-</citation>
-</references-cited>
-
-
 The development of patents is oftentimes based on research from previous
 patents, known simply as a citation.  Within the USPTO XML file,
 citations are organized numerically through a patent citation number reference.
@@ -56,5 +30,44 @@ mentioned patent number and type.  Here we are able to determine that
 this patent’s first citation is to design patent #20662 and its 38th
 citation is to design patent #540507.
 
+<references-cited>
+  <citation>
+    <patcit num="00001">
+      <document-id>
+                ……
+        <doc-number>D20662</doc-number>
+                ……
+      </document-id>
+    </patcit>
+        ……
+  </citation>
+    ……
+  <citation>
+    <patcit num="00038">
+      <document-id>
+                ……
+        <doc-number>D540507</doc-number>
+                ……
+      </document-id>
+    </patcit>
+        ……
+  </citation>
+</references-cited>
+
+
 */
 
+/**
+ *
+Variable TypeDescription
+------------------------
+
+Patent:   8 character alphanumeric identification assigned by the USTPO 
+Citation: Patent that is cited by thehe defined patent.
+Cit_Date: Patent grant date cited by defined PatentText8ent
+Cit_Name: Patent primary inventor surname cited by defined patentnt
+Cit_Kind: Patent kind codes (defined in Appendix 2) cited by defined patent
+Cit_Name: Lastname of primary inventor of the cited patentntent
+Category: Cited source of patent (Cited by examiner, other)
+Cit_Name: LastnameSeqNumberCitation sequence (0 = first citation)
+*/
