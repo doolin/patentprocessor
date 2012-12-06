@@ -8,7 +8,9 @@ Citation:    Grant number for cited patent.
 Cit_Date:    Grant date of cited patent. As of 2012/12/06, the date value
              stored in the database may be reassign the day to the first of
              each month rather than the day upon which the cited patent
-             was granted.
+             was granted. For example, patent 6,000,000 cites patent 4,432,057
+             granted on February 14, 1984. We're storing the grant date as
+             February 1, 1984.
 Cit_Name:    Primary inventor last name on cited patent.
 Cit_Kind:    Patent kind codes (defined in Appendix 2) cited by defined patent
              Many empty fields, candidate for removal from schema.
@@ -36,7 +38,8 @@ CREATE TABLE citation00_10 (
   Cit_Country VARCHAR(2),
   Citation    VARCHAR(8),
   Category    VARCHAR(15),
-  CitSeq      INTEGER);
+  CitSeq      INTEGER
+);
 
 
 CREATE UNIQUE INDEX idx_idx1 ON citation00_10 (patent,citation);
