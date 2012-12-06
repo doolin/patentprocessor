@@ -3,6 +3,7 @@
 Schema Description
 ------------------------
 
+<<<<<<< HEAD
 Patent:      8 character alphanumeric identification assigned by the USTPO
 Citation:    Grant number for cited patent.
 Cit_Date:    Grant date of cited patent. As of 2012/12/06, the date value
@@ -24,6 +25,8 @@ citseq:      Position of cited patent in sequence (0 = first citation).
              from schema.
 */
 
+=======
+>>>>>>> minor formatting tweak
 /**
  * Citations in the SQLite3 files are
  * split. This table covers years 2000
