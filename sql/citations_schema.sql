@@ -46,7 +46,7 @@ CREATE UNIQUE INDEX idx_idx1 ON citation00_10 (patent,citation);
 CREATE INDEX idx_idx2 ON citation00_10 (citation);
 CREATE INDEX idx_idx3 ON citation00_10 (patent);
 
--- More information
+-- Example USPTO XML citation fragment
 /**
  *
 The development of patents is oftentimes based on research from previous
