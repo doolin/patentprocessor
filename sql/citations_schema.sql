@@ -23,7 +23,10 @@ citseq:      Position of cited patent in sequence (0 = first citation).
              Apparently not widely stored. Good candidate for removal
              from schema.
 Patent:   8 character alphanumeric identification assigned by the USTPO
-Citation: Patent that is cited by the defined patent.
+Citation: Grant date of cited patent. As of 2012/12/06, the date value
+          stored in the database may be reassign the day to the first of
+          each month rather than the day upon which the cited patent
+          was granted.
 Cit_Date: Patent grant date cited by defined Patent
 Cit_Name: Patent primary inventor surname cited by defined patent
 Cit_Kind: Patent kind codes (defined in Appendix 2) cited by defined patent
