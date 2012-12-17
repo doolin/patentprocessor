@@ -1,5 +1,6 @@
 from xml.dom import minidom
 from types import *
+from exceptions import NotImplementedError
 import datetime
 import csv
 import os
