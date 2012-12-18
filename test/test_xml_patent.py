@@ -470,6 +470,15 @@ class TestXMLPatent(unittest.TestCase):
                                          but orgname tags do not!"""
                                          % (xml_tuple[0], orgname))
 
+    def test_xmlpatentbase_abstract(self):
+        """Tests to make sure that XMLPatentBase is properly subclasses -- attempting
+        to initialize it should raise a NotImplmentedError"""
+        try:
+          xpb = XMLPatentBase("dummy string")
+          logging.error("We should not be able to initialize a non-subclassed XMLPatentBase object")
+        except NotImplementedError:
+          pass  
+
     def tearDown(self):
         #anything needed to be torn down should be added here, pass for now
         pass
