@@ -189,13 +189,13 @@ class XMLPatentBase(object):
     Base class for specific table-oriented patent subclasses
     """
     def __init__(self, xmlstring):
-      pass
+      raise NotImplementedError("__init__ not defined for XMLPatentBase")
 
     def build_table(self):
-      pass
+      raise NotImplementedError("build_table not defined for XMLPatentBase")
     
     def insert_table(self):
-      pass
+      raise NotImplementedError("insert_table not defined for XMLPatentBase")
 
     """
     These are all methods from the old XMLPatent class. I'm keeping them
