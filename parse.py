@@ -45,7 +45,7 @@ def parse_file(filename):
 
 def parallel_parse(filelist):
     pool = multiprocessing.Pool(multiprocessing.cpu_count())
-    return list(itertools.chain(*pool.imap_unordered(parse_file, filelist)))
+    return pool.imap_unordered(parse_file, filelist)
 
 # setup argparse
 parser = argparse.ArgumentParser(description=\
