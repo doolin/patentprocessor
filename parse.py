@@ -16,8 +16,7 @@ sys.path.append( '.' )
 sys.path.append( './lib/' )
 import shutil
 
-from patXML import XMLPatent
-from patXML import uniasc
+from patXML import *
 from fwork  import *
 
 regex = re.compile(r"""
@@ -105,8 +104,9 @@ logging.info("Total files: %d" % (len(files)))
 parsed_xmls = parallel_parse(files)
 logging.info("   - Total Patents: %d" % (len(parsed_xmls)))
 
-tables = ["assignee", "citation", "class", "inventor", "patent",\
-        "patdesc", "lawyer", "sciref", "usreldoc"]
+xmlclasses = [AssigneeXML, CitationXML, ClassXML, InventorXML, \
+              PatentXML, PatdescXML, LawyerXML, ScirefXML, UsreldocXML]
+
 total_count = 0
 total_patents = 0
 
@@ -117,13 +117,14 @@ for filename in parsed_xmls:
     patents = 0
 
     for i, x in enumerate(parsed_xmls):
-        try:
-            xmllist.append(XMLPatent(x))
-            patents += 1
-        except Exception as inst:
-            logging.error(type(inst))
-            logging.error("  - Error: %s (%d)  %s" % (filename, i, x[175:200]))
-            count += 1
+        for xmlclass in xmlclasses:
+            try:
+                xmllist.append(xmlclass(x))
+                patents += 1
+            except Exception as inst:
+                logging.error(type(inst))
+                logging.error("  - Error: %s (%d)  %s" % (filename, i, x[175:200]))
+                count += 1
 
     logging.info("   - number of patents: %d %s ", len(xmllist), datetime.datetime.now()-t1)
     logging.info( "   - number of errors: %d", count)
@@ -131,8 +132,7 @@ for filename in parsed_xmls:
     total_patents += patents
 
     for patent in xmllist:
-        for table in tables:
-            patent.insertcallbacks[table]()
+        patent.insert_table()
 
     logging.info("   - %s", datetime.datetime.now()-t1)
     logging.info("   - total errors: %d", total_count)
