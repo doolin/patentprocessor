@@ -11,7 +11,7 @@ from xml.dom.minidom import parse, parseString
 from optparse import OptionParser
 
 sys.path.append('../lib')
-from patXML import XMLPatentBase, XMLPatent
+from patXML import *
 
 # Details of xml fixtures can be found on googlegroups
 
@@ -34,6 +34,8 @@ folder = os.path.join(dir, 'fixtures/xml/')
 log_file = os.path.join(dir, 'unittest/unit-test.log')
 xml_files = [x for x in os.listdir(folder)
              if re.match(r"ipg120327.one.xml", x) != None] # Match fixtures
+xmlclasses = [AssigneeXML, CitationXML, ClassXML, InventorXML, \
+              PatentXML, PatdescXML, LawyerXML, ScirefXML, UsreldocXML]
 
 
 # Logging setup
@@ -73,18 +75,21 @@ class TestXMLPatent(unittest.TestCase):
                 print " - Testing Patent: %s" % (xml)
             try:
                 file_to_open = open(folder + xml, 'U')
+                contents = file_to_open.read()
             except Exception as fileError:
                 logging.error("Error opening patent %d, filename: %s"
                              % (i+1, xml))
-            try:
-                xml_patent = XMLPatent(file_to_open.read())
-                self.assertTrue(xml_patent)
-                patent_count = patent_count + 1
-                # Storing tuple (original XML file, parsed XML) for finer block testing
-                parsed_xml.append((xml, xml_patent))
-            except Exception as exPatError:
-                logging.error("Construction Error at patent %d, filename %s"
-                             % (i+1, xml))
+            for xmlclass in xmlclasses:
+                try:
+                    xml_patent = xmlclass(contents)
+                    self.assertTrue(xml_patent)
+                    patent_count = patent_count + 1
+                    # Storing tuple (original XML file, parsed XML) for finer block testing
+                    parsed_xml.append((xml, xml_patent))
+                except Exception as exPatError:
+                    print exPatError
+                    logging.error("Construction Error at patent %d, filename %s"
+                                 % (i+1, xml))
 
         logging.info("%d Patents have passed construction!", patent_count)
         if patent_count is len(xml_files):
@@ -464,15 +469,6 @@ class TestXMLPatent(unittest.TestCase):
                         logging.error("""File:%s, orgname field %s exists in law,
                                          but orgname tags do not!"""
                                          % (xml_tuple[0], orgname))
-
-    def test_xmlpatentbase_abstract(self):
-        """Tests to make sure that XMLPatentBase is properly subclasses -- attempting
-        to initialize it should raise a NotImplmentedError"""
-        try:
-          xpb = XMLPatentBase("dummy string")
-          logging.error("We should not be able to initialize a non-subclassed XMLPatentBase object")
-        except NotImplementedError:
-          pass  
 
     def tearDown(self):
         #anything needed to be torn down should be added here, pass for now
