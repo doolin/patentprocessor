@@ -40,6 +40,22 @@ Pull requests are welcome. Here are a few pointers which will make everything ea
 
 **You must rebase before issuing a pull request: `git pull --rebase <upstream> master`**.
 
+### Coding style
+
+Start with [PEP8](http://www.python.org/dev/peps/pep-0008/). A very
+large number of extremely intelligent software engineers working at the
+wealthiest corporations on the planet have more or less agreed on a
+standard set of conventions allowing J. Random Coder (that's you and I)
+to read and write Python like the Big Boys and Girls (PyLadies!).
+It *highly* unlikely we can improve on these guidelines.
+
+That said, rules are rules and exists to broken once in a while.
+So, optimize for readability.  Specifically:
+
+* Use vowels, not secret shorthand 1337 cmptr cd fr nmng vrbls.
+* Line length to 80 characters, no more.
+
+
 ## Configuring the Preprocessing Environment
 
 In order to properly configure the preprocessing environment, the end user must
