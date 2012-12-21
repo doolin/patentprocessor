@@ -28,7 +28,7 @@ Pull requests are welcome. Here are a few pointers which will make everything ea
 * Test code should follow the pattern `test/test_libfile.py`. This pattern may change in
   the future, whence this documentation will change at that time.
 
-** Please rebase for issuing pull request: `git pull --rebase <upstream> master**.
+**Please rebase for issuing pull request: `git pull --rebase <upstream> master`**.
 
 ## Configuring the Preprocessing Environment
 
