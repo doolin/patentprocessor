@@ -147,23 +147,23 @@ class TestSQLite(unittest.TestCase):
         self.assertEqual([(1,), ('2',), ('2',), ('2',), ('2',)],
             self.s.fetch(field=["a"]))
 
-    def test_add(self):
-        self.s.add("d")
-        self.s.add("e", typ="ron")
-        self.s.add(keys=["e", "f"], typ="ron")
-        self.s.add({"A":"g", "B":"h"}, table="main")
-        self.assertItemsEqual(["B","a","c","d","e","f"], 
-            self.s.columns())
-        self.assertItemsEqual(["A","B","E","d","f"], 
-            self.s.columns(table="main"))
-        self.s.add("d", db="db")
-        self.s.add(keys="e", typ="ron", db="db")
-        self.s.add(["e", "f"], typ="ron", db="db")
-        self.s.add({"A":"g", "B":"h"}, table="main", db="db")
-        self.assertItemsEqual(["B","a","c","d","e","f"], 
-            self.s.columns(db="db"))
-        self.assertItemsEqual(["A","B","E","d","f"], 
-            self.s.columns(table="main", db="db"))
+#    def test_add(self):
+#        self.s.add("d")
+#        self.s.add("e", typ="ron")
+#        self.s.add(keys=["e", "f"], typ="ron")
+#        self.s.add({"A":"g", "B":"h"}, table="main")
+#        self.assertItemsEqual(["B","a","c","d","e","f"], 
+#            self.s.columns())
+#        self.assertItemsEqual(["A","B","E","d","f"], 
+#            self.s.columns(table="main"))
+#        self.s.add("d", db="db")
+#        self.s.add(keys="e", typ="ron", db="db")
+#        self.s.add(["e", "f"], typ="ron", db="db")
+#        self.s.add({"A":"g", "B":"h"}, table="main", db="db")
+#        self.assertItemsEqual(["B","a","c","d","e","f"], 
+#            self.s.columns(db="db"))
+#        self.assertItemsEqual(["A","B","E","d","f"], 
+#            self.s.columns(table="main", db="db"))
 
     def test__baseIndex(self):
         self.assertItemsEqual(['test (a)', 'test (a,b)'],
