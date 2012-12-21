@@ -414,7 +414,7 @@ class SQLite:
         Args:
           key: Modified default keys to key.  These are the columns to index.
           index: Name of index to modify
-          unique: Is the index unique?  
+          unique: Is the index unique?
           combo: Do we want to index all combinations of keys?
              ie. if combo True: [a,b] indexes [a], [b] and [a,b]
         Return:
@@ -762,6 +762,7 @@ class SQLite:
             #this is data, just execute the insert command
             self.insert(data=data, field=field, header=header, ignore=ignore, errlog=errlog)
 
+
     def merge(self, key, on, tableFrom, keyType=None, **kwargs):
         """
         *Will come back to this function
@@ -784,7 +785,7 @@ class SQLite:
         c.executemany("UPDATE table SET ed=?, eric=? WHERE ron=? AND ron1=?",
             c.execute("SELECT b.ed, b.amy, b.ron, b.amy
                          FROM table AS a INNER JOIN tableFrom AS b
-                           ON a.ron=b.ron AND a.ron1=b.amy").fetchall())       
+                           ON a.ron=b.ron AND a.ron1=b.amy").fetchall())
         """
 
         def huggleMe(lst, idx=0, head="", tail="", inner=", "):
