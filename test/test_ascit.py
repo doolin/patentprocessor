@@ -87,7 +87,7 @@ class TestAscit(unittest.TestCase):
 
     def test_remove_spaces(self):
         #print ascit('foo bar')
-        assert('FOOBAR' == ascit('foo bar'))
+        assert('FOOBAR' == ascit('foobar'))
 
     def test_remove_duplicates(self):
         #print ascit('foo,- |||,,,- - --,, |,-,, bar')
