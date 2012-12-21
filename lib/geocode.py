@@ -118,7 +118,7 @@ if not(tblExist(c, "locMerge")):
 
 c.executescript("""
     CREATE TABLE IF NOT EXISTS usloc AS
-        SELECT  Zipcode, Lat, Long, Upper(City) as City,
+        SELECT  Zipcode, Latitude, Longitude, Upper(City) as City,
                 BLK_SPLIT(Upper(City)) as BlkCity,
                 SUBSTR(UPPER(BLK_SPLIT(City)),1,3) as City3,
                 REV_WRD(BLK_SPLIT(City), 4) as City4R,
@@ -211,7 +211,7 @@ for scnt in range(-1, c.execute("select max(sep_cnt(city)) from loc").fetchone()
         SELECT  11,
                 a.cnt as cnt,
                 a.city as CityA, a.state as StateA, a.country as CountryA, a.zipcode as ZipcodeA,
-                b.city, b.state, 'US', b.zipcode, b.lat, b.long
+                b.city, b.state, 'US', b.zipcode, b.latitude, b.longitude
           FROM  loc AS a INNER JOIN usloc AS b
             ON  SEP_WRD(CityA, %d)=b.city AND StateA=b.state AND CountryA='US'
          WHERE  SEP_CNT(CityA)>=%d AND CityA!="";
@@ -222,7 +222,7 @@ for scnt in range(-1, c.execute("select max(sep_cnt(city)) from loc").fetchone()
         SELECT  11,
                 a.cnt as cnt,
                 a.city as CityA, a.state as StateA, a.country as CountryA, a.zipcode as ZipcodeA,
-                b.city, b.state, 'US', b.zipcode, b.lat, b.long
+                b.city, b.state, 'US', b.zipcode, b.latitude, b.longitude
           FROM  loc AS a INNER JOIN usloc AS b
             ON  BLK_SPLIT(SEP_WRD(a.City, %d))=b.blkcity AND a.state=b.state AND a.country='US'
          WHERE  SEP_CNT(a.City)>=%d AND a.City!=""
@@ -233,7 +233,7 @@ for scnt in range(-1, c.execute("select max(sep_cnt(city)) from loc").fetchone()
         SELECT  (10+jarow(BLK_SPLIT(SEP_WRD(a.City, %d)), b.BlkCity)) AS Jaro,
                 a.cnt as cnt,
                 a.city as CityA, a.state as StateA, a.country as CountryA, a.zipcode as ZipcodeA,
-                b.city, b.state, 'US', b.zipcode, b.lat, b.long
+                b.city, b.state, 'US', b.zipcode, b.latitude, b.longitude
           FROM  loc AS a INNER JOIN usloc AS b
             ON  SUBSTR(BLK_SPLIT(SEP_WRD(a.City, %d)),1,3)=b.City3 AND a.state=b.state AND a.country='US'
          WHERE  jaro>%s AND SEP_CNT(a.City)>=%d AND a.City!=""
@@ -245,7 +245,7 @@ for scnt in range(-1, c.execute("select max(sep_cnt(city)) from loc").fetchone()
         SELECT  (10+jarow(BLK_SPLIT(SEP_WRD(a.City, %d)), b.BlkCity)) AS Jaro,
                 a.cnt as cnt,
                 a.city as CityA, a.state as StateA, a.country as CountryA, a.zipcode as ZipcodeA,
-                b.city, b.state, 'US', b.zipcode, b.lat, b.long
+                b.city, b.state, 'US', b.zipcode, b.latitude, b.longitude
           FROM  loc AS a INNER JOIN usloc AS b
             ON  REV_WRD(BLK_SPLIT(SEP_WRD(a.City, %d)),4)=b.City4R AND a.state=b.state AND a.country='US'
          WHERE  jaro>%s AND SEP_CNT(a.City)>=%d AND a.City!=""
@@ -338,7 +338,7 @@ replace_loc("""
     SELECT  15,
             a.cnt as cnt,
             a.city as CityA, a.state as StateA, a.country as CountryA, a.zipcode as ZipcodeA,
-            b.city, b.state, 'US', b.zipcode, b.lat, b.long
+            b.city, b.state, 'US', b.zipcode, b.latitude, b.longitude
       FROM  (SELECT  *
                FROM  loc
               WHERE  NCity IS NOT NULL) AS a
@@ -351,7 +351,7 @@ replace_loc("""
     SELECT  14+jarow(BLK_SPLIT(a.NCity), b.BlkCity) AS Jaro,
             a.cnt as cnt,
             a.city as CityA, a.state as StateA, a.country as CountryA, a.zipcode as ZipcodeA,
-            b.city, b.state, 'US', b.zipcode, b.lat, b.long
+            b.city, b.state, 'US', b.zipcode, b.latitude, b.longitude
       FROM  (SELECT  *
                FROM  loc
               WHERE  NCity IS NOT NULL) AS a
@@ -420,7 +420,7 @@ replace_loc("""
     SELECT  31,
             a.cnt as cnt,
             a.city as CityA, a.state as StateA, a.country as CountryA, a.zipcode as ZipcodeA,
-            b.City, b.State, 'US', b.zipcode, b.lat, b.long
+            b.City, b.State, 'US', b.zipcode, b.latitude, b.longitude
       FROM  (SELECT  *, (SEP_WRD(zipcode,0)+0) as Zip2
                FROM  loc
               WHERE  Zipcode!='' AND Country='US') AS a
