@@ -28,13 +28,13 @@ class orgClean():
         uqKey = self.uqKey
         other = self.other
         table = self.table
-        
+
         s.conn.create_function("jarow", 2, jarow)
         s.c.executescript("""
-            
+
                 DROP TABLE IF EXISTS grp;
                 DROP TABLE IF EXISTS wrd;
-            
+
             CREATE TABLE IF NOT EXISTS grp AS
                 SELECT  0 AS Mtch,
                         %s, '' AS %s2,
@@ -136,7 +136,7 @@ class orgClean():
                     return word[::-1][:minlength]
                 else:
                     return word
-                
+
             def wordOrder(word):
                 newWord = []
                 for x in word.split(" "):
@@ -297,7 +297,7 @@ class orgClean():
             else:
                 print "-------------------------"
         if fname!=None:
-            f.close()    
+            f.close()
         s.close()
 
     def merge(self, keys, db=None, tbl="main"):
@@ -305,7 +305,7 @@ class orgClean():
         s.open()
         if len(keys[0])<13:
             keys = ["%s%0.12d" % (x[0], int(x[1:])) for x in keys]
-            
+
         k1 = min(keys)
         for k in keys:
             s.c.execute("UPDATE grp SET %s2='%s' WHERE %s2='%s'" % (self.uqKey, k1, self.uqKey, k))
@@ -317,7 +317,7 @@ class orgClean():
                 t.c.execute("UPDATE %s SET %s='%s' WHERE %s='%s'" % (tbl, self.uqKey, k1, self.uqKey, k))
             t.conn.commit()
             t.close()
-    
+
     def find(self, key, mode=0):
         s = self.s
         s.open()
@@ -346,7 +346,7 @@ class orgClean():
         t.c.execute("UPDATE %s SET %s=OrgDct(%s)" % (table, self.uqKey, self.fld))
         t.conn.commit()
         t.close()
-        
+
     def setNames(self):
         s = self.s
         s.open()
@@ -362,7 +362,7 @@ class orgClean():
         if len(key)<13 and len(key)>1:
             key = "%s%0.12d" % (key[0], int(key[1:]))
         return key in self.name and self.name[key] or ""
-        
+
 ###Normal Run
 ##import orgClean
 ##org = orgClean.orgClean()
