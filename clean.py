@@ -18,7 +18,10 @@ debug = False
 t1 = datetime.datetime.now()
 print "Start", t1
 ##### Run B2_LocationMatch.py
-import B2_LocationMatch
+
+#import B2_LocationMatch
+#import geocode
+
 print "   - Loc Merge", "\n   -", datetime.datetime.now()-t1
 
 ##
@@ -32,7 +35,10 @@ print "   - Loc Merge", "\n   -", datetime.datetime.now()-t1
 s = SQLite.SQLite(db = 'assignee.sqlite3', tbl = 'assignee_1')
 s.conn.create_function("ascit", 1, ascit)
 s.conn.create_function("cc", 3, locFunc.cityctry)
-s.attach(database='NBER_asg',name='NBER')
+
+#s.attach(database='NBER_asg',name='NBER')
+s.attach(db='NBER_asg',name='NBER')
+
 s.c.execute("DROP TABLE IF EXISTS assignee_1")
 s.replicate(tableTo = 'assignee_1', table = 'assignee')
 #s.addSQL(data='assignee', insert="IGNORE")

@@ -3,8 +3,8 @@ import sys
 from SQLite import *
 from senAdd import *
 import datetime
-import scipy
-import scipy.stats
+#import scipy
+#import scipy.stats
 
 
 #SET UP DATABASE - Prep a 'AdsgNum' in the beginning
