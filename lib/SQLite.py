@@ -824,7 +824,7 @@ class SQLite:
             DROP TABLE IF EXISTS TblB;
             CREATE TEMPORARY TABLE TblA AS SELECT %s FROM %s GROUP BY %s;
             CREATE TEMPORARY TABLE TblB AS SELECT %s, %s FROM %s GROUP BY %s;
-            """ % (huggleMe(on), table, huggleMe(on),
+            """ % (huggleMe(on), tbl, huggleMe(on),
                    huggleMe(key, idx=1), huggleMe(on, idx=1), self._dbAdd(db=db, tbl=tableFrom), huggleMe(on, idx=1))) #"""
         self.index(keys=[x[0] for x in on], tbl="TblA", index='idx_temp_TblA')
         self.index(keys=[x[1] for x in on], tbl="TblB", index='idx_temp_TblB')
