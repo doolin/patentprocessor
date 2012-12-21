@@ -31,9 +31,9 @@ class TestBMark2(unittest.TestCase):
         #print "Setting up..."
         self.foo = 'bar'
 
-    def test_compute_orig(self):
-            orig = compute_orig(self.c)
-	    assert(1442 == orig)
+#    def test_compute_orig(self):
+#        orig = compute_orig(self.c)
+#        assert(1442 == orig)
 
     def test_compute_errm(self):
         errm = compute_errm(self.c)
