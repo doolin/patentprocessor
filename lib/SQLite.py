@@ -59,6 +59,14 @@ class SQLite:
         """
         self.close()
 
+    def open(self):
+        """
+        Opens the connection.
+        """
+        import sqlite3
+        self.conn = sqlite3.connect(self.db)
+        self.c = self.conn.cursor()
+
     #-------------------------------------HIDDEN METHODS
 
     def _getSelf(self, field=None, **kwargs):
