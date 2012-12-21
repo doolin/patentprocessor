@@ -22,7 +22,8 @@ class orgClean():
     def disambig(self):
         import datetime
         s = self.s
-        s.open()
+        # Probably don't need this open() call anymore.
+        #s.open()
 
         fld = self.fld
         uqKey = self.uqKey
