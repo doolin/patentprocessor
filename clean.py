@@ -13,24 +13,21 @@ from fwork import *
 import locFunc
 import orgClean
 
-debug = False
+#debug = False
+debug = True
 
 t1 = datetime.datetime.now()
-print "Start", t1
-##### Run B2_LocationMatch.py
+#print "Start", t1
 
+# TODO: Move the location handling code into a different script,
+# or call it from the driver file.
+##### Run B2_LocationMatch.py
 #import B2_LocationMatch
 #import geocode
 
-print "   - Loc Merge", "\n   -", datetime.datetime.now()-t1
+#print "   - Loc Merge", "\n   -", datetime.datetime.now()-t1
 
-##
-## ###########################
-#####                       ###
-####     A S S I G N E E     ##
-#####                       ###
-## ###########################
-##
+
 ### Create copy of assignee table, add column for assigneeAsc
 s = SQLite.SQLite(db = 'assignee.sqlite3', tbl = 'assignee_1')
 s.conn.create_function("ascit", 1, ascit)
