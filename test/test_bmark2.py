@@ -23,7 +23,7 @@ class TestBMark2(unittest.TestCase):
 
     @classmethod
     def setUpClass(self):
-	print "Setting up TestCase"
+        #print "Setting up TestCase"
         self.conn = sqlite3.connect("./fixtures/sqlite3/combined.sqlite3")
         self.c = self.conn.cursor() 
 
@@ -37,26 +37,26 @@ class TestBMark2(unittest.TestCase):
 
     def test_compute_errm(self):
         errm = compute_errm(self.c)
-	assert(60 == errm)
+        assert(60 == errm)
 
-    def test_compute_u(self):
-	print "Testing compute_u"
+#    def test_compute_u(self):
+#        print "Testing compute_u"
 
-    def test_compute_o(self):
-        print "Testing compute_o"
+#    def test_compute_o(self):
+#        print "Testing compute_o"
 
     def test_get_filename_suffix(self):
         filename = 'foo.bar.csv'
-	assert('csv' == get_filename_suffix(filename))
+        assert('csv' == get_filename_suffix(filename))
         filename = 'foo.bar.sqlite3'
-	assert('sqlite3' == get_filename_suffix(filename))
+        assert('sqlite3' == get_filename_suffix(filename))
 
 
     def test_is_csv_file(self):
         filename = 'foo.bar.csv'
-	assert(True == is_csv_file(filename))
+        assert(True == is_csv_file(filename))
         filename = 'foo.bar.sqlite3'
-	assert(False == is_csv_file(filename))
+       	assert(False == is_csv_file(filename))
 
     def tearDown(self):
         foo = 1
@@ -64,7 +64,7 @@ class TestBMark2(unittest.TestCase):
 
     @classmethod
     def tearDownClass(self):
-        print "\nTearing down TestCase."
+        #print "\nTearing down TestCase."
         self.c.close()
 
 if __name__ == '__main__':
