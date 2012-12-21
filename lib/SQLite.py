@@ -252,6 +252,12 @@ class SQLite:
             PRAGMA temp_store=2;
             """) #"""
 
+    def getTbl(self, table=None):
+        if table==None:
+            return self.tbl
+        else:
+            return table
+
     def chgTbl(self, tbl):
         """
         Allows a user to change their default table
