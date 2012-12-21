@@ -4,6 +4,11 @@ The following collection of scripts performs pre- and
 post-processing on patent data as part of the patent
 inventor disambiguation process.
 
+Follow development, subscribe to
+[RSS
+feed](https://github.com/funginstitute/patentprocessor/commits/master.atom).
+
+
 ## Contributing to the Patent Processor Project
 
 Pull requests are welcome. Here are a few pointers which will make everything easier:
@@ -28,7 +33,7 @@ Pull requests are welcome. Here are a few pointers which will make everything ea
 * Test code should follow the pattern `test/test_libfile.py`. This pattern may change in
   the future, whence this documentation will change at that time.
 
-**Please rebase for issuing pull request: `git pull --rebase <upstream> master`**.
+**You must rebase before issuing a pull request: `git pull --rebase <upstream> master`**.
 
 ## Configuring the Preprocessing Environment
 
