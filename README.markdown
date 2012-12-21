@@ -26,7 +26,7 @@ There are two ways to get started:
 `consolidate.py` to obtain a full set of tables.
 
 
-See "Configuriging your environment" below.
+See "Configuring the Preprocessing Environment" below.
 
 
 ## Contributing to the Patent Processor Project
