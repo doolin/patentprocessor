@@ -13,6 +13,21 @@ Follow development, subscribe to
 [RSS
 feed](https://github.com/funginstitute/patentprocessor/commits/master.atom).
 
+## Processing patents
+
+There are two ways to get started:
+
+* Run `preprocess.sh`. This will run the preprocessor on any files
+  contained in the PATENTROOT directory (defaults to the root directory)
+
+* run `parse.py` directly to customize which directories are processed and
+  which regex is used to process the files. Run `parse.py -h` to see the
+  relevant command-line options. Follow with `clean.py` then
+`consolidate.py` to obtain a full set of tables.
+
+
+See "Configuriging your environment" below.
+
 
 ## Contributing to the Patent Processor Project
 
@@ -58,6 +73,15 @@ So, optimize for readability.  Specifically:
 
 ## Configuring the Preprocessing Environment
 
+The python-based preprocessor is tested on Ubuntu 12.04 and MacOSX 10.6.
+Any flavor of unixen with the following installed should work:
+
+* Python 2.7.3
+* scipy package for Python
+* sqlite3
+* More? Please [file an
+  issue](https://github.com/funginstitute/patentprocessor/issues) if you find another dependency.
+
 In order to properly configure the preprocessing environment, the end user must
 manually perform the following:
 
@@ -85,17 +109,6 @@ This is sub-optimal for testing.
 In the future, the small test xml file in the fixtures directory can be
 used to construct mock data such that testing the cleaning phase can
 proceed independently of any other phase.
-
-## Processing patents
-
-There are two ways to get started:
-
-* `preprocess.sh` to get started. This will run the preprocessor on any files
-  contained in the PATENTROOT directory (defaults to the root directory)
-
-* run `parse.py` directly to customize which directories are processed and
-  which regex is used to process the files. Run `parse.py -h` to see the
-  relevant command-line options.
 
 
 ## Disambiguating
