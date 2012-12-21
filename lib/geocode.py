@@ -268,7 +268,7 @@ for scnt in range(-1, c.execute("select max(sep_cnt(city)) from loc").fetchone()
     ##FOREIGN COUNTRY (Full Name 2)
     replace_loc("""
         SELECT  21,
-                a.cnt as cnt, 
+                a.cnt as cnt,
                 a.city as CityA, a.state as StateA, a.country as CountryA, a.zipcode as ZipcodeA,
                 b.full_name_nd_ro, "", b.cc1, "", b.lat, b.long
           FROM  loc AS a INNER JOIN loc.gnsloc AS b
