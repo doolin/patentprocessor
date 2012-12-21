@@ -43,9 +43,8 @@ c.executescript("""
         City VARCHAR(10),   State VARCHAR(2),
         Country VARCHAR(2), Zipcode VARCHAR(5),
         City3 VARCHAR,
-
         NCity VARCHAR(10),  NState VARCHAR(2),
-        NCountry VARCHAR(2), 
+        NCountry VARCHAR(2),
         UNIQUE(City,State,Country,Zipcode));
     DROP INDEX IF EXISTS loc_idxCC;
     DROP INDEX IF EXISTS loc_idx;
@@ -59,7 +58,7 @@ c.executescript("""
 if not(tblExist(c, "locMerge")):
     print datetime.datetime.now()
     c.executescript("""
-        CREATE TEMPORARY TABLE temp AS 
+        CREATE TEMPORARY TABLE temp AS
             SELECT  Upper(City) as CityX, Upper(State) as StateX,
                     Upper(Country) as CountryX, count(*) as Cnt
               FROM  asg.assignee
@@ -78,12 +77,12 @@ if not(tblExist(c, "locMerge")):
          LEFT JOIN  loc.typos AS b
                 ON  a.CityY=b.City AND a.StateY=b.State AND a.CtryY=b.Country;
         DROP TABLE  temp;
-        DROP TABLE  temp2;                
+        DROP TABLE  temp2;
         """)
 
     print datetime.datetime.now()
     c.executescript("""
-        CREATE TEMPORARY TABLE temp AS 
+        CREATE TEMPORARY TABLE temp AS
             SELECT  Upper(City) as CityX, Upper(State) as StateX,
                     Upper(Country) as CountryX, Zipcode, count(*) as Cnt
               FROM  inv.inventor
@@ -96,13 +95,13 @@ if not(tblExist(c, "locMerge")):
               FROM  temp
              WHERE  CityY!=""
           GROUP BY  CityY, StateY, CtryY, ZipcodeY;
-        INSERT OR REPLACE INTO loc 
+        INSERT OR REPLACE INTO loc
             SELECT  a.*, SUBSTR(CityY,1,3), b.NewCity, b.NewState, b.NewCountry
               FROM  temp2 AS a
          LEFT JOIN  loc.typos AS b
                 ON  a.CityY=b.City AND a.StateY=b.State AND a.CtryY=b.Country;
         DROP TABLE  temp;
-        DROP TABLE  temp2;                
+        DROP TABLE  temp2;
         """)
 
     c.executescript("""
@@ -147,7 +146,6 @@ c.executescript("""
     CREATE TABLE IF NOT EXISTS locMerge (
         Mtch INTEGER,
         Val FLOAT,          Cnt INTEGER,
-        
         City VARCHAR,       State VARCHAR,
         Country VARCHAR,    Zipcode VARCHAR,
 
@@ -207,11 +205,11 @@ print "Loc =", c.execute("select count(*) from loc").fetchone()[0]
 for scnt in range(-1, c.execute("select max(sep_cnt(city)) from loc").fetchone()[0]+1):
     sep = scnt
     print "------", scnt, "------"
-    
+
     ##DOMESTIC
     replace_loc("""
         SELECT  11,
-                a.cnt as cnt, 
+                a.cnt as cnt,
                 a.city as CityA, a.state as StateA, a.country as CountryA, a.zipcode as ZipcodeA,
                 b.city, b.state, 'US', b.zipcode, b.lat, b.long
           FROM  loc AS a INNER JOIN usloc AS b
@@ -222,7 +220,7 @@ for scnt in range(-1, c.execute("select max(sep_cnt(city)) from loc").fetchone()
     ##DOMESTIC (Blk Remove)
     replace_loc("""
         SELECT  11,
-                a.cnt as cnt, 
+                a.cnt as cnt,
                 a.city as CityA, a.state as StateA, a.country as CountryA, a.zipcode as ZipcodeA,
                 b.city, b.state, 'US', b.zipcode, b.lat, b.long
           FROM  loc AS a INNER JOIN usloc AS b
@@ -233,7 +231,7 @@ for scnt in range(-1, c.execute("select max(sep_cnt(city)) from loc").fetchone()
     ##DOMESTIC FIRST3 (JARO WINKLER)
     replace_loc("""
         SELECT  (10+jarow(BLK_SPLIT(SEP_WRD(a.City, %d)), b.BlkCity)) AS Jaro,
-                a.cnt as cnt, 
+                a.cnt as cnt,
                 a.city as CityA, a.state as StateA, a.country as CountryA, a.zipcode as ZipcodeA,
                 b.city, b.state, 'US', b.zipcode, b.lat, b.long
           FROM  loc AS a INNER JOIN usloc AS b
@@ -245,7 +243,7 @@ for scnt in range(-1, c.execute("select max(sep_cnt(city)) from loc").fetchone()
     ##DOMESTIC LAST4 (JARO WINKLER)
     replace_loc("""
         SELECT  (10+jarow(BLK_SPLIT(SEP_WRD(a.City, %d)), b.BlkCity)) AS Jaro,
-                a.cnt as cnt, 
+                a.cnt as cnt,
                 a.city as CityA, a.state as StateA, a.country as CountryA, a.zipcode as ZipcodeA,
                 b.city, b.state, 'US', b.zipcode, b.lat, b.long
           FROM  loc AS a INNER JOIN usloc AS b
@@ -259,7 +257,7 @@ for scnt in range(-1, c.execute("select max(sep_cnt(city)) from loc").fetchone()
     ##FOREIGN COUNTRY (Full Name 1)
     replace_loc("""
         SELECT  21,
-                a.cnt as cnt, 
+                a.cnt as cnt,
                 a.city as CityA, a.state as StateA, a.country as CountryA, a.zipcode as ZipcodeA,
                 b.full_name_nd_ro, "", b.cc1, "", b.lat, b.long
           FROM  loc AS a INNER JOIN loc.gnsloc AS b
@@ -281,7 +279,7 @@ for scnt in range(-1, c.execute("select max(sep_cnt(city)) from loc").fetchone()
     ##FOREIGN COUNTRY (Short Form)
     replace_loc("""
         SELECT  21,
-                a.cnt as cnt, 
+                a.cnt as cnt,
                 a.city as CityA, a.state as StateA, a.country as CountryA, a.zipcode as ZipcodeA,
                 b.full_name_nd_ro, "", b.cc1, "", b.lat, b.long
           FROM  loc AS a INNER JOIN loc.gnsloc AS b
@@ -292,7 +290,7 @@ for scnt in range(-1, c.execute("select max(sep_cnt(city)) from loc").fetchone()
     ##FOREIGN COUNTRY (Blk Split)
     replace_loc("""
         SELECT  21,
-                a.cnt as cnt, 
+                a.cnt as cnt,
                 a.city as CityA, a.state as StateA, a.country as CountryA, a.zipcode as ZipcodeA,
                 b.full_name_nd_ro, "", b.cc1, "", b.lat, b.long
           FROM  loc AS a INNER JOIN loc.gnsloc AS b
@@ -303,7 +301,7 @@ for scnt in range(-1, c.execute("select max(sep_cnt(city)) from loc").fetchone()
     ##FOREIGN COUNTRY FIRST3 (JARO WINKLER)
     replace_loc("""
         SELECT  (20+jarow(BLK_SPLIT(SEP_WRD(a.City, %d)), b.sort_name_ro)) AS Jaro,
-                a.cnt as cnt, 
+                a.cnt as cnt,
                 a.city as CityA, a.state as StateA, a.country as CountryA, a.zipcode as ZipcodeA,
                 b.full_name_nd_ro, "", b.cc1, "", b.lat, b.long
           FROM  loc AS a INNER JOIN loc.gnsloc AS b
@@ -315,7 +313,7 @@ for scnt in range(-1, c.execute("select max(sep_cnt(city)) from loc").fetchone()
     ##FOREIGN COUNTRY LAST4 (JARO WINKLER)
     replace_loc("""
         SELECT  (20+jarow(BLK_SPLIT(SEP_WRD(a.City, %d)), b.sort_name_ro)) AS Jaro,
-                a.cnt as cnt, 
+                a.cnt as cnt,
                 a.city as CityA, a.state as StateA, a.country as CountryA, a.zipcode as ZipcodeA,
                 b.full_name_nd_ro, "", b.cc1, "", b.lat, b.long
           FROM  loc AS a INNER JOIN loc.gnsloc AS b
@@ -338,7 +336,7 @@ print "------ F ------"
 ##DOMESTIC (2nd LAYER)
 replace_loc("""
     SELECT  15,
-            a.cnt as cnt, 
+            a.cnt as cnt,
             a.city as CityA, a.state as StateA, a.country as CountryA, a.zipcode as ZipcodeA,
             b.city, b.state, 'US', b.zipcode, b.lat, b.long
       FROM  (SELECT  *
@@ -351,7 +349,7 @@ INNER JOIN  usloc AS b
 ##DOMESTIC FIRST3 (2nd, JARO WINKLER)
 replace_loc("""
     SELECT  14+jarow(BLK_SPLIT(a.NCity), b.BlkCity) AS Jaro,
-            a.cnt as cnt, 
+            a.cnt as cnt,
             a.city as CityA, a.state as StateA, a.country as CountryA, a.zipcode as ZipcodeA,
             b.city, b.state, 'US', b.zipcode, b.lat, b.long
       FROM  (SELECT  *
@@ -366,7 +364,7 @@ INNER JOIN  usloc AS b
 ##FOREIGN FULL NAME (2nd LAYER)
 replace_loc("""
     SELECT  25,
-            a.cnt as cnt, 
+            a.cnt as cnt,
             a.city as CityA, a.state as StateA, a.country as CountryA, a.zipcode as ZipcodeA,
             b.full_name_nd_ro, '' as state, b.cc1, '' as zip, b.lat, b.long
       FROM  (SELECT  *
@@ -379,7 +377,7 @@ INNER JOIN  loc.gnsloc AS b
 ##FOREIGN FULL ND (2nd LAYER)
 replace_loc("""
     SELECT  25,
-            a.cnt as cnt, 
+            a.cnt as cnt,
             a.city as CityA, a.state as StateA, a.country as CountryA, a.zipcode as ZipcodeA,
             b.full_name_nd_ro, '' as state, b.cc1, '' as zip, b.lat, b.long
       FROM  (SELECT  *
@@ -392,7 +390,7 @@ INNER JOIN  loc.gnsloc AS b
 ##FOREIGN NO SPACE (2nd LAYER)
 replace_loc("""
     SELECT  25,
-            a.cnt as cnt, 
+            a.cnt as cnt,
             a.city as CityA, a.state as StateA, a.country as CountryA, a.zipcode as ZipcodeA,
             b.full_name_nd_ro, '' as state, b.cc1, '' as zip, b.lat, b.long
       FROM  (SELECT  *
@@ -405,7 +403,7 @@ INNER JOIN  loc.gnsloc AS b
 ##FOREIGN COUNTRY FIRST3 (2nd, JARO WINKLER)
 replace_loc("""
     SELECT  24+jarow(BLK_SPLIT(a.NCity), b.sort_name_ro) AS Jaro,
-            a.cnt as cnt, 
+            a.cnt as cnt,
             a.city as CityA, a.state as StateA, a.country as CountryA, a.zipcode as ZipcodeA,
             b.full_name_nd_ro, '' as state, b.cc1, '' as zip, b.lat, b.long
       FROM  (SELECT  *
@@ -420,7 +418,7 @@ INNER JOIN  loc.gnsloc AS b
 ##DOMESTIC ZIPCODE
 replace_loc("""
     SELECT  31,
-            a.cnt as cnt, 
+            a.cnt as cnt,
             a.city as CityA, a.state as StateA, a.country as CountryA, a.zipcode as ZipcodeA,
             b.City, b.State, 'US', b.zipcode, b.lat, b.long
       FROM  (SELECT  *, (SEP_WRD(zipcode,0)+0) as Zip2
