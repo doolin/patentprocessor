@@ -808,7 +808,13 @@ class SQLite:
         on =  [type(x)==types.StringType and [x,x] or x for x in on]
 
         for i,x in enumerate(key):
-            self.add(x[0], keyType!=None and keyType[i] or "", tbl=tbl)
+            #self.add(x[0], keyType!=None and keyType[i] or "", tbl=tbl)
+            self.add(x[0], keyType!=None and keyType[i] or "", table=tbl)
+
+        #print "x: ", x
+        #print "tbl: ", tbl
+        #print "on: ", on
+        #print "on[0]: ", on[0]
 
         idxT = self.index(keys=[x[0] for x in on], tbl=tbl)
         idxF = self.index(keys=[x[1] for x in on], tbl=tableFrom, db=db)
