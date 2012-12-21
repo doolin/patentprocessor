@@ -23,7 +23,7 @@ t1 = datetime.datetime.now()
 # or call it from the driver file.
 ##### Run B2_LocationMatch.py
 #import B2_LocationMatch
-#import geocode
+import geocode
 
 #print "   - Loc Merge", "\n   -", datetime.datetime.now()-t1
 
