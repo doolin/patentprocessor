@@ -125,16 +125,23 @@ class SQLite:
         except:
             return list
 
+    # TODO: Need to test 4 cases, at least. Also, the if
+    # statements are not mutually exclusive, so be careful.
     def _keyList(self, key, lower=False, **kwargs):
         """
         Convert key to List of keys if string or if "keys"
         """
+        #print "kwargs from _keyList: ", kwargs
         if "keys" in kwargs: #2012/07/01 to depreciate "keys"
             key = [kwargs["keys"]]
+            #print "from 'if \"keys\"'..."
         if type(key).__name__ in ('unicode', 'str'):
             key = [key]
+            #print "from 'type(key).__name__'..."
         if lower:
             key = set([k.lower() for k in key])
+            #print "from 'if lower:'..."
+        #print "key from inside _keyList..."
         return key
 
     def _sqlmasterScan(self, var, type, lookup=None, db=None, seq=None):
