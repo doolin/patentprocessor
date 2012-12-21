@@ -424,7 +424,11 @@ class SQLite:
         import re
         import itertools
         db, tbl = self._getSelf(field=["db", "tbl"], **kwargs)
-        key = self._keyList(key, lower=True, **kwargs)
+        #key = self._keyList(key, lower=True, **kwargs)
+        #print "key before _key call: ", key
+        #print kwargs
+        key = self._keyList(key, **kwargs)
+        #print "key after _key call: ", key
 
         if combo:
             for x in xrange(len(key)):
