@@ -43,12 +43,15 @@ s.c.execute("INSERT INTO assignee_1 SELECT * FROM assignee %s" % (debug and "LIM
 s.add('assigneeAsc', 'VARCHAR(30)')
 s.c.execute("UPDATE assignee_1 SET assigneeAsc = ascit(assignee);")
 s.commit()
-print "DONE: assignee_1 table created in assignee.sqlite3 with new column assigneeAsc", "\n   -", datetime.datetime.now()-t1
+#print "DONE: assignee_1 table created in assignee.sqlite3 with new column assigneeAsc", "\n   -", datetime.datetime.now()-t1
 
 #s.merge(key=[['AsgNum', 'pdpass']], on=[['assigneeAsc', 'assignee']], keyType=['INTEGER'], tableFrom='main', db='db')
 #s.attach(database = 'NBER_asg')
-print "Tables call from script ", s.tables()
+#print "Tables call from script ", s.tables()
+
 s.merge(key=[['AsgNum', 'pdpass']], on=[['assigneeAsc', 'assignee']], keyType=['INTEGER'], tableFrom='assignee', db='NBER')
+#s.merge(key=[['AsgNum', 'pdpass']], on=['assigneeAsc', 'assignee'], keyType=['INTEGER'], tableFrom='assignee', db='NBER')
+
 s.c.execute("UPDATE assignee_1 SET AsgNum=NULL WHERE AsgNum<0")
 print"DONE: NBER pdpass added to assignee_1 in column AsgNum", "\n   -", datetime.datetime.now()-t1
 s.commit()
