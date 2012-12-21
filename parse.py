@@ -66,7 +66,7 @@ parser.add_argument('--verbosity', '-v', type = int,
         help='Set the level of verbosity for the computation. The higher the \
         verbosity level, the less restrictive the print policy. 0 (default) \
         = error, 1 = warning, 2 = info, 3 = debug')
-      
+
 # double check that variables are actually set
 # we ignore the verbosity argument when determining
 # if any variables have been set by the user
