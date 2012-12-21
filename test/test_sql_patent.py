@@ -29,6 +29,9 @@ first_patent = "17900731"
 
 dir = os.path.dirname(__file__)
 folder = os.path.join(dir, 'unittest/')
+
+# TODO: test for existence of unittest/log directory,
+# create directory if not exists.
 log_file = os.path.join(dir, 'unittest/log/sql-test-log.log')
 xml_files = [x for x in os.listdir(folder)
              if re.match(r".*?patent.*?xml", x) != None]
