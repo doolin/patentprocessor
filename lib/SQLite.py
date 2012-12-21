@@ -440,12 +440,18 @@ class SQLite:
             index = "idx_idx{num}".format(num=seq[-1] and seq[-1]+1 or "")
 
         idxBase = self._baseIndex(**kwargs)
+
         #building an index
         idxNew = ["CREATE"]
         if unique:
             idxNew.append("UNIQUE")
-        idxNew.extend(["INDEX", self._dbAdd(db=db, tbl=index), 
-            "ON", tbl, "({key})".format(key=",".join(key))])
+
+        #print "index: ", index
+        print "From SQLite.index, key: ", key
+        key = key[0]
+
+        idxNew.extend(["INDEX", self._dbAdd(db=db, tbl=index), "ON", tbl,
+            "({key})".format(key=",".join(key))])
         idxNew = " ".join(idxNew)
 
         if not set(key) <= set(self.columns(lower=True, **kwargs)):
