@@ -4,6 +4,11 @@ The following collection of scripts performs pre- and
 post-processing on patent data as part of the patent
 inventor disambiguation process.
 
+
+Join the [Google discussion
+group](https://groups.google.com/forum/?fromgroups=#!forum/disambiguation),
+let us know how you're using the code.
+
 Follow development, subscribe to
 [RSS
 feed](https://github.com/funginstitute/patentprocessor/commits/master.atom).
