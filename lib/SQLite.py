@@ -447,7 +447,11 @@ class SQLite:
             idxNew.append("UNIQUE")
 
         #print "index: ", index
-        print "From SQLite.index, key: ", key
+        #print "From SQLite.index, key: ", key
+
+        # NOTE: this derefernce is to make the current patent
+        # code base parse correctly. Some of the test code has
+        # been changed to support this dereference.
         key = key[0]
 
         idxNew.extend(["INDEX", self._dbAdd(db=db, tbl=index), "ON", tbl,

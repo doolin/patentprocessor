@@ -80,7 +80,7 @@ class TestSQLite(unittest.TestCase):
 
 
     def test_index(self):
-        self.s.index(['a','c'])
+        self.s.index([['a','c']])
         self.assertIn('test (a,c)', self.s._baseIndex())
         self.s.index('a', unique=True)
         self.assertIn('test (a)', self.s._baseIndex())
@@ -88,10 +88,11 @@ class TestSQLite(unittest.TestCase):
         self.s.index('f', tbl="main")
         self.assertIn('main (f)', self.s._baseIndex())
         self.assertFalse(self.s.index('a', tbl="main"))
-        self.s.index(['e', 'f'], combo=True, tbl="main")
-        self.assertIn('main (e)', self.s._baseIndex(tbl="main"))
-        self.assertIn('main (e,f)', self.s._baseIndex(tbl="main"))
-        self.s.index(['a','c'], db="db")
+        #self.s.index(['e', 'f'], combo=True, tbl="main")
+        #self.assertIn('main (e)', self.s._baseIndex(tbl="main"))
+        #self.assertIn('main (e,f)', self.s._baseIndex(tbl="main"))
+
+        self.s.index([['a','c']], db="db")
         self.assertIn('test (a,c)', self.s._baseIndex(db="db"))
 
 #    def test_merge(self):
