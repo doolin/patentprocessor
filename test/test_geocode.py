@@ -5,7 +5,7 @@ import sys
 sys.path.append( '.' )
 sys.path.append( '../lib/' )
 
-import geocode
+#import geocode
 
 
 class TestGeocode(unittest.TestCase):
