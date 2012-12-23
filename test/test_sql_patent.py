@@ -9,18 +9,19 @@ import re
 import logging
 import copy
 from xml.dom.minidom import parse, parseString
-from xml_patent import XMLPatent
 from optparse import OptionParser
 from sql_patent import SQLPatent
 from types import *
 
+sys.path.append('../lib')
+from patXML import *
+
 
 # Data structures/variables used in testing
-tables = ["assignee", "citation", "class", "inventor",
-          "patent", "patdesc", "lawyer", "sciref", "usreldoc"]
+xmlclasses = [AssigneeXML, CitationXML, ClassXML, InventorXML, \
+              PatentXML, PatdescXML, LawyerXML, ScirefXML, UsreldocXML]
 debug = False
 xml_files = []
-parsed_xml = []
 parsed_xml = []
 max_years = "2012"
 max_months = "12"
@@ -42,7 +43,8 @@ xml_files = [x for x in os.listdir(folder)
 # Parsing XML to be used in SQLPatent()
 
 for xml in xml_files:
-    parsed_xml.append(XMLPatent(open(folder + xml, 'U')))
+    for xmlclass in xmlclasses:
+        parsed_xml.append(xmlclass(open(folder + xml, 'U').read()))
 
 testSQL = SQLPatent()
 
@@ -79,12 +81,13 @@ class TestSQLPatent(unittest.TestCase):
             except Exception as fileError:
                 logging.error("Error opening patent %d, filename: %s"
                              % (i+1, xml))
-            try:
-                xml_patent = XMLPatent(file_to_open)
-            except Exception as exPatError:
-                logging.error("Construction Error at patent %d, filename %s"
-                             % (i+1, xml))
-            parsed_xml.append(xml_patent)
+            for xmlclass in xmlclasses:
+                try:
+                    xml_patent = xmlclass(file_to_open.read())
+                    parsed_xml.append(xml_patent)
+                except Exception as exPatError:
+                    logging.error("Construction Error at patent %d, filename %s"
+                                 % (i+1, xml))
 
     def test_patent_SQL_tblBuild_asg2(self):
         new_table = testSQL.tblBuild(parsed_xml, "assignee")
