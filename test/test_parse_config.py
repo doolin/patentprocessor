@@ -32,6 +32,8 @@ class TestPatentConfig(unittest.TestCase):
                 'PATENTROOT to the patentprocessor directory for the scope of this test. ' +
                 'Use `export PATENTROOT=/path/to/directory` to change')
             os.environ['PATENTROOT'] = os.getcwd()
+        self.assertTrue(os.access(os.environ['PATENTROOT'], os.F_OK), msg='PATENTROOT directory does not exist')
+        self.assertTrue(os.access(os.environ['PATENTROOT'], os.R_OK), msg='PATENTROOT directory is not readable')
         self.assertTrue(os.environ.has_key('PATENTROOT'))
         os.chdir('..')
 
