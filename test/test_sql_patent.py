@@ -32,6 +32,10 @@ folder = os.path.join(dir, 'unittest/')
 
 # TODO: test for existence of unittest/log directory,
 # create directory if not exists.
+if not os.access('unittest/log', os.F_OK):
+    os.mkdir('unittest/log')
+if not os.access('unittest/log/sql-test-log.log', os.F_OK+os.R_OK):
+    os.open('unittest/log/sql-test-log.log', os.O_CREAT)
 log_file = os.path.join(dir, 'unittest/log/sql-test-log.log')
 xml_files = [x for x in os.listdir(folder)
              if re.match(r".*?patent.*?xml", x) != None]
