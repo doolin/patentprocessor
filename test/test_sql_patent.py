@@ -246,6 +246,6 @@ if __name__ == '__main__':
         debug = True
     del sys.argv[1:]
     if debug:
-        print "\n     Starting Unit Testing for XMLPatent()"
+        print "\n     Starting Unit Testing for XMLPatent classes"
     open(log_file, 'w')
     unittest.main()
