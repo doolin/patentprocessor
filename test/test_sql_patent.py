@@ -30,8 +30,7 @@ first_patent = "17900731"
 dir = os.path.dirname(__file__)
 folder = os.path.join(dir, 'unittest/')
 
-# TODO: test for existence of unittest/log directory,
-# create directory if not exists.
+# create unittest/log/sql-test-log.log if not exists/readable
 if not os.access('unittest/log', os.F_OK):
     os.mkdir('unittest/log')
 if not os.access('unittest/log/sql-test-log.log', os.F_OK+os.R_OK):
