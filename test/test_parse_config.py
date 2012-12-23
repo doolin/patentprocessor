@@ -88,9 +88,6 @@ class TestPatentConfig(unittest.TestCase):
     def tearDown(self):
         os.chdir('test')
 
-# TODO: Add a function which tests for existence (and maybe
-# validity of PATENTROOT, and guides the user how to set it
-# if its not set or invalid.
 if __name__ == '__main__':
 
     open(log_file, 'w')
