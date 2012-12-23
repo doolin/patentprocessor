@@ -47,34 +47,6 @@ def parallel_parse(filelist):
     pool = multiprocessing.Pool(multiprocessing.cpu_count())
     return pool.imap_unordered(parse_file, filelist)
 
-def parse_file(filename):
-    parsed_xmls = []
-    size = os.stat(filename).st_size
-    with open(filename,'r') as f:
-        with contextlib.closing(mmap.mmap(f.fileno(), size, access=mmap.ACCESS_READ)) as m:
-            parsed_xmls.extend(regex.findall(m))
-    return parsed_xmls
-
-def parallel_parse(filelist):
-    pool = multiprocessing.Pool(multiprocessing.cpu_count())
-    return list(itertools.chain(*pool.imap_unordered(parse_file, filelist)))
-
-    files = [directory+'/'+fi for directory in directories for fi in \
-            os.listdir(patentroot+'/'+directory) \
-            if re.search(xmlregex, fi, re.I) != None]
-    return files
-
-def parse_file(filename):
-    parsed_xmls = []
-    size = os.stat(filename).st_size
-    with open(filename,'r') as f:
-        with contextlib.closing(mmap.mmap(f.fileno(), size, access=mmap.ACCESS_READ)) as m:
-            parsed_xmls.extend(regex.findall(m))
-    return parsed_xmls
-
-def parallel_parse(filelist):
-    pool = multiprocessing.Pool(multiprocessing.cpu_count())
-    return list(itertools.chain(*pool.imap_unordered(parse_file, filelist)))
 
 # setup argparse
 parser = argparse.ArgumentParser(description=\
@@ -143,7 +115,7 @@ logging.info("Total files: %d" % (len(files)))
 
 # list of parsed xml strings
 parsed_xmls = parallel_parse(files)
-logging.info("   - Total Patents: %d" % (len(parsed_xmls)))
+logging.info("   - Total Patents: %d" % (len(parsed_xmls._items)))
 
 xmlclasses = [AssigneeXML, CitationXML, ClassXML, InventorXML, \
               PatentXML, PatdescXML, LawyerXML, ScirefXML, UsreldocXML]
