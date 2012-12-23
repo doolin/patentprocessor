@@ -26,7 +26,12 @@ class TestPatentConfig(unittest.TestCase):
         current_directory = os.getcwd()
         if not current_directory.endswith('test'):
             logging.error('Please run from the patentprocessor/test directory')
-        # need a default value for later tests
+        # test existence of PATENTROOT; set it to reasonable default if nonexistant
+        if not os.environ.has_key('PATENTROOT'):
+            logging.error('Cannot find PATENTROOT environment variable. Setting ' +
+                'PATENTROOT to the patentprocessor directory for the scope of this test. ' +
+                'Use `export PATENTROOT=/path/to/directory` to change')
+            os.environ['PATENTROOT'] = os.getcwd()
         self.assertTrue(os.environ.has_key('PATENTROOT'))
         os.chdir('..')
 
