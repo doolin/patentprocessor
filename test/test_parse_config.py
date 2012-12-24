@@ -12,6 +12,9 @@ log_file = os.path.join(dir, 'unittest/unit-test.log')
 
 # Logging setup
 logging.basicConfig(filename=log_file, level=logging.DEBUG)
+console = logging.StreamHandler()
+console.setLevel(logging.DEBUG)
+logging.getLogger('').addHandler(console)
 
 
 class TestPatentConfig(unittest.TestCase):
