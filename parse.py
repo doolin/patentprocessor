@@ -73,23 +73,7 @@ parser.add_argument('--verbosity', '-v', type = int,
 # if any variables have been set by the user
 specified = [arg for arg in sys.argv if arg.startswith('-')]
 nonverbose = [opt for opt in specified if '-v' not in opt]
-if len(sys.argv)==1:
-    parser.print_help()
-    sys.exit(1)
-
-if len(sys.argv)==1:
-    parser.print_help()
-    sys.exit(1)
-
-if len(sys.argv)==1:
-    parser.print_help()
-    sys.exit(1)
-
-if len(sys.argv)==1:
-    parser.print_help()
-    sys.exit(1)
-
-if len(sys.argv)==1:
+if len(nonverbose) == 0:
     parser.print_help()
     sys.exit(1)
 
