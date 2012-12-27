@@ -95,12 +95,11 @@ class Patent(handler.ContentHandler):
         for x in self._search('classification-national','main-classification')[0]]
     self.abstract = self._search('abstract')
     self.invention_title = self._search('invention-title')
-    #TODO: extract the following information as according to patXML
-    #self.asg_list
-    #self.cit_list
-    #self.rel_list
-    #self.inv_list
-    #self.law_list
+    self.asg_list = self.__asg_list__()
+    self.cit_list = self.__cit_list__() 
+    self.rel_list = self.__rel_list__()
+    self.inv_list = self.__inv_list__()
+    self.law_list = self.__law_list__()
     print 'country',self.country
     print 'patent',self.patent
     print 'kind',self.kind
@@ -114,3 +113,8 @@ class Patent(handler.ContentHandler):
     print 'classes',self.classes
     print 'abstract',self.abstract 
     print 'invention_title',self.invention_title 
+    print 'asg_list',self.asg_list
+    print 'cit_list',self.cit_list
+    print 'rel_list',self.rel_list
+    print 'inv_list',self.inv_list
+    print 'law_list',self.law_list
