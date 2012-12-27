@@ -64,6 +64,21 @@ class Patent(handler.ContentHandler):
     if content.strip():
       self.contents[tuple(self.tagstack)].append(content)
 
+  def __asg_list__(self):
+    pass
+
+  def __cit_list__(self):
+    pass
+
+  def __rel_list__(self):
+    pass
+
+  def __inv_list__(self):
+    pass
+
+  def __law_list__(self):
+    pass
+
   def endDocument(self):
     print '--------DONE--------'
     self.country = self._search('publication-reference','country')
