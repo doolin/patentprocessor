@@ -1,4 +1,4 @@
-# Python scripts for disambiguating patent data
+# Python scripts for processing USPTO inventor and patent data
 
 The following collection of scripts performs pre- and
 post-processing on patent data as part of the patent
@@ -111,7 +111,16 @@ used to construct mock data such that testing the cleaning phase can
 proceed independently of any other phase.
 
 
-## Disambiguating
+## Disambiguating inventor names
+
+Inventor disambiguation is performed using order restricted Bayesian
+inference, [implemented in c++ and hosted on
+github](https://github.com/funginstitute/disambiguator).
+The application compiles and runs on both Ubuntu Linux 12.04 and
+MacOS Snow Leopard (OSX 10.6). An external library for solving a
+quadratic program is required, which is free for academic use.
+
+
 
 ## Postprocessing
 
