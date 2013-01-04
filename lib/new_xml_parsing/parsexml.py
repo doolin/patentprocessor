@@ -76,7 +76,16 @@ class Patent(handler.ContentHandler):
     return res
 
   def __asg_list__(self):
-    res = self._search('assignees')
+    toadd = []
+    if self._search('assignees','first-name'):
+      toadd = [1]
+      toadd.extend('assignees','last-name')
+      toadd.extend('assignees','first-name')
+    else:
+      toadd = [0]
+      toadd.extend('assignees','orgname')
+      toadd.extend('assignees','role')
+
     return res if res else list(res)
 
   def __cit_list__(self):
