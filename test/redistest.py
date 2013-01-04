@@ -40,25 +40,3 @@ for filenum, filename in enumerate(files):
 
     for i, x in enumerate(XMLs):
         r.set(i,x)
-#
-#
-#
-#    xmllist = []
-#    count = 0
-#    patents = 0
-#    for i, x in enumerate(XMLs):
-#        try:
-#            xmllist.append(XMLPatent(x))
-#            patents += 1
-#        except Exception as inst:
-#            print type(inst)
-#            print "  - Error: %s (%d)  %s" % (filename, i, x[175:200])
-#            count += 1
-#    print "   - number of patents:", len(xmllist), datetime.datetime.now()-t1
-#    print "   - number of errors: " ,count
-#    total_count += count
-#    total_patents += patents
-#    print "   -", datetime.datetime.now()-t1
-#    print "   - total errors: ", total_count
-#    print "   - total patents: ", total_patents
-#
