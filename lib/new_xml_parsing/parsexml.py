@@ -139,20 +139,19 @@ class Patent(handler.ContentHandler):
     pass
 
   def endDocument(self):
-    print '--------DONE--------'
-    self.country = self._search('publication-reference','country')
-    self.patent = self._search('publication-reference','doc-number')
-    self.kind = self._search('publication-reference','kind')
-    self.date_grant = self._search('publication-reference','date')
+    self.country = self._search('publication-reference','country')[0][0]
+    self.patent = self._search('publication-reference','doc-number')[0][0]
+    self.kind = self._search('publication-reference','kind')[0][0]
+    self.date_grant = self._search('publication-reference','date')[0][0]
     self.pat_type = self.attributes['appl-type']
-    self.date_app = self._search('application-reference','date')
-    self.country_app = self._search('application-reference','country')
-    self.patent_app = self._search('application-reference','doc-number')
-    self.code_app = self._search('us-application-series-code')
-    self.clm_num = self._search('number-of-claims')
+    self.date_app = self._search('application-reference','date')[0][0]
+    self.country_app = self._search('application-reference','country')[0][0]
+    self.patent_app = self._search('application-reference','doc-number')[0][0]
+    self.code_app = self._search('us-application-series-code')[0][0]
+    self.clm_num = self._search('number-of-claims')[0][0]
     self.classes = self.__classes__()
     self.abstract = self._search('abstract')
-    self.invention_title = self._search('invention-title')
+    self.invention_title = self._search('invention-title')[0][0]
     self.asg_list = self.__asg_list__()
     self.cit_list = self.__cit_list__() 
     self.rel_list = self.__rel_list__()
