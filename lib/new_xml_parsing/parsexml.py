@@ -79,14 +79,26 @@ class Patent(handler.ContentHandler):
     toadd = []
     if self._search('assignees','first-name'):
       toadd = [1]
-      toadd.extend('assignees','last-name')
-      toadd.extend('assignees','first-name')
+      data = self._search('assignees','last-name')
+      toadd.extend(data[0] if data else [])
+      data = self._search('assignees','first-name')
+      toadd.extend(data[0] if data else [])
     else:
       toadd = [0]
-      toadd.extend('assignees','orgname')
-      toadd.extend('assignees','role')
-
-    return res if res else list(res)
+      data = self._search('assignees','orgname')
+      toadd.extend(data[0] if data else [])
+      data = self._search('assignees','role')
+      toadd.extend(data[0] if data else [])
+    if len(toadd) == 1:
+      return []
+    tag = 'addressbook' if self._search('assignees','addressbook') else 'address'
+    for inner in ['street','city','state','country','postcode']:
+      data = self._search('assignees',tag,inner)
+      toadd.extend(data[0] if data else [''])
+    for tag in ['nationality','residence']:
+      data = self._search('assignees',tag,'country')
+      toadd.extend(data[0] if data else [''])
+    return [toadd]
 
   def __cit_list__(self):
     basetag = 'references-cited' if self._search('references-cited') else 'citation'
