@@ -95,7 +95,29 @@ class Patent(handler.ContentHandler):
     return map(list,list(izip(*toadd)))
 
   def __rel_list__(self):
-    pass
+    d_list = []
+    for tag in ['continuation-in-part','continuation','division','reissue']:
+      if self._search('us-related-documents',tag):
+        childtmp = [tag,-1]
+        parenttmp = [tag, 1]
+        for nested in ['doc-number','country','kind']:
+          data = self._search('us-related-documents',tag,'relation','child-doc',nested)
+          childtmp.extend(data[0] if data else [''])
+        for nested in ['doc-number','country','kind','date','parent-status']:
+          data = self._search('us-related-documents',tag,'relation','parent-doc',nested)
+          parenttmp.extend(data[0] if data else [''])
+        for nested in ['doc-number','country','kind','date','parent-status']:
+          data = self._search('us-related-documents',tag,'relation','parent-doc','parent-grant-document',nested)
+          parenttmp.extend(data[0] if data else [''])
+          data = self._search('us-related-documents',tag,'relation','parent-doc','parent-pct-document',nested)
+          parenttmp.extend(data[0] if data else [''])
+        d_list.append(childtmp)
+        d_list.append(parenttmp)
+    for tag in ['related-publication', 'us-provisional-application']:
+      if self._search('us-related-documents', tag):
+        for nested in ['doc-number','country','kind']:
+          pass
+    return d_list
 
   def __inv_list__(self):
     pass
