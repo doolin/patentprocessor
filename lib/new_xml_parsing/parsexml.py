@@ -66,6 +66,15 @@ class Patent(handler.ContentHandler):
     if content.strip():
       self.contents[tuple(self.tagstack)].append(content)
 
+  def __classes__(self):
+    res = []
+    for tag in ['main-classification','further-classification']:
+      tmp = self._search('classification-national', tag)
+      if tmp:
+        res.append(tmp[0])
+    res = [[x[0][:3].replace(' ',''), x[0][3:].replace(' ','')] for x in res]
+    return res
+
   def __asg_list__(self):
     pass
 
@@ -93,8 +102,7 @@ class Patent(handler.ContentHandler):
     self.patent_app = self._search('application-reference','doc-number')
     self.code_app = self._search('us-application-series-code')
     self.clm_num = self._search('number-of-claims')
-    self.classes = [[x[:3].replace(' ',''), x[3:].replace(' ','')] \
-        for x in self._search('classification-national','main-classification')[0]]
+    self.classes = self.__classes__()
     self.abstract = self._search('abstract')
     self.invention_title = self._search('invention-title')
     self.asg_list = self.__asg_list__()
