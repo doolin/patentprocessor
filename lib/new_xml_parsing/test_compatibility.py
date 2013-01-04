@@ -111,8 +111,9 @@ class TestXMLPatent(unittest.TestCase):
     def test_law_list(self):
         for old,new in zip(parsed_xml_old, parsed_xml_new):
             self.assertTrue( old.law_list == new.law_list, "{0}\nshould be\n{1}".format(new.law_list,old.law_list))
+
     def tearDown(self):
-        #anything needed to be torn down\nshould be\nadded here, pass for now
+        #anything needed to be torn down  should be  added here, pass for now
         pass
 
 unittest.main()
