@@ -80,7 +80,19 @@ class Patent(handler.ContentHandler):
     return res if res else list(res)
 
   def __cit_list__(self):
-    pass
+    basetag = 'references-cited' if self._search('references-cited') else 'citation'
+    toadd = self._search(basetag,'category')
+    if self._search(basetag,'patcit'):
+      toadd.extend(self._search(basetag,'patcit','country'))
+      toadd.extend(self._search(basetag,'patcit','doc-number'))
+      toadd.extend(self._search(basetag,'patcit','date'))
+      toadd.extend(self._search(basetag,'patcit','kind'))
+      toadd.extend(self._search(basetag,'patcit','name'))
+      toadd.append(['']*len(self._search(basetag,'patcit','name')[0]))
+    elif self._search(basetag, 'othercit'):
+      toadd.extend(['','','','',''])
+      toadd.extend(self._search(basetag,'othercit'))
+    return map(list,list(izip(*toadd)))
 
   def __rel_list__(self):
     pass
