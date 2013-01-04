@@ -31,7 +31,14 @@ See "Configuring the Preprocessing Environment" below.
 
 ## Contributing to the Patent Processor Project
 
-Pull requests are welcome. Here are a few pointers which will make everything easier:
+Contributions are welcome, for source code development, testing
+(including validation and verification), uses cases, etc. We're
+targeting general PEP-compliance, so even an issue noting where we could
+do better is appreciated.
+
+### Contributing code
+
+Pull requests are especially welcome. Here are a few pointers which will make everything easier:
 
 * Small, tightly constrained commits.
 * New files should be in their own commit, and committed before they are used in subsequent commits.
