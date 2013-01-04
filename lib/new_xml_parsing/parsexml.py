@@ -2,6 +2,7 @@
 
 import logging
 import pprint
+from itertools import izip, chain
 from collections import deque, defaultdict
 from xml.sax import make_parser, handler, parseString, saxutils
 
