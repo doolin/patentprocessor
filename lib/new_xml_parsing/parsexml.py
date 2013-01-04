@@ -76,7 +76,8 @@ class Patent(handler.ContentHandler):
     return res
 
   def __asg_list__(self):
-    pass
+    res = self._search('assignees')
+    return res if res else list(res)
 
   def __cit_list__(self):
     pass
