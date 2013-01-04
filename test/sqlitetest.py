@@ -4,6 +4,7 @@ import unittest
 import sys
 import sqlite3
 sys.path.append('../')
+sys.path.append('../lib')
 import SQLite
 
 # TODO: Get a database connection for testing merge
