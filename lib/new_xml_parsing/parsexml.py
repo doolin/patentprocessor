@@ -49,7 +49,8 @@ class Patent(handler.ContentHandler):
     for term in terms:
       searchdict = dict((k,v[v.index(term):]) \
                     for k,v in searchdict.iteritems() if term in v)
-    return list(self.contents[k] for k in searchdict.iterkeys())
+    res = list(self.contents[k] for k in searchdict.iterkeys())
+    return res if res else ''
 
   def startElement(self, name, attrs):
     self.tagstack.append(name)
