@@ -1,6 +1,6 @@
 
 clean:
-	rm -rf *~ *.pyc
+	rm -rf *~ *.pyc *.log
 
 spotless: clean
 	rm -rf *.sqlite3
