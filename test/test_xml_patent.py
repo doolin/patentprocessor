@@ -31,7 +31,7 @@ valid_kind_types = ["A1", "A2", "A9", "B1", "B2", "B3", "B4", "B5",
 # Directory of test files and logs
 dir = os.path.dirname(__file__)
 folder = os.path.join(dir, 'fixtures/xml/')
-log_file = os.path.join(dir, 'unittest/unit-test.log')
+log_file = os.path.join(dir, 'fixtures/unittest/unit-test.log')
 xml_files = [x for x in os.listdir(folder)
              if re.match(r"ipg120327.one.xml", x) != None] # Match fixtures
 xmlclasses = [AssigneeXML, CitationXML, ClassXML, InventorXML, \

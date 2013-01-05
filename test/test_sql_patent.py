@@ -29,14 +29,14 @@ max_days = "31"
 first_patent = "17900731"
 
 dir = os.path.dirname(__file__)
-folder = os.path.join(dir, 'unittest/')
+folder = os.path.join(dir, 'fixtures/unittest/')
 
 # create unittest/log/sql-test-log.log if not exists/readable
-if not os.access('unittest/log', os.F_OK):
-    os.mkdir('unittest/log')
-if not os.access('unittest/log/sql-test-log.log', os.F_OK+os.R_OK):
-    os.open('unittest/log/sql-test-log.log', os.O_CREAT)
-log_file = os.path.join(dir, 'unittest/log/sql-test-log.log')
+if not os.access('fixtures/unittest/log', os.F_OK):
+    os.mkdir('fixtures/unittest/log')
+if not os.access('fixtures/unittest/log/sql-test-log.log', os.F_OK+os.R_OK):
+    os.open('fixtures/unittest/log/sql-test-log.log', os.O_CREAT)
+log_file = os.path.join(dir, 'fixtures/unittest/log/sql-test-log.log')
 xml_files = [x for x in os.listdir(folder)
              if re.match(r".*?patent.*?xml", x) != None]
 
@@ -224,7 +224,7 @@ class TestSQLPatent(unittest.TestCase):
         new_table = testSQL.tblBuild(parsed_xml, "nullcheck")
         for i, table_entry in enumerate(new_table):
             self.assertTrue(not table_entry)
-            
+
     def tearDown(self):
         #anything needed to be torn down should be added here, pass for now
         pass
