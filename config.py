@@ -1,3 +1,4 @@
+# TODO: Remove path dependence on ron
 basePath = "/home/ronlai/patent"
 
 loc = {
