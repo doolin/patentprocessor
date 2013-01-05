@@ -4,7 +4,7 @@ import unittest
 import os
 import sys
 import re
-from xml.sax import parseString
+from xml.sax import make_parser, handler, saxutils
 
 sys.path.append('..')
 from patXML import *
@@ -21,8 +21,11 @@ for xf in xml_files:
     text = open('test_xml_files/'+xf).read()
     old = XMLPatentBase(text)
     new = Patent()
-    parseString(text, new)
+    parser = make_parser()
+    parser.setFeature(handler.feature_external_ges, False)
+    parser.setContentHandler(new)
     parsed_xml_old.append(old)
+    parser.parse('test_xml_files/'+xf)
     parsed_xml_new.append(new)
 
 """
