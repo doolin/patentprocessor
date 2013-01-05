@@ -13,8 +13,8 @@ from fwork import *
 import locFunc
 import orgClean
 
-#debug = False
-debug = True
+debug = False
+#debug = True
 
 t1 = datetime.datetime.now()
 #print "Start", t1
