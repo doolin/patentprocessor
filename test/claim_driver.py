@@ -21,7 +21,7 @@ class Claims():
 
     def __init__(self):
       self.XMLs = []
-     
+
     def handle_file(self):
       print "Setting up XML files to be parsed..."
       with open(sys.argv[1], 'U') as filename: 
@@ -31,7 +31,7 @@ class Claims():
                 .*?
                 [<][/]PATDOC[>])    #and here is the end tag
              """, filename.read(),  re.I + re.S + re.X)
-             
+
     def handle_claims(self):
       for i, xml in enumerate(self.XMLs):
         try:
@@ -42,18 +42,19 @@ class Claims():
           print "found error", e
           logging.error("\n\nError at Patent: %d" % (i+1))
           logging.error(xml)
-          
+
     def handle_special_entities(self, s):
       return re.sub(r'&.*?;'," ", s)
-      
+
 
     def store_claims(self, claims):
       claim_list.append(claims)
-        
+
     def print_claims(self):
       for claims in claim_list:
         print "current claim is:", claims 
-        
+
+
 class Claim(handler.ContentHandler):
 
     def __init__(self):
@@ -69,7 +70,7 @@ class Claim(handler.ContentHandler):
         self.ptexttag = False
         self.pdattag = False
         self.patdoctag = False
-        
+
     def startElement(self, name, attrs):
         if name == "PATDOC":
             self.patdoctag = True
@@ -89,7 +90,7 @@ class Claim(handler.ContentHandler):
             self.ptexttag = True
         if name == "PDAT":
             self.pdattag = True
-              
+
     def endElement(self, name):
         if name == "PATDOC":
             self.patdoctag = False
@@ -109,7 +110,7 @@ class Claim(handler.ContentHandler):
             self.ptexttag = False
         if name == "PDAT":
             self.pdattag = False
-    
+
     def characters(self, content):
         saxutils.escape(content)
         if (self.b110tag and self.dnumtag and self.pdattag):
@@ -120,14 +121,14 @@ class Claim(handler.ContentHandler):
     def endDocument(self):
         # Utility Patents can have 1+ claims, http://www.uspto.gov/web/offices/pac/mpep/s1502.html
         claim_list.append((self.patent, self.claims))
-        
+
 
 class Claims_SQL():
 
   def __init__(self):
     self.con = None
     self.cursor = None
-    
+
   def initialize_con_database(self, con_db_name):
     # Set Up SQL Connectionss
     # Database to connect to
@@ -139,7 +140,7 @@ class Claims_SQL():
                            Patent TEXT,
                            Claims TEXT);
                     	""")
-                    	    
+
   def insert_claims(self, claim_list):
     for claim_tuple in claim_list:
       self.cursor.execute("""INSERT OR IGNORE INTO claims VALUES (?,?);""" , claim_tuple)
@@ -160,10 +161,3 @@ handlers["file"]()
 handlers["claims"]()
 handlers["db_init"]("claims.sqlite3")
 handlers["insert_claims"](claim_list) 
-
-
-      
-
-
-
-
