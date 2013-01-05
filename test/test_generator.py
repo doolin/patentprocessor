@@ -24,7 +24,7 @@ class TestGenerator(unittest.TestCase):
         pass 
 
     def test_process_csv(self):
-        file_name = open("./csv/gen_sample.csv", "rb")
+        file_name = open("./fixtures/csv/gen_sample.csv", "rb")
         csv_reader = process_csv(file_name)
         for i, row in enumerate(csv_reader):
             assert([str(i),"foo", "bar", "01234567"] == row)
