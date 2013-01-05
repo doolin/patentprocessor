@@ -8,6 +8,7 @@ import subprocess
 
 # Setup test files and logs
 dir = os.path.dirname(__file__)
+testdir = os.path.join(dir, '/test/fixtures/unittest/fixtures')
 log_file = os.path.join(dir, './fixtures/unittest/unit-test.log')
 
 # Logging setup
@@ -43,7 +44,7 @@ class TestPatentConfig(unittest.TestCase):
     def test_argparse_patentroot(self):
         # test that argparse is setting the variables correctly for patentroot
         exit_status = subprocess.call('python parse.py --patentroot %s' % \
-                (os.getcwd() + '/test/fixtures/unittest/fixtures'), \
+                (os.getcwd() + testdir), \
                 stdout=self.null_out, shell=True)
         # valid directory, but no xml files
         self.assertTrue(exit_status == 0)
@@ -64,21 +65,23 @@ class TestPatentConfig(unittest.TestCase):
         # test valid regex on unittest/fixtures folder
         exit_status = subprocess.call("python parse.py \
                 --patentroot %s --xmlregex '2012_\d.xml'" % \
-                (os.getcwd() + '/test/fixtures/unittest/fixtures'), \
+                (os.getcwd() + testdir), \
                 stdout=self.null_out, shell=True)
         self.assertTrue(exit_status == 0)
 
     def test_argparse_directory(self):
         # test that argparse is setting the variables correctly for directories
         # parse.py should not find any .xml files, but this should still pass
+        base = '/'.join(testdir.split('/')[:-1])
+        top = testdir.split('/')[-1]
         exit_status = subprocess.call('python parse.py --patentroot %s' % \
-                (os.getcwd() + '/test/fixtures/unittest'), stdout=self.null_out, shell=True)
+                (os.getcwd() + base), stdout=self.null_out, shell=True)
         self.assertTrue(exit_status == 0)
 
         # parse.py should concatentate the correct directory and find xml files
         exit_status = subprocess.call("python parse.py --patentroot %s \
-                --directory fixtures --xmlregex '2012_\d.xml'" % \
-                (os.getcwd() + '/test/fixtures/unittest'), stdout=self.null_out, shell=True)
+                --directory %s --xmlregex '2012_\d.xml'" % \
+                (os.getcwd() + base, top), stdout=self.null_out, shell=True)
         self.assertTrue(exit_status == 0)
 
         # TODO: make test for iterating through multiple directories
