@@ -28,5 +28,3 @@ def assignee(self):
 
     """
     return
-
-    
