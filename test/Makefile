@@ -1,4 +1,4 @@
 
 
 clean:
-	rm -rf *.sqlite3 *~ *.pyc
+	rm -rf *.sqlite3 *~ *.pyc err
