@@ -66,6 +66,9 @@ class Patent(handler.ContentHandler):
     if content.strip():
       self.contents[tuple(self.tagstack)].append(content)
 
+  def has_data(self, l):
+    return filter(lambda x: x, l)
+
   def __classes__(self):
     res = []
     for tag in ['main-classification','further-classification']:
