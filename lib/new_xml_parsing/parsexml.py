@@ -122,8 +122,9 @@ class Patent(handler.ContentHandler):
     d_list = []
     for tag in ['continuation-in-part','continuation','division','reissue']:
       if self._search('us-related-documents',tag):
-        childtmp = [tag,-1]
-        parenttmp = [tag, 1]
+        childtmp = []
+        parenttmp = []
+        parenttmpsecondary = []
         for nested in ['doc-number','country','kind']:
           data = self._search('us-related-documents',tag,'relation','child-doc',nested)
           childtmp.extend(data[0] if data else [''])
@@ -132,11 +133,17 @@ class Patent(handler.ContentHandler):
           parenttmp.extend(data[0] if data else [''])
         for nested in ['doc-number','country','kind','date','parent-status']:
           data = self._search('us-related-documents',tag,'relation','parent-doc','parent-grant-document',nested)
-          parenttmp.extend(data[0] if data else [''])
-          data = self._search('us-related-documents',tag,'relation','parent-doc','parent-pct-document',nested)
-          parenttmp.extend(data[0] if data else [''])
-        d_list.append(childtmp)
-        d_list.append(parenttmp)
+          if data:
+            parenttmpsecondary.extend(data[0])
+          else:
+            data = self._search('us-related-documents',tag,'relation','parent-doc','parent-pct-document',nested)
+            parenttmpsecondary.extend(data[0] if data else [''])
+        if self.has_data(childtmp):
+          d_list.append([tag, -1] + childtmp)
+        if self.has_data(parenttmp):
+          d_list.append([tag, 1] + parenttmp)
+        if self.has_data(parenttmpsecondary):
+          d_list.append([tag, 1] + parenttmpsecondary)
     for tag in ['related-publication', 'us-provisional-application']:
       if self._search('us-related-documents', tag):
         for nested in ['doc-number','country','kind']:
