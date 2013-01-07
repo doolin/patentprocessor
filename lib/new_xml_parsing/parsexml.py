@@ -152,18 +152,17 @@ class Patent(handler.ContentHandler):
 
   def __inv_list__(self):
     toadd = []
-    for tag in ['parties', 'applicant']:
-      for nested in ['last-name', 'first-name']:
-        data = self._search(tag, 'addressbook', nested)
-        toadd.append(data[0] if data else [''])
-      for nested in ['street','city','state','country','postcode']:
-        data = self._search(tag, 'addressbook', nested)
-        toadd.append(data[0] if data else [''])
-        data = self._search(tag, 'address', nested)
-        toadd.append(data[0] if data else [''])
-      for nested in ['nationality','residence']:
-        data = self._search(tag,nested,'country')
-        toadd.append(data[0] if data else [''])
+    for nested in ['last-name', 'first-name']:
+      data = self._search('parties','applicant', 'addressbook', nested)
+      toadd.append(data[0] if data else [''])
+    for nested in ['street','city','state','country','postcode']:
+      data = self._search('parties','applicant', 'addressbook', nested)
+      toadd.append(data[0] if data else [''])
+      data = self._search('parties','applicant', 'address', nested)
+      toadd.append(data[0] if data else [''])
+    for nested in ['nationality','residence']:
+      data = self._search('parties','applicant',nested,'country')
+      toadd.append(data[0] if data else [''])
     return map(list,list(izip(*toadd)))
 
   def __law_list__(self):
