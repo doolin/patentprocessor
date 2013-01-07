@@ -1,0 +1,18 @@
+<a>
+  <b>
+    <c>
+      hello
+    </c>
+    <c>
+      world
+    </c>
+  </b>
+  <b>
+    <d>
+      second
+    </d>
+    <d>
+      tag
+    </d>
+  </b>
+</a>
