@@ -25,4 +25,14 @@ class Test_XMLElement(unittest.TestCase):
         # sanity check
         self.assertTrue(xml_files)
 
+    def test_basic_xml(self):
+        xmlhandler = XMLHandler()
+        parser.setContentHandler(xmlhandler)
+        parser.setFeature(handler.feature_external_ges, False)
+        parser.parse('test_xml_files/basic.xml')
+        self.assertTrue(xmlhandler.root)
+        root = xmlhandler.root
+        self.assertTrue(len(root.a.b) == 2)
+
+
 unittest.main()
