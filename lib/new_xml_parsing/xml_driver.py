@@ -62,5 +62,6 @@ class XMLHandler(handler.ContentHandler):
             self.root.add_child(xmlelem)
 
     def endElement(self, name):
-        self.elements.pop()
+        if self.elements:
+            self.elements.pop()
 
