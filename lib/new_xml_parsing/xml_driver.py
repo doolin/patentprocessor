@@ -63,6 +63,7 @@ class XMLHandler(handler.ContentHandler):
             self.elements[-1].add_child(xmlelem)
         else:
             self.root.add_child(xmlelem)
+        self.elements.append(xmlelem)
 
     def endElement(self, name):
         if self.elements:
