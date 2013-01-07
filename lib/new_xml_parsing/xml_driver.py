@@ -19,7 +19,7 @@ class XMLElement(object):
     def __init__(self, name, attributes):
         self._name = name
         self._attributes = attributes
-        self.children = []
+        self.children = ChainList()
         self.is_root = False
 
     def __iter__(self):
@@ -38,8 +38,8 @@ class XMLElement(object):
     def __getattr__(self, key):
         candidates = filter(lambda x: x._name == key, self.children)
         if candidates:
-            self.__dict__[key] = candidates
-            return candidates
+            self.__dict__[key] = ChainList(candidates)
+            return ChainList(candidates)
         else:
             raise KeyError("No such child: {0}".format(key))
 
@@ -62,7 +62,7 @@ class XMLHandler(handler.ContentHandler):
     def __init__(self):
         self.root = XMLElement(None, None)
         self.root.is_root = True
-        self.elements = []
+        self.elements = ChainList()
 
     def startElement(self, name, attributes):
         xmlelem = XMLElement(name, dict(attributes.items()))
