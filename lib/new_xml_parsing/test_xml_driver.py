@@ -25,7 +25,7 @@ class Test_XMLElement(unittest.TestCase):
         # sanity check
         self.assertTrue(xml_files)
 
-    def test_basic_xml(self):
+    def test_basic_xml_tag_counts(self):
         xmlhandler = XMLHandler()
         parser.setContentHandler(xmlhandler)
         parser.setFeature(handler.feature_external_ges, False)
