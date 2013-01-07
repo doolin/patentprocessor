@@ -19,6 +19,7 @@ class XMLElement(object):
     def __init__(self, name, attributes):
         self._name = name
         self._attributes = attributes
+        self.content = ''
         self.children = ChainList()
         self.is_root = False
 
@@ -75,4 +76,8 @@ class XMLHandler(handler.ContentHandler):
     def endElement(self, name):
         if self.elements:
             self.elements.pop()
+
+    def characters(self, content):
+        if content.strip():
+          self.elements[-1].content = content
 
