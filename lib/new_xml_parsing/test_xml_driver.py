@@ -37,6 +37,23 @@ class Test_XMLElement(unittest.TestCase):
         self.assertTrue(len(root.a.b.c) == 3)
         self.assertTrue(len(root.a.b.d) == 2)
 
+    def test_basic_xml_tag_contents(self):
+        xmlhandler = XMLHandler()
+        parser.setContentHandler(xmlhandler)
+        parser.setFeature(handler.feature_external_ges, False)
+        parser.parse('test_xml_files/basic.xml')
+        root = xmlhandler.root
+        self.assertTrue(root.a.b.c[0].content  == 'hello', \
+            "{0} should be {1}".format(root.a.b.c[0].content, 'hello'))
+        self.assertTrue(root.a.b.c[1].content  == 'world', \
+            "{0} should be {1}".format(root.a.b.c[1].content, 'world'))
+        self.assertTrue(root.a.b.c[2].content  == '3', \
+            "{0} should be {1}".format(root.a.b.c[2].content, '3'))
+        self.assertTrue(root.a.b.d[0].content  == '1', \
+            "{0} should be {1}".format(root.a.b.c[0].content, '1'))
+        self.assertTrue(root.a.b.d[1].content  == '2', \
+            "{0} should be {1}".format(root.a.b.c[1].content, '2'))
+        
 
 
 unittest.main()
