@@ -2,6 +2,13 @@
 
 from xml.sax import handler
 
+class ChainList(list):
+    def __getattr__(self, key):
+        res = []
+        for item in self:
+            res.extend( filter(lambda x: x._name == key, item.children))
+        return ChainList(res)
+
 class XMLElement(object):
     """
     Represents XML elements from a document. These will assist
