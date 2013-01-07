@@ -32,7 +32,11 @@ class Test_XMLElement(unittest.TestCase):
         parser.parse('test_xml_files/basic.xml')
         self.assertTrue(xmlhandler.root)
         root = xmlhandler.root
+        self.assertTrue(len(root.a) == 1)
         self.assertTrue(len(root.a.b) == 2)
+        self.assertTrue(len(root.a.b.c) == 3)
+        self.assertTrue(len(root.a.b.d) == 2)
+
 
 
 unittest.main()
