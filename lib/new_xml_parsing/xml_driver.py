@@ -6,6 +6,7 @@ class XMLElement(object):
     """
     Represents XML elements from a document. These will assist
     us in representing an XML document as a Python object.
+    Heavily inspired from: https://github.com/stchris/untangle/blob/master/untangle.py
     """
 
     def __init__(self, name, attributes):
