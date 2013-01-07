@@ -43,6 +43,23 @@ class XMLElement(object):
                if name else \
                self.children
     
-        
-        
+class XMLHandler(handler.ContentHandler):
+    """
+    SAX Handler to create the Python object while parsing
+    """
+
+    def __init__(self):
+        self.root = XMLElement(None, None)
+        self.root.is_root = True
+        self.elements = []
+
+    def startElement(self, name, attributes):
+        xmlelem = XMLElement(name, dict(attributes.items()))
+        if self.elements:
+            self.elements[-1].add_child(xmlelem)
+        else:
+            self.root.add_child(xmlelem)
+
+    def endElement(self, name):
+        self.elements.pop()
 
