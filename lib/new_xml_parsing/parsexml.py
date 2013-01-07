@@ -166,7 +166,11 @@ class Patent(handler.ContentHandler):
     return map(list,list(izip(*toadd)))
 
   def __law_list__(self):
-    pass
+    toadd = []
+    for tag in ['last-name','first-name','country','orgname']:
+      data = self._search('agents','agent','addressbook',tag)
+      toadd.append([''.join(data[0])] if data else [''])
+    return map(list,list(izip(*toadd)))
 
   def endDocument(self):
     self.country = self._search('publication-reference','country')[0][0]
