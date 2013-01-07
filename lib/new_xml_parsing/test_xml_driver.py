@@ -25,3 +25,4 @@ class Test_XMLElement(unittest.TestCase):
         # sanity check
         self.assertTrue(xml_files)
 
+unittest.main()
