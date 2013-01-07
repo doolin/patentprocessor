@@ -21,6 +21,9 @@ class XMLElement(object):
     #TODO: make sure all XMLElements behave as lists during iteration
     def __len__(self):
         return 1
+    
+    def __nonzero__(self):
+        return self.is_root or self._name is not None
 
     def __getitem__(self, key):
         return self.get_attribute(key)
