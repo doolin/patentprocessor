@@ -30,8 +30,7 @@ for xf in xml_files:
 class Test_XMLElement(unittest.TestCase):
     
     def setUp(self):
-        # sanity check
-        self.assertTrue(xml_files)
+        # setup basic.xml parser/handler
         xmlhandler = XMLHandler()
         parser.setContentHandler(xmlhandler)
         parser.setFeature(handler.feature_external_ges, False)
