@@ -105,6 +105,6 @@ class Patent(object):
        parser.setContentHandler(xh)
        parser.setFeature(handler.feature_external_ges, False)
        parser.parse(filename)
-       self.xml = xh.root.us_bibliographic_data_grant
+       self.xml = xh.root.us_patent_grant.us_bibliographic_data_grant
         
        self.country = self.xml.publication_reference
