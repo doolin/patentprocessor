@@ -38,10 +38,6 @@ class XMLElement(object):
     def __iter__(self):
         yield self
 
-    #TODO: make sure all XMLElements behave as lists during iteration
-    def __len__(self):
-        return 1
-    
     def __nonzero__(self):
         return self.is_root or self._name is not None
 
