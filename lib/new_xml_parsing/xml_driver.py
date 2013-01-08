@@ -81,6 +81,7 @@ class XMLHandler(handler.ContentHandler):
         self.elements = ChainList()
 
     def startElement(self, name, attributes):
+        name = name.replace('-','_').replace('.','_').replace(':','_')
         xmlelem = XMLElement(name, dict(attributes.items()))
         if self.elements:
             self.elements[-1].add_child(xmlelem)
