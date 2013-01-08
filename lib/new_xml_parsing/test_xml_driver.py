@@ -18,20 +18,16 @@ parsed_xml_old = []
 parsed_xml_new = []
 for xf in xml_files:
     old = XMLPatentBase(open('test_xml_files/'+xf).read())
-    parser = make_parser()
-    new = XMLHandler()
-    parser.setContentHandler(new)
-    parser.setFeature(handler.feature_external_ges, False)
-    parser.parse('test_xml_files/'+xf)
-
+    new = Patent(open('test_xml_files/'+xf))
     parsed_xml_old.append(old)
-    parsed_xml_new.append(new.root.us_patent_grant.us_bibliographic_data_grant)
+    parsed_xml_new.append(new)
 
 class Test_XMLElement(unittest.TestCase):
     
     def setUp(self):
         # setup basic.xml parser/handler
         xmlhandler = XMLHandler()
+        parser = make_parser()
         parser.setContentHandler(xmlhandler)
         parser.setFeature(handler.feature_external_ges, False)
         parser.parse('test_xml_files/basic.xml')
