@@ -4,7 +4,7 @@ import os
 import re
 import sys
 import unittest
-from xml_driver import XMLElement, XMLHandler
+from xml_driver import XMLElement, XMLHandler, Patent
 from xml.sax import make_parser, handler
 
 sys.path.append('..')
