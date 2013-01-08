@@ -97,3 +97,14 @@ class XMLHandler(handler.ContentHandler):
         if content.strip():
           self.elements[-1].content = content
 
+class Patent(object):
+    
+  def __init__(self, filename):
+       xh = XMLHandler()
+       parser = make_parser()
+       parser.setContentHandler(xh)
+       parser.setFeature(handler.feature_external_ges, False)
+       parser.parse(filename)
+       self.xml = xh.root.us_bibliographic_data_grant
+        
+       self.country = self.xml.publication_reference
