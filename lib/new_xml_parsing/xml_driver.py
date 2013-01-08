@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-from xml.sax import handler
+from xml.sax import make_parser, handler
 
 class ChainList(list):
     """
