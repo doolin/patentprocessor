@@ -3,6 +3,12 @@
 from xml.sax import handler
 
 class ChainList(list):
+    """
+    This is the base structure that handles the tree created by XMLElement
+    and XMLHandler. Overriding __getattr__ allows us to chain queries on
+    a list in order to traverse the tree.
+    """
+
     def contents_of(self, tag):
         res = []
         for item in self:
