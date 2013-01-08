@@ -49,5 +49,8 @@ class Test_XMLElement(unittest.TestCase):
         self.assertTrue(self.root.a.b.d[1].content  == '2', \
             "{0} should be {1}".format(self.root.a.b.c[1].content, '2'))
     
+    def test_basic_xml_contents_of(self):
+        self.assertTrue(self.root.a.b.contents_of('c') == ['hello','world','3'])
+        self.assertTrue(self.root.a.b[0].contents_of('c') == ['hello','world'])
 
 unittest.main()
