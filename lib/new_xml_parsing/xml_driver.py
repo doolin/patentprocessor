@@ -3,6 +3,12 @@
 from xml.sax import handler
 
 class ChainList(list):
+    def contents_of(self, tag):
+        res = []
+        for item in self:
+            res.extend( item.contents_of(tag) )
+        return ChainList(res)
+
     def __getattr__(self, key):
         res = []
         for item in self:
@@ -41,6 +47,13 @@ class XMLElement(object):
         if candidates:
             self.__dict__[key] = ChainList(candidates)
             return ChainList(candidates)
+        else:
+            raise KeyError("No such child: {0}".format(key))
+
+    def contents_of(self, key):
+        candidates = filter(lambda x: x._name == key, self.children)
+        if candidates:
+            return [x.content for x in candidates]
         else:
             raise KeyError("No such child: {0}".format(key))
 
