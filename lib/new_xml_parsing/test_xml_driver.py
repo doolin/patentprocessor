@@ -24,18 +24,12 @@ class Test_XMLElement(unittest.TestCase):
     def setUp(self):
         # sanity check
         self.assertTrue(xml_files)
-
-    def test_basic_xml_tag_counts(self):
         xmlhandler = XMLHandler()
         parser.setContentHandler(xmlhandler)
         parser.setFeature(handler.feature_external_ges, False)
         parser.parse('test_xml_files/basic.xml')
         self.assertTrue(xmlhandler.root)
-        root = xmlhandler.root
-        self.assertTrue(len(root.a) == 1)
-        self.assertTrue(len(root.a.b) == 2)
-        self.assertTrue(len(root.a.b.c) == 3)
-        self.assertTrue(len(root.a.b.d) == 2)
+        self.root = xmlhandler.root
 
     def test_basic_xml_tag_contents(self):
         xmlhandler = XMLHandler()
