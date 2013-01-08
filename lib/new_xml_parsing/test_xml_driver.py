@@ -2,9 +2,13 @@
 
 import os
 import re
+import sys
 import unittest
 from xml_driver import XMLElement, XMLHandler
 from xml.sax import make_parser, handler
+
+sys.path.append('..')
+from patXML import *
 
 # Directory of test files
 xml_files = [x for x in os.listdir('test_xml_files')
