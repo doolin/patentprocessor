@@ -137,7 +137,7 @@ class Patent(object):
   def _classes(self):
       main = self.xml.classification_national.contents_of('main_classification')
       further = self.xml.classification_national.contents_of('further_classification')
-      it = [x[0] for x in (main,further) if x]
+      it = [x[0] for x in (main,further) if self.has_content(x)]
       return [ [x[:3].replace(' ',''), x[3:].replace(' ','')] for x in it]
 
 
