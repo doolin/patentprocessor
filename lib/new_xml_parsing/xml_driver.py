@@ -130,6 +130,9 @@ class Patent(object):
       self.clm_num = self.xml.contents_of('number_of_claims')[0]
       self.classes = self._classes()
 
+  def has_content(self, l):
+      return any(filter(lambda x: x, l))
+
   def _classes(self):
       main = self.xml.classification_national.contents_of('main_classification')
       further = self.xml.classification_national.contents_of('further_classification')
