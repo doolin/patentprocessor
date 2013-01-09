@@ -63,7 +63,7 @@ class XMLElement(object):
             raise KeyError("key not found: {0}".format(key))
 
     def contents_of(self, key):
-        candidates = filter(lambda x: x._name == key, self.children)
+        candidates = self.__getattr__(key)
         if candidates:
             return [x.content for x in candidates]
         else:
