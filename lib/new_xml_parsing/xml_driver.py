@@ -130,6 +130,7 @@ class Patent(object):
       self.clm_num = self.xml.contents_of('number_of_claims')[0]
       self.classes = self._classes()
       self.abstract = self.xml.contents_of('abstract','')
+      self.invention_title = self.xml.contents_of('invention_title')[0]
 
   def has_content(self, l):
       return any(filter(lambda x: x, l))
