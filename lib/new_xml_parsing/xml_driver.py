@@ -1,5 +1,7 @@
 #!/usr/bin/env python
 
+from itertools import chain
+from collections import deque
 from xml.sax import make_parser, handler
 
 class ChainList(list):
@@ -17,8 +19,11 @@ class ChainList(list):
 
     def __getattr__(self, key):
         res = []
-        for item in self:
-            res.extend( filter(lambda x: x._name == key, item.children))
+        scope = deque(self)
+        while scope:
+            current = scope.popleft()
+            if current._name == key: res.append(current)
+            else: scope.extend(current.children)
         return ChainList(res)
 
 class XMLElement(object):
@@ -45,12 +50,17 @@ class XMLElement(object):
         return self.get_attribute(key)
 
     def __getattr__(self, key):
-        candidates = filter(lambda x: x._name == key, self.children)
-        if candidates:
-            self.__dict__[key] = ChainList(candidates)
-            return ChainList(candidates)
+        res = []
+        scope = deque(self.children)
+        while scope:
+            current = scope.popleft()
+            if current._name == key: res.append(current)
+            else: scope.extend(current.children)
+        if res:
+            self.__dict__[key] = ChainList(res)
+            return ChainList(res)
         else:
-            raise KeyError("No such child: {0}".format(key))
+            raise KeyError("key not found: {0}".format(key))
 
     def contents_of(self, key):
         candidates = filter(lambda x: x._name == key, self.children)
