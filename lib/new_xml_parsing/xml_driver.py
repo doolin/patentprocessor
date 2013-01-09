@@ -60,14 +60,14 @@ class XMLElement(object):
             self.__dict__[key] = ChainList(res)
             return ChainList(res)
         else:
-            raise KeyError("key not found: {0}".format(key))
+            return ChainList('')
 
     def contents_of(self, key):
         candidates = self.__getattr__(key)
         if candidates:
             return [x.content for x in candidates]
         else:
-            raise KeyError("No such child: {0}".format(key))
+            return ChainList('')
 
     def add_child(self, child):
         self.children.append(child)
