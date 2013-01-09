@@ -121,6 +121,8 @@ class Patent(object):
        self.patent = self.xml.publication_reference.contents_of('doc_number')[0]
        self.kind = self.xml.publication_reference.contents_of('kind')[0]
        self.date_grant = self.xml.publication_reference.contents_of('date')[0]
+       #TODO: better handling of attributes
+       self.pat_type = 'not implemented'
        self.date_app = self.xml.application_reference.contents_of('date')[0]
        self.country_app = self.xml.application_reference.contents_of('country')[0]
        self.patent_app = self.xml.application_reference.contents_of('doc_number')[0]
