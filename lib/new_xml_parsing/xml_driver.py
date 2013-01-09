@@ -11,11 +11,11 @@ class ChainList(list):
     a list in order to traverse the tree.
     """
 
-    def contents_of(self, tag):
+    def contents_of(self, tag, default=['']):
         res = []
         for item in self:
             res.extend( item.contents_of(tag) )
-        return ChainList(res)
+        return ChainList(res) if res else default
 
     def __getattr__(self, key):
         res = []
@@ -62,12 +62,12 @@ class XMLElement(object):
         else:
             return ChainList('')
 
-    def contents_of(self, key):
+    def contents_of(self, key, default=ChainList('')):
         candidates = self.__getattr__(key)
         if candidates:
             return [x.content for x in candidates]
         else:
-            return ChainList('')
+            return default
 
     def add_child(self, child):
         self.children.append(child)
