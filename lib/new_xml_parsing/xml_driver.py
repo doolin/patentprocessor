@@ -110,21 +110,24 @@ class XMLHandler(handler.ContentHandler):
 class Patent(object):
     
   def __init__(self, filename):
-       xh = XMLHandler()
-       parser = make_parser()
-       parser.setContentHandler(xh)
-       parser.setFeature(handler.feature_external_ges, False)
-       parser.parse(filename)
-       self.xml = xh.root.us_patent_grant.us_bibliographic_data_grant
-        
-       self.country = self.xml.publication_reference.contents_of('country')[0]
-       self.patent = self.xml.publication_reference.contents_of('doc_number')[0]
-       self.kind = self.xml.publication_reference.contents_of('kind')[0]
-       self.date_grant = self.xml.publication_reference.contents_of('date')[0]
-       #TODO: better handling of attributes
-       self.pat_type = 'not implemented'
-       self.date_app = self.xml.application_reference.contents_of('date')[0]
-       self.country_app = self.xml.application_reference.contents_of('country')[0]
-       self.patent_app = self.xml.application_reference.contents_of('doc_number')[0]
-       self.code_app = self.xml.contents_of('us_application_series_code')[0]
-       self.clm_num = self.xml.contents_of('number_of_claims')[0]
+      xh = XMLHandler()
+      parser = make_parser()
+      parser.setContentHandler(xh)
+      parser.setFeature(handler.feature_external_ges, False)
+      parser.parse(filename)
+      self.xml = xh.root.us_patent_grant.us_bibliographic_data_grant
+       
+      self.country = self.xml.publication_reference.contents_of('country')[0]
+      self.patent = self.xml.publication_reference.contents_of('doc_number')[0]
+      self.kind = self.xml.publication_reference.contents_of('kind')[0]
+      self.date_grant = self.xml.publication_reference.contents_of('date')[0]
+      #TODO: better handling of attributes
+      self.pat_type = 'not implemented'
+      self.date_app = self.xml.application_reference.contents_of('date')[0]
+      self.country_app = self.xml.application_reference.contents_of('country')[0]
+      self.patent_app = self.xml.application_reference.contents_of('doc_number')[0]
+      self.code_app = self.xml.contents_of('us_application_series_code')[0]
+      self.clm_num = self.xml.contents_of('number_of_claims')[0]
+
+    
+
