@@ -39,6 +39,7 @@ class Test_XMLElement(unittest.TestCase):
         self.assertTrue(len(self.root.a.b) == 2)
         self.assertTrue(len(self.root.a.b.c) == 3)
         self.assertTrue(len(self.root.a.b.d) == 2)
+        self.assertTrue(len(self.root.a.c) == 3)
 
     def test_basic_xml_tag_contents(self):
         self.assertTrue(self.root.a.b.c[0].content  == 'hello', \
