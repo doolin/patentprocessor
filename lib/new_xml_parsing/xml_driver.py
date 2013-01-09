@@ -128,6 +128,12 @@ class Patent(object):
       self.patent_app = self.xml.application_reference.contents_of('doc_number')[0]
       self.code_app = self.xml.contents_of('us_application_series_code')[0]
       self.clm_num = self.xml.contents_of('number_of_claims')[0]
+      self.classes = self._classes()
 
-    
+  def _classes(self):
+      main = self.xml.classification_national.contents_of('main_classification')
+      further = self.xml.classification_national.contents_of('further_classification')
+      it = [x[0] for x in (main,further) if x]
+      return [ [x[:3].replace(' ',''), x[3:].replace(' ','')] for x in it]
+
 
