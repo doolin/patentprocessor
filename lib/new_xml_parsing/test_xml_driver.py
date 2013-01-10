@@ -42,16 +42,16 @@ class Test_XMLElement(unittest.TestCase):
         self.assertTrue(len(self.root.a.c) == 3)
 
     def test_basic_xml_tag_contents(self):
-        self.assertTrue(self.root.a.b.c[0].content  == 'hello', \
-            "{0} should be {1}".format(self.root.a.b.c[0].content, 'hello'))
-        self.assertTrue(self.root.a.b.c[1].content  == 'world', \
-            "{0} should be {1}".format(self.root.a.b.c[1].content, 'world'))
-        self.assertTrue(self.root.a.b.c[2].content  == '3', \
-            "{0} should be {1}".format(self.root.a.b.c[2].content, '3'))
-        self.assertTrue(self.root.a.b.d[0].content  == '1', \
-            "{0} should be {1}".format(self.root.a.b.c[0].content, '1'))
-        self.assertTrue(self.root.a.b.d[1].content  == '2', \
-            "{0} should be {1}".format(self.root.a.b.c[1].content, '2'))
+        self.assertTrue(self.root.a.b.c[0].get_content()  == 'hello', \
+            "{0} should be {1}".format(self.root.a.b.c[0].get_content(), 'hello'))
+        self.assertTrue(self.root.a.b.c[1].get_content()  == 'world', \
+            "{0} should be {1}".format(self.root.a.b.c[1].get_content(), 'world'))
+        self.assertTrue(self.root.a.b.c[2].get_content()  == '3', \
+            "{0} should be {1}".format(self.root.a.b.c[2].get_content(), '3'))
+        self.assertTrue(self.root.a.b.d[0].get_content()  == '1', \
+            "{0} should be {1}".format(self.root.a.b.c[0].get_content(), '1'))
+        self.assertTrue(self.root.a.b.d[1].get_content()  == '2', \
+            "{0} should be {1}".format(self.root.a.b.c[1].get_content(), '2'))
     
     def test_basic_xml_contents_of(self):
         self.assertTrue(self.root.a.b.contents_of('c') == ['hello','world','3'])
