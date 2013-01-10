@@ -36,7 +36,7 @@ class XMLElement(object):
     def __init__(self, name, attributes):
         self._name = name
         self._attributes = attributes
-        self.content = ''
+        self.content = []
         self.children = ChainList()
         self.is_root = False
 
@@ -65,9 +65,14 @@ class XMLElement(object):
     def contents_of(self, key, default=ChainList('')):
         candidates = self.__getattr__(key)
         if candidates:
-            return [x.content for x in candidates]
+            return [x.get_content() for x in candidates]
         else:
             return default
+
+    def get_content(self):
+        if len(self.content) == 1:
+            return self.content[0]
+        else: return self.content
 
     def add_child(self, child):
         self.children.append(child)
@@ -105,7 +110,7 @@ class XMLHandler(handler.ContentHandler):
 
     def characters(self, content):
         if content.strip():
-          self.elements[-1].content = content
+          self.elements[-1].content.append(content)
 
 class Patent(object):
     
