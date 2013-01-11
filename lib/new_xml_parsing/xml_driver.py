@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-from itertools import chain
+from itertools import chain, izip
 from collections import deque
 from xml.sax import make_parser, handler
 
@@ -136,6 +136,7 @@ class Patent(object):
       self.classes = self._classes()
       self.abstract = self.xml.contents_of('abstract','')
       self.invention_title = self.xml.contents_of('invention_title')[0]
+      self.cit_list = self._cit_list()
 
   def has_content(self, l):
       return any(filter(lambda x: x, l))
@@ -146,4 +147,24 @@ class Patent(object):
       it = [x[0] for x in (main,further) if self.has_content(x)]
       return [ [x[:3].replace(' ',''), x[3:].replace(' ','')] for x in it]
 
+  def _cit_list(self):
+      res = []
+      cits = self.xml.references_cited.citation
+      record = cits.contents_of('category')
+      res.append(record)
+      if cits.patcit:
+          for tag in ['country','doc_number','date','kind','name']:
+              res.append(cits.patcit.contents_of(tag))
+          res.append( [''] * len(res[0]))
+      contacts = map(list, list(izip(*res)))
+      last_records = record[len(contacts):]
+      if cits.othercit:
+          for item in last_records:
+              tmp = [item, '', '', '', '' ,'']
+              s = ''
+              for item in cits.contents_of('othercit'):
+                  s += ''.join(item)
+              tmp.append(s)
+              contacts.append(tmp)
+      return contacts
 
