@@ -140,6 +140,7 @@ class Patent(object):
       self.cit_list = self._cit_list()
       self.rel_list = self._rel_list()
       self.inv_list = self._inv_list()
+      self.law_list = self._law_list()
 
   def has_content(self, l):
       return any(filter(lambda x: x, l))
@@ -242,3 +243,15 @@ class Patent(object):
       maxlen = max(map(len, res))
       res = [x*maxlen if len(x) != maxlen else x for x in res]
       return map(list, list(izip(*res)))
+
+  def _law_list(self):
+      doc = self.xml.parties.agents
+      if not doc: return []
+      res = []
+      for agent in doc.agent:
+        tmp = []
+        for tag in ['last_name','first_name','country','orgname']:
+            data = agent.contents_of(tag)
+            tmp.extend([''.join(x) for x in data] if data else [''])
+        res.append(tmp)
+      return res
