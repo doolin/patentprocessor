@@ -2,7 +2,7 @@
 
 from itertools import chain, izip
 from collections import deque
-from xml.sax import make_parser, handler
+from xml.sax import make_parser, handler, saxutils
 
 class ChainList(list):
     """
@@ -110,7 +110,7 @@ class XMLHandler(handler.ContentHandler):
 
     def characters(self, content):
         if content.strip():
-          self.elements[-1].content.append(content)
+          self.elements[-1].content.append(saxutils.unescape(content))
 
 class Patent(object):
     
