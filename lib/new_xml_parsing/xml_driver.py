@@ -181,11 +181,9 @@ class Patent(object):
       contacts = map(list, list(izip(*res)))
       last_records = record[len(contacts):]
       if cits.othercit:
-          for item in last_records:
-              tmp = [item, '', '', '', '' ,'']
-              s = ''
-              for item in cits.contents_of('othercit'):
-                  s += ''.join(item)
+          for rec,cit in zip(last_records,cits.contents_of('othercit')):
+              tmp = [rec, '', '', '', '' ,'']
+              s = ''.join(cit)
               tmp.append(s)
               contacts.append(tmp)
       return contacts
