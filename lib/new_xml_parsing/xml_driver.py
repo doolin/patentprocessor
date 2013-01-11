@@ -137,6 +137,7 @@ class Patent(object):
       self.abstract = self.xml.contents_of('abstract','')
       self.invention_title = self.xml.contents_of('invention_title')[0]
       self.cit_list = self._cit_list()
+      self.rel_list = self._rel_list()
 
   def has_content(self, l):
       return any(filter(lambda x: x, l))
@@ -169,3 +170,41 @@ class Patent(object):
               contacts.append(tmp)
       return contacts
 
+  def _rel_list(self):
+      res = []
+      for tag in ['continuation_in_part','continuation','division','reissue']:
+          if not self.xml.__getattr__(tag):
+              continue
+          tag = tag.replace('_','-')
+          if self.xml.relation.child_doc:
+              tmp = [tag, -1]
+              for nested in ['doc_number','country','kind']:
+                  tmp.extend(self.xml.relation.child_doc.contents_of(nested))
+              res.append(tmp)
+          if self.xml.relation.parent_doc:
+              tmp = [tag, 1]
+              for nested in ['doc_number','country','kind','date','parent_status']:
+                  data = self.xml.relation.parent_doc.contents_of(nested)
+                  tmp.append(data[0] if isinstance(data, list) else data)
+              res.append(tmp)
+          if self.xml.relation.parent_doc.parent_grant_document:
+              tmp = [tag, 1]
+              for nested in ['doc_number','country','kind','date','parent_status']:
+                  tmp.extend(self.xml.relation.parent_grant_document.contents_of(nested))
+              res.append(tmp)
+          if self.xml.relation.parent_doc.parent_pct_document:
+              tmp = [tag, 1]
+              for nested in ['doc_number','country','kind','date','parent_status']:
+                  tmp.extend(self.xml.relation.parent_pct_document.contents_of(nested))
+              res.append(tmp)
+          if res: break
+      for tag in ['related-publication','us-provisional-application']:
+          if not self.xml.__getattr__(tag):
+              continue
+          if self.xml.document_id:
+              tmp = [tag, 0]
+              for nested in ['doc_number','country','kind']:
+                  tmp.extend(self.xml.document_id.contents_of(nested))
+              res.append(tmp)
+          if res: break
+      return res
