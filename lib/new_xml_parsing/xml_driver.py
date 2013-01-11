@@ -147,6 +147,7 @@ class Patent(object):
       it = [x[0] for x in (main,further) if self.has_content(x)]
       return [ [x[:3].replace(' ',''), x[3:].replace(' ','')] for x in it]
 
+  #TODO: fix text encodings 
   def _cit_list(self):
       res = []
       cits = self.xml.references_cited.citation
