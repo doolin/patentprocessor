@@ -139,6 +139,7 @@ class Patent(object):
       self.asg_list = self._asg_list()
       self.cit_list = self._cit_list()
       self.rel_list = self._rel_list()
+      self.inv_list = self._inv_list()
 
   def has_content(self, l):
       return any(filter(lambda x: x, l))
@@ -227,3 +228,17 @@ class Patent(object):
               res.append(tmp)
           if res: break
       return res
+
+  def _inv_list(self):
+      doc = self.xml.parties.applicant
+      if not doc: return []
+      res = []
+      res.append(doc.addressbook.contents_of('last_name'))
+      res.append(doc.addressbook.contents_of('first_name'))
+      for tag in ['street','city','state','country','postcode']:
+          res.append(doc.addressbook.address.contents_of(tag))
+      res.append(doc.nationality.contents_of('country'))
+      res.append(doc.residence.contents_of('country'))
+      maxlen = max(map(len, res))
+      res = [x*maxlen if len(x) != maxlen else x for x in res]
+      return map(list, list(izip(*res)))
