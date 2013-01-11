@@ -136,6 +136,7 @@ class Patent(object):
       self.classes = self._classes()
       self.abstract = self.xml.contents_of('abstract','')
       self.invention_title = self.xml.contents_of('invention_title')[0]
+      self.asg_list = self._asg_list()
       self.cit_list = self._cit_list()
       self.rel_list = self._rel_list()
 
@@ -147,6 +148,24 @@ class Patent(object):
       further = self.xml.classification_national.contents_of('further_classification')
       it = [x[0] for x in (main,further) if self.has_content(x)]
       return [ [x[:3].replace(' ',''), x[3:].replace(' ','')] for x in it]
+
+  def _asg_list(self):
+      doc = self.xml.assignees.assignee
+      data = []
+      if not doc: return []
+      if doc.first_name:
+          data = [1]
+          data.extend(doc.contents_of('last_name'))
+          data.extend(doc.contents_of('first_name'))
+      else:
+          data = [0]
+          data.extend(doc.contents_of('orgname'))
+          data.extend(doc.contents_of('role'))
+      for tag in ['street','city','state','country','postcode']:
+          data.extend(doc.addressbook.address.contents_of(tag))
+      data.extend(doc.nationality.contents_of('country'))
+      data.extend(doc.residence.contents_of('country'))
+      return [data]
 
   #TODO: fix text encodings 
   def _cit_list(self):
