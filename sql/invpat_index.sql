@@ -1,9 +1,9 @@
-CREATE INDEX asg on invpat (Assignee);
-CREATE INDEX asg2 on invpat (AsgNum);
-CREATE INDEX gyr on invpat (Gyear);
-CREATE INDEX iNidx  ON invpat (Invnum_N);
-CREATE INDEX locc on invpat (City);
-CREATE INDEX loccs on invpat (City, State);
-CREATE INDEX locs on invpat (State);
-CREATE INDEX pdx ON invpat (Patent);
-CREATE INDEX pidx ON invpat (Patent, InvSeq);
+CREATE INDEX idx_invpat_assignee on invpat (Assignee);
+CREATE INDEX idx_invpat_asgnum on invpat (Asgnum);           
+CREATE INDEX idx_invpat_gyear on invpat (Gyear);
+CREATE INDEX idx_invpat_invnum_n on invpat (Invnum_N);
+CREATE INDEX idx_invpat_city on invpat (City);
+CREATE INDEX idx_invpat_city_state on invpat (City, State);
+CREATE INDEX idx_invpat_state on invpat (State);
+CREATE INDEX idx_invpat_patent on invpat (Patent);
+CREATE INDEX idx_invpat_patent_invseq on invpat (Patent, Invseq);
