@@ -1,8 +1,10 @@
 #!/usr/bin/env python
 
+import re
 from itertools import chain, izip
 from collections import deque
 from xml.sax import make_parser, handler, saxutils
+from cgi import escape
 
 class ChainList(list):
     """
