@@ -153,7 +153,9 @@ class Patent(object):
   def _classes(self):
       main = self.xml.classification_national.contents_of('main_classification')
       further = self.xml.classification_national.contents_of('further_classification')
-      it = [x[0] for x in (main,further) if self.has_content(x)]
+      it = [main[0] if self.has_content(main) else []]
+      if self.has_content(further):
+          it.extend(further)
       return [ [x[:3].replace(' ',''), x[3:].replace(' ','')] for x in it]
 
   def _asg_list(self):
