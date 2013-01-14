@@ -191,7 +191,14 @@ class Patent(object):
       if cits.patcit:
           for tag in ['country','doc_number','date','kind','name']:
               res.append(cits.patcit.contents_of(tag))
-          res.append( [''] * len(res[0]))
+          maxlen = max(map(len, res[1:]))
+          newres = []
+          for item in res:
+              if len(item) != maxlen:
+                  item.extend(['']*(maxlen - len(item)))
+              newres.append(item)
+          res = newres 
+          res.append( [''] * max(map(len, res)))
       contacts = map(list, list(izip(*res)))
       last_records = record[len(contacts):]
       if cits.othercit:
