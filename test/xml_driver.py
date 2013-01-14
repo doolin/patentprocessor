@@ -112,7 +112,11 @@ class XMLHandler(handler.ContentHandler):
 
     def characters(self, content):
         if content.strip():
-          self.elements[-1].content.append(saxutils.unescape(content))
+          if self.elements[-1]._name == 'sub':
+            newtxt = u"<sub>"+content+u"</sub>"
+            self.elements[-2].content.append(newtxt)
+          else:
+            self.elements[-1].content.append(saxutils.unescape(content))
 
 class Patent(object):
     
@@ -193,7 +197,7 @@ class Patent(object):
       if cits.othercit:
           for rec,cit in zip(last_records,cits.contents_of('othercit')):
               tmp = [rec, '', '', '', '' ,'']
-              s = ''.join(cit)
+              s = ''.join([self._escape_html_nosub(x) for x in cit])
               tmp.append(s)
               contacts.append(tmp)
       return contacts
