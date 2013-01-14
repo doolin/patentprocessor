@@ -168,6 +168,14 @@ class Patent(object):
       data.extend(doc.residence.contents_of('country'))
       return [data]
 
+  def _escape_html_nosub(self, string):
+      lt = re.compile('<(?!/?sub>)')
+      gt = re.compile('(?=.)*(?<!sub)>')
+      string = string.replace('&','&amp;')
+      string = re.sub(lt,"&lt;",string)
+      string = re.sub(gt,"&gt;",string)
+      return string
+
   #TODO: fix text encodings 
   def _cit_list(self):
       res = []
