@@ -14,7 +14,7 @@ from patXML import *
 basedir = os.curdir
 testdir = os.path.join(basedir, 'fixtures/unittest/fixtures/')
 xml_files = [x for x in os.listdir(testdir)
-             if re.match(r"2012_\d.xml", x) != None] # Match fixtures
+             if re.match(r"20\d\d_\d.xml", x) != None] # Match fixtures
 
 parsed_xml_old = []
 parsed_xml_new = []
