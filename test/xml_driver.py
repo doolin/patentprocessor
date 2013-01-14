@@ -86,7 +86,8 @@ class XMLElement(object):
         return filter(lambda x: x._name == name, self.children) \
                if name else \
                self.children
-    
+
+
 class XMLHandler(handler.ContentHandler):
     """
     SAX Handler to create the Python object while parsing
@@ -118,8 +119,9 @@ class XMLHandler(handler.ContentHandler):
           else:
             self.elements[-1].content.append(saxutils.unescape(content))
 
+
 class Patent(object):
-    
+
   def __init__(self, filename):
       xh = XMLHandler()
       parser = make_parser()
@@ -127,7 +129,7 @@ class Patent(object):
       parser.setFeature(handler.feature_external_ges, False)
       parser.parse(filename)
       self.xml = xh.root.us_patent_grant.us_bibliographic_data_grant
-       
+
       self.country = self.xml.publication_reference.contents_of('country')[0]
       self.patent = self.xml.publication_reference.contents_of('doc_number')[0]
       self.kind = self.xml.publication_reference.contents_of('kind')[0]
