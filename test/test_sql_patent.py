@@ -10,7 +10,6 @@ import logging
 import copy
 from xml.dom.minidom import parse, parseString
 from optparse import OptionParser
-from sql_patent import SQLPatent
 from types import *
 
 sys.path.append('../lib')
@@ -46,7 +45,6 @@ for xml in xml_files:
     for xmlclass in xmlclasses:
         parsed_xml.append(xmlclass(open(folder + xml, 'U').read()))
 
-testSQL = SQLPatent()
 
 # Logging setup
 logging.basicConfig(filename=log_file, level=logging.DEBUG)
@@ -91,8 +89,8 @@ class TestSQLPatent(unittest.TestCase):
 
     def test_patent_SQL_tblBuild_asg2(self):
         assignees = filter(lambda x: isinstance(x, AssigneeXML), parsed_xml)
-        new_table = testSQL.tblBuild(assignees, "assignee")
-        for i, table_entry in enumerate(new_table):
+        new_table = [x.build_table() for x in assignees]
+        for i, table_entry in enumerate(new_table[0]):
             for xml in parsed_xml:
                 asg_list = xml.asg_list[i]
                 self.assertTrue(len(table_entry) == 9 or not table_entry)
@@ -107,8 +105,8 @@ class TestSQLPatent(unittest.TestCase):
 
     def test_patent_SQL_tblBuild_cit(self):
         citations = filter(lambda x: isinstance(x, CitationXML), parsed_xml)
-        new_table = testSQL.tblBuild(citations, "citation")
-        for i, table_entry in enumerate(new_table):
+        new_table = [x.build_table() for x in citations]
+        for i, table_entry in enumerate(new_table[0]):
             for xml in parsed_xml:
                 cit_list = xml.cit_list[i]
                 self.assertTrue(len(table_entry) == 8 or not table_entry)
@@ -123,8 +121,8 @@ class TestSQLPatent(unittest.TestCase):
 
     def test_patent_SQL_tblBuild_class(self):
         classes = filter(lambda x: isinstance(x, ClassXML), parsed_xml)
-        new_table = testSQL.tblBuild(classes, "class")
-        for i, table_entry in enumerate(new_table):
+        new_table = [x.build_table() for x in classes]
+        for i, table_entry in enumerate(new_table[0]):
             for xml in parsed_xml:
                 class_list = xml.classes[i]
                 self.assertTrue(len(table_entry) == 4 or not table_entry)
@@ -135,8 +133,8 @@ class TestSQLPatent(unittest.TestCase):
 
     def test_patent_SQL_tblBuild_inv(self):
         inventors = filter(lambda x: isinstance(x, InventorXML), parsed_xml)
-        new_table = testSQL.tblBuild(inventors, "inventor")
-        for i, table_entry in enumerate(new_table):
+        new_table = [x.build_table() for x in inventors]
+        for i, table_entry in enumerate(new_table[0]):
             for xml in parsed_xml:
                 inv_list = xml.inv_list[i]
                 self.assertTrue(len(table_entry) == 10 or not table_entry)
@@ -152,8 +150,8 @@ class TestSQLPatent(unittest.TestCase):
 
     def test_patent_SQL_tblBuild_pat(self):
         patents = filter(lambda x: isinstance(x, PatentXML), parsed_xml)
-        new_table = testSQL.tblBuild(patents, "patent")
-        for i, table_entry in enumerate(new_table):
+        new_table = [x.build_table() for x in patents]
+        for i, table_entry in enumerate(new_table[0]):
             for xml in parsed_xml:
                 self.assertTrue(len(table_entry) == 10 or not table_entry)
                 self.assertTrue(table_entry[0] == xml.patent)
@@ -169,8 +167,8 @@ class TestSQLPatent(unittest.TestCase):
 
     def test_patent_SQL_tblBuild_patdesc(self):
         patdescs = filter(lambda x: isinstance(x, PatdescXML), parsed_xml)
-        new_table = testSQL.tblBuild(patdescs, "patdesc")
-        for i, table_entry in enumerate(new_table):
+        new_table = [x.build_table() for x in patdescs]
+        for i, table_entry in enumerate(new_table[0]):
             for xml in parsed_xml:
                 self.assertTrue(len(table_entry) == 3 or not table_entry)
                 self.assertTrue(table_entry[0] == xml.patent)
@@ -179,8 +177,8 @@ class TestSQLPatent(unittest.TestCase):
 
     def test_patent_SQL_tblBuild_lawyer(self):
         lawyers = filter(lambda x: isinstance(x, LawyerXML), parsed_xml)
-        new_table = testSQL.tblBuild(lawyers, "lawyer")
-        for i, table_entry in enumerate(new_table):
+        new_table = [x.build_table() for x in lawyers]
+        for i, table_entry in enumerate(new_table[0]):
             for xml in parsed_xml:
                 law_list = xml.law_list[i]
                 self.assertTrue(len(table_entry) == 6 or not table_entry)
@@ -192,8 +190,8 @@ class TestSQLPatent(unittest.TestCase):
 
     def test_patent_SQL_tblBuild_sciref(self):
         scirefs = filter(lambda x: isinstance(x, ScirefXML), parsed_xml)
-        new_table = testSQL.tblBuild(scirefs, "sciref")
-        for i, table_entry in enumerate(new_table):
+        new_table = [x.build_table() for x in scirefs]
+        for i, table_entry in enumerate(new_table[0]):
             for xml in parsed_xml:
                 cit_list = [y for y in xml.cit_list if y[1]==""][i]
                 self.assertTrue(len(table_entry) == 3 or not table_entry)
@@ -202,8 +200,8 @@ class TestSQLPatent(unittest.TestCase):
 
     def test_patent_SQL_tblBuild_usreldoc(self):
         usreldocs = filter(lambda x: isinstance(x, UsreldocXML), parsed_xml)
-        new_table = testSQL.tblBuild(usreldocs, "usreldoc")
-        for i, table_entry in enumerate(new_table):
+        new_table = [x.build_table() for x in usreldocs]
+        for i, table_entry in enumerate(new_table[0]):
             for xml in parsed_xml:
                 rel_list = [y for y in xml.rel_list if y[1]==""][i]
                 self.assertTrue(len(table_entry) == 7 or not table_entry)
