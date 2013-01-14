@@ -257,7 +257,10 @@ class Patent(object):
       res.append(doc.addressbook.contents_of('last_name'))
       res.append(doc.addressbook.contents_of('first_name'))
       for tag in ['street','city','state','country','postcode']:
-          res.append(doc.addressbook.address.contents_of(tag))
+          data = doc.addressbook.address.contents_of(tag)
+          if any(map(lambda x: isinstance(x, list), data)):
+              data = [''.join(x) for x in data]
+          res.append(data)
       res.append(doc.nationality.contents_of('country'))
       res.append(doc.residence.contents_of('country'))
       maxlen = max(map(len, res))
