@@ -27,7 +27,6 @@ regex = re.compile(r"""
 [<][/]us[-]patent[-]grant[>])    #and here is the end tag
 """, re.I+re.S+re.X)
 
-# TODO: write unittests
 def list_files(directories, patentroot, xmlregex):
     """
     Returns listing of all files within all directories relative to patentroot
