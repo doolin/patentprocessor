@@ -46,7 +46,7 @@ def parse_file(filename):
 
 def parallel_parse(filelist):
     pool = multiprocessing.Pool(multiprocessing.cpu_count())
-    return pool.imap_unordered(parse_file, filelist)
+    return itertools.chain(*pool.imap_unordered(parse_file, filelist))
 
 
 # setup argparse
@@ -100,7 +100,6 @@ logging.info("Total files: %d" % (len(files)))
 
 # list of parsed xml strings
 parsed_xmls = parallel_parse(files)
-logging.info("   - Total Patents: %d" % (len(parsed_xmls._items)))
 
 xmlclasses = [AssigneeXML, CitationXML, ClassXML, InventorXML, \
               PatentXML, PatdescXML, LawyerXML, ScirefXML, UsreldocXML]
