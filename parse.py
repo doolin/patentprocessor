@@ -14,12 +14,8 @@ import itertools
 import sys
 sys.path.append( '.' )
 sys.path.append( './lib/' )
-# TODO: remove shutil import
-import shutil
 
 from patXML import *
-# TODO: remove fwork import
-from fwork  import *
 
 regex = re.compile(r"""
  ([<][?]xml[ ]version.*?[>]       #all XML starts with ?xml
