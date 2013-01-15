@@ -110,6 +110,9 @@ if __name__ == '__main__':
     total_count = 0
     total_patents = 0
 
+    if not parsed_xmls:
+        parsed_xmls = ['']
+
     for us_patent_grant in parsed_xmls[0]:
 
         xmllist = []
