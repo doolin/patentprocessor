@@ -33,7 +33,7 @@ def list_files(directories, patentroot, xmlregex):
     files = [patentroot+'/'+directory+'/'+fi for directory in directories for fi in \
             os.listdir(patentroot+'/'+directory) \
             if re.search(xmlregex, fi, re.I) != None]
-    print files
+    logging.info("   - Total Patents: %d" % (len(files)))
     return files
 
 def parse_file(filename):
