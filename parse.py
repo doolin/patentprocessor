@@ -14,9 +14,11 @@ import itertools
 import sys
 sys.path.append( '.' )
 sys.path.append( './lib/' )
+# TODO: remove shutil import
 import shutil
 
 from patXML import *
+# TODO: remove fwork import
 from fwork  import *
 
 regex = re.compile(r"""
@@ -25,6 +27,7 @@ regex = re.compile(r"""
 [<][/]us[-]patent[-]grant[>])    #and here is the end tag
 """, re.I+re.S+re.X)
 
+# TODO: write unittests
 def list_files(directories, patentroot, xmlregex):
     """
     Returns listing of all files within all directories relative to patentroot
@@ -52,6 +55,7 @@ def parallel_parse(filelist):
 #TODO: pull out modular functionality into unittest-able methods
 if __name__ == '__main__':
 
+    # TODO: extract all argument parsing into fxn (in its own file)
     # setup argparse
     parser = argparse.ArgumentParser(description=\
             'Specify source directory/directories for xml files to be parsed')
@@ -101,18 +105,23 @@ if __name__ == '__main__':
     files = list_files(DIRECTORIES, PATENTROOT, XMLREGEX)
     logging.info("Total files: %d" % (len(files)))
 
+    # TODO: extract into function
     # list of parsed xml strings
     parsed_xmls = parallel_parse(files)
 
+    # TODO: put into configuration file (low priority)
     xmlclasses = [AssigneeXML, CitationXML, ClassXML, InventorXML, \
                   PatentXML, PatdescXML, LawyerXML, ScirefXML, UsreldocXML]
 
     total_count = 0
     total_patents = 0
 
+    # TODO: think of better fix (return empty list from parallel_parse if we don't have files,
+    #       but this should be related to https://github.com/funginstitute/patentprocessor/issues/7)
     if not parsed_xmls:
         parsed_xmls = ['']
 
+    # TODO: extract parse_patent method
     for us_patent_grant in parsed_xmls[0]:
 
         xmllist = []
@@ -133,6 +142,7 @@ if __name__ == '__main__':
         total_count += count
         total_patents += patents
 
+        # TODO: (extract) build_tables on parsed patents
         for patent in xmllist:
             patent.insert_table()
 
