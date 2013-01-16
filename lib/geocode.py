@@ -161,24 +161,28 @@ c.executescript("""
     """)
 print datetime.datetime.now()
 
-c.executescript("""
-    CREATE TABLE IF NOT EXISTS locMerge (
-        Mtch INTEGER,
-        Val FLOAT,          Cnt INTEGER,
-        City VARCHAR,       State VARCHAR,
-        Country VARCHAR,    Zipcode VARCHAR,
 
-        NCity VARCHAR,     NState VARCHAR,
-        NCountry VARCHAR,  NZipcode VARCHAR,
-        NLat FLOAT,        NLong FLOAT,
-        City3 VARCHAR,
-        UNIQUE(City, State, Country, Zipcode));
-    CREATE INDEX IF NOT EXISTS okM_idxCC ON locMerge (City,Country);
-    CREATE INDEX IF NOT EXISTS okM_idx   ON locMerge (City,State,Country,Zipcode);
-    CREATE INDEX IF NOT EXISTS okM_idxCS ON locMerge (City,State);
-    CREATE INDEX IF NOT EXISTS okM_idx3  ON locMerge (City3,State,Country);
-    """)
+def create_locMerge_table(conn):
+    conn.executescript("""
+        CREATE TABLE IF NOT EXISTS locMerge (
+            Mtch INTEGER,
+            Val FLOAT,          Cnt INTEGER,
+            City VARCHAR,       State VARCHAR,
+            Country VARCHAR,    Zipcode VARCHAR,
 
+            NCity VARCHAR,     NState VARCHAR,
+            NCountry VARCHAR,  NZipcode VARCHAR,
+            NLat FLOAT,        NLong FLOAT,
+            City3 VARCHAR,
+            UNIQUE(City, State, Country, Zipcode));
+        CREATE INDEX IF NOT EXISTS okM_idxCC ON locMerge (City,Country);
+        CREATE INDEX IF NOT EXISTS okM_idx   ON locMerge (City,State,Country,Zipcode);
+        CREATE INDEX IF NOT EXISTS okM_idxCS ON locMerge (City,State);
+        CREATE INDEX IF NOT EXISTS okM_idx3  ON locMerge (City3,State,Country);
+        """)
+
+
+create_locMerge_table(c)
 
 # TODO: Unit test this so that it and the unit test can be
 # eliminated in a future redesign.
