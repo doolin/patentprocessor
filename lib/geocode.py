@@ -5,7 +5,14 @@
 ##    CREATE INDEX IF NOT EXISTS idx_ctc0 ON gnsloc (SORT_NAME, CC1);
 
 import datetime, csv, os, re, sqlite3
-from fwork import *
+
+#from fwork import *
+# We need to import these one at a time because many of these functions are
+# duplicated in multiple places. That is, there are 3 or 4 identical or
+# slightly different versions located in a different files.
+from fwork import jarow
+from fwork import cityctry
+from fwork import tblExist
 
 def sep_wrd(word, seq):
     if seq==-1:
