@@ -81,18 +81,18 @@ class TestParseFile(unittest.TestCase):
     
     def test_list_files(self):
         patentroot = '.'
-        testdir = [os.path.join(basedir, './fixtures/unittest/fixtures')]
-        xmlregex = r'2012_\d.xml'
+        testdir = [os.path.join(basedir, './fixtures/xml')]
+        xmlregex = r'ipg120327.one.xml'
         files = parse.list_files(testdir, patentroot, xmlregex)
         self.assertTrue(isinstance(files, list))
-        self.assertTrue(len(files) == 9)
+        self.assertTrue(len(files) == 1)
         self.assertTrue(all(filter(lambda x: isinstance(x, str), files)))
         self.assertTrue(all(map(lambda x: os.path.exists(x), files)))
 
     def test_parse_patent(self):
         patentroot = '.'
-        testdir = [os.path.join(basedir, './fixtures/unittest/fixtures')]
-        xmlregex = r'2012_\d.xml'
+        testdir = [os.path.join(basedir, './fixtures/xml')]
+        xmlregex = r'ipg120327.one.xml'
         filelist = parse.list_files(testdir, patentroot, xmlregex)
         grant_list = parse.parallel_parse(filelist)
         parsed_grants = parse.parse_patent(grant_list)

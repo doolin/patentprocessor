@@ -8,7 +8,7 @@ import subprocess
 
 # Setup test files and logs
 dir = os.path.dirname(__file__)
-testdir = os.path.join(dir, '/test/fixtures/unittest/fixtures')
+testdir = os.path.join(dir, '/test/fixtures/xml')
 log_file = os.path.join(dir, './fixtures/unittest/unit-test.log')
 
 # Logging setup
@@ -64,7 +64,7 @@ class TestPatentConfig(unittest.TestCase):
         # test that argparse is setting the regular expression correctly
         # test valid regex on unittest/fixtures folder
         exit_status = subprocess.call("python parse.py \
-                --patentroot %s --xmlregex '2012_\d.xml'" % \
+                --patentroot %s --xmlregex 'ipg120327.one.xml'" % \
                 (os.getcwd() + testdir), \
                 stdout=self.null_out, shell=True)
         self.assertTrue(exit_status == 0)
@@ -80,7 +80,7 @@ class TestPatentConfig(unittest.TestCase):
 
         # parse.py should concatentate the correct directory and find xml files
         exit_status = subprocess.call("python parse.py --patentroot %s \
-                --directory %s --xmlregex '2012_\d.xml'" % \
+                --directory %s --xmlregex 'ipg120327.one.xml'" % \
                 (os.getcwd() + base, top), stdout=self.null_out, shell=True)
         self.assertTrue(exit_status == 0)
 
