@@ -30,7 +30,6 @@ conn.create_function("rev_wrd",   2, lambda x,y:x.upper()[::-1][:y])
 
 c.executescript("""
     PRAGMA CACHE_SIZE=20000;
-
     ATTACH DATABASE 'assignee.sqlite3' AS asg;
     ATTACH DATABASE 'inventor.sqlite3' AS inv;
     ATTACH DATABASE 'loctbl'   AS loc;
@@ -55,8 +54,12 @@ c.executescript("""
     DROP INDEX IF EXISTS loc3_idxCC;
     """)
 
+
+
 if not(tblExist(c, "locMerge")):
+
     print datetime.datetime.now()
+
     c.executescript("""
         CREATE TEMPORARY TABLE temp AS
             SELECT  Upper(City) as CityX, Upper(State) as StateX,
@@ -71,7 +74,7 @@ if not(tblExist(c, "locMerge")):
               FROM  temp
              WHERE  CityY!=""
           GROUP BY  CityY, StateY, CtryY;
-        INSERT OR REPLACE INTO loc 
+        INSERT OR REPLACE INTO loc
             SELECT  a.*, SUBSTR(CityY,1,3), b.NewCity, b.NewState, b.NewCountry
               FROM  temp2 AS a
          LEFT JOIN  loc.typos AS b
@@ -115,6 +118,9 @@ if not(tblExist(c, "locMerge")):
         """)
 
     print datetime.datetime.now()
+
+## End of if block
+
 
 c.executescript("""
     CREATE TABLE IF NOT EXISTS usloc AS
@@ -160,6 +166,8 @@ c.executescript("""
     CREATE INDEX IF NOT EXISTS okM_idx3  ON locMerge (City3,State,Country);
     """)
 
+
+# TODO: Unit test extensively.
 def replace_loc(script):
     #ALLOWS US TO REPLACE THE PREV LOC DATASET
     c.executescript("""
@@ -411,7 +419,7 @@ replace_loc("""
               WHERE  NCity IS NOT NULL) AS a
 INNER JOIN  loc.gnsloc AS b
         ON  SUBSTR(BLK_SPLIT(a.NCity),1,3)=b.sort_name_ro AND a.Ncountry=b.cc1
-     WHERE  jaro>%s 
+     WHERE  jaro>%s
   ORDER BY  a.NCity, a.NCountry, jaro;
     """ % "24.95")
 
