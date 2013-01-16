@@ -14,6 +14,11 @@ basedir = os.path.dirname(__file__)
 testdir = os.path.join(basedir, './fixtures/xml/')
 testfileone = 'ipg120327.one.xml'
 testfiletwo = 'ipg120327.two.xml'
+regex = re.compile(r"""
+ ([<][?]xml[ ]version.*?[>]       #all XML starts with ?xml
+.*?
+[<][/]us[-]patent[-]grant[>])    #and here is the end tag
+""", re.I+re.S+re.X)
 xmlclasses = [AssigneeXML, CitationXML, ClassXML, InventorXML, \
               PatentXML, PatdescXML, LawyerXML, ScirefXML, UsreldocXML]
 
@@ -27,6 +32,7 @@ class TestParseFile(unittest.TestCase):
         self.assertTrue(isinstance(parsed_output, list))
         self.assertTrue(len(parsed_output) == 1)
         self.assertTrue(isinstance(parsed_output[0], str))
+        self.assertTrue(regex.match(parsed_output[0]))
 
     def test_parallel_parse_one(self):
         filelist = [testdir+testfileone]
@@ -36,6 +42,7 @@ class TestParseFile(unittest.TestCase):
         self.assertTrue(isinstance(parsed_output[0],list))
         self.assertTrue(len(parsed_output[0]) == 1)
         self.assertTrue(isinstance(parsed_output[0][0], str))
+        self.assertTrue(regex.match(parsed_output[0]))
 
     def test_parse_file_two(self):
         parsed_output = parse.parse_file(testdir+testfiletwo)
@@ -43,6 +50,8 @@ class TestParseFile(unittest.TestCase):
         self.assertTrue(len(parsed_output) == 2)
         self.assertTrue(isinstance(parsed_output[0], str))
         self.assertTrue(isinstance(parsed_output[1], str))
+        self.assertTrue(regex.match(parsed_output[0]))
+        self.assertTrue(regex.match(parsed_output[1]))
 
     def test_parallel_parse_two(self):
         filelist = [testdir+testfiletwo]
@@ -53,6 +62,8 @@ class TestParseFile(unittest.TestCase):
         self.assertTrue(len(parsed_output[0]) == 2)
         self.assertTrue(isinstance(parsed_output[0][0], str))
         self.assertTrue(isinstance(parsed_output[0][1], str))
+        self.assertTrue(regex.match(parsed_output[0]))
+        self.assertTrue(regex.match(parsed_output[1]))
     
     def test_use_parallel_parse_one(self):
         filelist = [testdir+testfileone]
