@@ -81,31 +81,36 @@ s.commit()
 print "DONE: Asg Locationize!", "\n   -", datetime.datetime.now()-t1
 s.close()
 
+
+
  ###########################
 ###                       ###
 ##     I N V E N T O R     ##
 ###                       ###
  ###########################
 
-## Clean inventor: ascit(Firstname, Lastname, Street)
-## Create new table inventor_1 to hold prepped data
+def handle_inventor():
 
-i = SQLite.SQLite(db = 'inventor.sqlite3', tbl = 'inventor_1')
-i.conn.create_function("ascit", 1, ascit)
-i.conn.create_function("cc", 3, locFunc.cityctry)
-i.c.execute('drop table if exists inventor_1')
-i.replicate(tableTo = 'inventor_1', table = 'inventor')
-i.c.execute('insert or ignore into inventor_1 select * from inventor  %s' % (debug and "LIMIT 2500" or ""))
+    ## Clean inventor: ascit(Firstname, Lastname, Street)
+    ## Create new table inventor_1 to hold prepped data
 
-i.c.execute("""update inventor_1 set firstname = ascit(firstname), lastname = ascit(lastname), street = ascit(street), City = cc(city, country, 'city'), Country = cc(city, country, 'ctry');""")
-i.commit()
+    i = SQLite.SQLite(db = 'inventor.sqlite3', tbl = 'inventor_1')
+    i.conn.create_function("ascit", 1, ascit)
+    i.conn.create_function("cc", 3, locFunc.cityctry)
+    i.c.execute('drop table if exists inventor_1')
+    i.replicate(tableTo = 'inventor_1', table = 'inventor')
+    i.c.execute('insert or ignore into inventor_1 select * from inventor  %s' % (debug and "LIMIT 2500" or ""))
 
-i.attach('hashTbl.sqlite3')
-i.merge(key=['NCity', 'NState', 'NCountry', 'NZipcode', 'NLat', 'NLong'], on=['City', 'State', 'Country'], tableFrom='locMerge', db='db')
-i.merge(key=['NCity', 'NState', 'NCountry', 'NZipcode', 'NLat', 'NLong'], on=['City', 'State', 'Country', 'Zipcode'], tableFrom='locMerge', db='db')
-i.commit()
-i.close()
-print "DONE: Inv Locationize!", "\n   -", datetime.datetime.now()-t1
+    i.c.execute("""update inventor_1 set firstname = ascit(firstname), lastname = ascit(lastname), street = ascit(street), City = cc(city, country, 'city'), Country = cc(city, country, 'ctry');""")
+    i.commit()
+
+    i.attach('hashTbl.sqlite3')
+    i.merge(key=['NCity', 'NState', 'NCountry', 'NZipcode', 'NLat', 'NLong'], on=['City', 'State', 'Country'], tableFrom='locMerge', db='db')
+    i.merge(key=['NCity', 'NState', 'NCountry', 'NZipcode', 'NLat', 'NLong'], on=['City', 'State', 'Country', 'Zipcode'], tableFrom='locMerge', db='db')
+    i.commit()
+    i.close()
+    print "DONE: Inv Locationize!", "\n   -", datetime.datetime.now()-t1
+
 
  ###########################
 ###                       ###
@@ -115,9 +120,12 @@ print "DONE: Inv Locationize!", "\n   -", datetime.datetime.now()-t1
 
 # Clean up classes
 # see CleanDataSet.py --> classes()
+# FIXME: Module importing not allowed in function.
 from CleanDataset import *
 classes()
 print "DONE: Classes!", "\n   -", datetime.datetime.now()-t1
+
+
 
  ###########################
 ###                       ###
@@ -125,9 +133,14 @@ print "DONE: Classes!", "\n   -", datetime.datetime.now()-t1
 ###                       ###
  ###########################
 
-p = SQLite.SQLite(db = 'patent.sqlite3', tbl = 'patent')
-p.conn.create_function('dVert', 1, dateVert)
-p.c.execute("""update patent set AppDate=dVert(AppDate), GDate=dVert(GDate);""")
-p.commit()
-p.close()
-print "DONE: Patent Date!", "\n   -", datetime.datetime.now()-t1
+def handle_patent():
+    p = SQLite.SQLite(db = 'patent.sqlite3', tbl = 'patent')
+    p.conn.create_function('dVert', 1, dateVert)
+    p.c.execute("""update patent set AppDate=dVert(AppDate), GDate=dVert(GDate);""")
+    p.commit()
+    p.close()
+    print "DONE: Patent Date!", "\n   -", datetime.datetime.now()-t1
+
+
+handle_inventor()
+handle_patent()
