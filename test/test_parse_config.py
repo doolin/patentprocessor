@@ -49,11 +49,13 @@ class TestPatentConfig(unittest.TestCase):
         # valid directory, but no xml files
         self.assertTrue(exit_status == 0)
 
+    def test_argparse_invalid_directory(self):
         exit_status = subprocess.call('python parse.py --patentroot /asdf', \
                 stdout=self.null_out, shell=True)
         # specify invalid directory, should not have any files, but still pass
         self.assertTrue(exit_status == 0)
 
+    def test_argparse_valid_directory(self):
         # test a working, valid directory
         exit_status = subprocess.call('python parse.py --patentroot %s' % \
                 (os.environ['PATENTROOT']), stdout=self.null_out, shell=True)
