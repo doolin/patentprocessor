@@ -190,6 +190,34 @@ create_locMerge_table(c)
 def table_temp1_has_rows(conn):
     return conn.execute("SELECT count(*) FROM temp1").fetchone()[0] > 0
 
+# TODO: Find a way to unit test this set of queries
+def create_loc_and_locmerge_tables(conn):
+    conn.executescript("""
+        CREATE TEMPORARY TABLE temp2 AS
+            SELECT  count(*) as cnt, CityA, StateA, CountryA, ZipcodeA
+              FROM  temp1
+          GROUP BY  CityA, StateA, CountryA, ZipcodeA;
+        CREATE INDEX IF NOT EXISTS t1_idx ON temp1 (CityA, StateA, CountryA, ZipcodeA);
+        CREATE INDEX IF NOT EXISTS t2_idx ON temp2 (CityA, StateA, CountryA, ZipcodeA);
+        INSERT OR REPLACE INTO locMerge
+            SELECT  b.cnt, a.*, SUBSTR(a.CityA,1,3)
+              FROM  temp1 AS a
+        INNER JOIN  temp2 AS b
+                ON  a.CityA=b.CityA AND a.StateA=b.StateA AND a.CountryA=b.CountryA AND a.ZipcodeA=b.ZipcodeA;
+        CREATE TEMPORARY TABLE temp3 AS
+            SELECT  a.*
+              FROM  LOC AS a LEFT JOIN locMerge AS b
+                ON  a.City=b.City AND a.State=b.State AND a.Country=b.Country AND a.Zipcode=b.Zipcode
+             WHERE  b.Zipcode IS NULL;
+        DROP TABLE IF EXISTS loc;
+        CREATE TABLE loc AS SELECT * FROM temp3;
+        CREATE INDEX IF NOT EXISTS loc_idxCC ON loc (City, Country);
+        CREATE INDEX IF NOT EXISTS loc_idx   ON loc (City, State, Country, Zipcode);
+        CREATE INDEX IF NOT EXISTS loc_idxCS ON loc (City, State);
+        DROP TABLE IF EXISTS temp2;
+        DROP TABLE IF EXISTS temp3;
+          """)
+
 
 # TODO: Unit test extensively.
 def replace_loc(script):
@@ -212,31 +240,7 @@ def replace_loc(script):
     # handling the conditional expression for the if block.
     #if c.execute("SELECT count(*) FROM temp1").fetchone()[0]>0:
     if table_temp1_has_rows(c):
-        c.executescript("""
-            CREATE TEMPORARY TABLE temp2 AS
-                SELECT  count(*) as cnt, CityA, StateA, CountryA, ZipcodeA
-                  FROM  temp1
-              GROUP BY  CityA, StateA, CountryA, ZipcodeA;
-            CREATE INDEX IF NOT EXISTS t1_idx ON temp1 (CityA, StateA, CountryA, ZipcodeA);
-            CREATE INDEX IF NOT EXISTS t2_idx ON temp2 (CityA, StateA, CountryA, ZipcodeA); 
-            INSERT OR REPLACE INTO locMerge
-                SELECT  b.cnt, a.*, SUBSTR(a.CityA,1,3)
-                  FROM  temp1 AS a
-            INNER JOIN  temp2 AS b
-                    ON  a.CityA=b.CityA AND a.StateA=b.StateA AND a.CountryA=b.CountryA AND a.ZipcodeA=b.ZipcodeA;
-            CREATE TEMPORARY TABLE temp3 AS
-                SELECT  a.*
-                  FROM  LOC AS a LEFT JOIN locMerge AS b
-                    ON  a.City=b.City AND a.State=b.State AND a.Country=b.Country AND a.Zipcode=b.Zipcode
-                 WHERE  b.Zipcode IS NULL;
-            DROP TABLE IF EXISTS loc;
-            CREATE TABLE loc AS SELECT * FROM temp3;
-            CREATE INDEX IF NOT EXISTS loc_idxCC ON loc (City, Country);
-            CREATE INDEX IF NOT EXISTS loc_idx   ON loc (City, State, Country, Zipcode);
-            CREATE INDEX IF NOT EXISTS loc_idxCS ON loc (City, State);
-            DROP TABLE IF EXISTS temp2;
-            DROP TABLE IF EXISTS temp3;
-              """)
+        create_loc_and_locmerge_tables(c)
         VarX = c.execute("select count(*) from loc").fetchone()[0]
         VarY = c.execute("select count(*) from locMerge").fetchone()[0]
         print " - Loc =", VarX, " OkM =", VarY, " Total =", VarX+VarY, "  ", datetime.datetime.now()
