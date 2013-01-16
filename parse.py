@@ -36,7 +36,6 @@ def list_files(directories, patentroot, xmlregex):
     files = [patentroot+'/'+directory+'/'+fi for directory in directories for fi in \
             os.listdir(patentroot+'/'+directory) \
             if re.search(xmlregex, fi, re.I) != None]
-    logging.info("   - Total Patents: %d" % (len(files)))
     return files
 
 def parse_file(filename):
@@ -114,18 +113,19 @@ if __name__ == '__main__':
 
     #get a listing of all files within the directory that follow the naming pattern
     files = list_files(DIRECTORIES, PATENTROOT, XMLREGEX)
-    logging.info("Total files: %d" % (len(files)))
 
     parsed_xmls = parallel_parse(files)
     parsed_grants = parse_patent(parsed_xmls)
 
-    total_count = 0
-    total_patents = 0
+    total_patents = len(parsed_xmls)
+    total_errors = len(parsed_xmls) * len(xmlclasses) - len(parsed_grants)
 
     # TODO: (extract) build_tables on parsed patents
     for patent in parsed_grants:
         patent.insert_table()
 
-    logging.info("   - %s", datetime.datetime.now()-t1)
-    logging.info("   - total errors: %d", total_count)
-    logging.info("   - total patents: %d", total_patents)
+    logging.info("Parsing started at %s", str(datetime.datetime.today()))
+    logging.info("Time Elapsed: %s", datetime.datetime.now()-t1)
+    logging.info("Total Patent Files: %d" % (len(files)))
+    logging.info("Total Errors: %d", total_errors)
+    logging.info("Total Patents: %d", total_patents)
