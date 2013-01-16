@@ -118,6 +118,7 @@ if __name__ == '__main__':
     # TODO: extract into function
     # list of parsed xml strings
     parsed_xmls = parallel_parse(files)
+    parsed_grants = parse_patent(parsed_xmls)
 
     # TODO: put into configuration file (low priority)
     xmlclasses = [AssigneeXML, CitationXML, ClassXML, InventorXML, \
@@ -126,36 +127,10 @@ if __name__ == '__main__':
     total_count = 0
     total_patents = 0
 
-    # TODO: think of better fix (return empty list from parallel_parse if we don't have files,
-    #       but this should be related to https://github.com/funginstitute/patentprocessor/issues/7)
-    if not parsed_xmls:
-        parsed_xmls = ['']
+    # TODO: (extract) build_tables on parsed patents
+    for patent in parsed_grants:
+        patent.insert_table()
 
-    # TODO: extract parse_patent method
-    for us_patent_grant in parsed_xmls:
-
-        xmllist = []
-        count = 0
-        patents = 0
-
-        for xmlclass in xmlclasses:
-            try:
-                xmllist.append(xmlclass(us_patent_grant))
-                patents += 1
-            except Exception as inst:
-                logging.error(type(inst))
-                logging.error("  - Error: %s %s" % (us_patent_grant, us_patent_grant[175:200]))
-                count += 1
-
-        logging.info("   - number of patents: %d %s ", len(xmllist), datetime.datetime.now()-t1)
-        logging.info( "   - number of errors: %d", count)
-        total_count += count
-        total_patents += patents
-
-        # TODO: (extract) build_tables on parsed patents
-        for patent in xmllist:
-            patent.insert_table()
-
-        logging.info("   - %s", datetime.datetime.now()-t1)
-        logging.info("   - total errors: %d", total_count)
-        logging.info("   - total patents: %d", total_patents)
+    logging.info("   - %s", datetime.datetime.now()-t1)
+    logging.info("   - total errors: %d", total_count)
+    logging.info("   - total patents: %d", total_patents)
