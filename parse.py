@@ -45,7 +45,8 @@ def parse_file(filename):
 def parallel_parse(filelist):
     pool = multiprocessing.Pool(multiprocessing.cpu_count())
     parsed = pool.imap_unordered(parse_file, filelist)
-    return list(parsed)
+    return list(itertools.chain.from_iterable(parsed))
+
 
 #TODO: pull out modular functionality into unittest-able methods
 if __name__ == '__main__':
