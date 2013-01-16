@@ -98,8 +98,6 @@ class TestParseFile(unittest.TestCase):
         parsed_grants = parse.parse_patent(grant_list)
         self.assertTrue(len(parsed_grants) == len(grant_list)*len(xmlclasses))
 
-        
-
 
 if __name__ == '__main__':
     unittest.main()
