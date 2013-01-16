@@ -35,6 +35,11 @@ c.executescript("""
     ATTACH DATABASE 'loctbl'   AS loc;
     """)
 
+
+# TODO: Ensure this is the correct schema, that is, the
+# schema below needs to match the schema in the existing
+# loc table. If it doesn't match, we need to find out
+# why, and figure out what to do about that.
 c.executescript("""
  /* DROP TABLE IF EXISTS loc; */
     CREATE TABLE IF NOT EXISTS loc (
@@ -191,7 +196,9 @@ def replace_loc(script):
         CREATE TEMPORARY TABLE temp1 AS %s;
         CREATE INDEX IF NOT EXISTS tmp1_idx ON temp1 (CityA, StateA, CountryA, ZipcodeA);;
         """ % script)
-    # TODO: Refactor into its own function, unit test
+    # TODO: Refactor into its own function, unit test.
+    # Also, consider deleting, as these do not appear to be
+    # used anywhere in the code.
     field = ["[%s]" % x[1] for x in c.execute("PRAGMA TABLE_INFO(temp1)")][2:6]
     var_f = ",".join(field)
 
@@ -233,6 +240,7 @@ def replace_loc(script):
 
 
 print "Loc =", c.execute("select count(*) from loc").fetchone()[0]
+
 for scnt in range(-1, c.execute("select max(sep_cnt(city)) from loc").fetchone()[0]+1):
     sep = scnt
     print "------", scnt, "------"
@@ -362,6 +370,10 @@ for scnt in range(-1, c.execute("select max(sep_cnt(city)) from loc").fetchone()
 ####            ON  SEP_WRD(a.City, %d)=b.city AND a.country=b.state
 ####         WHERE  SEP_CNT(a.City)>=%d AND a.City!="";
 ####        """ % (sep, scnt))
+
+### End of for loop
+
+
 
 print "------ F ------"
 ##DOMESTIC (2nd LAYER)
