@@ -118,10 +118,6 @@ if __name__ == '__main__':
     parsed_xmls = parallel_parse(files)
     parsed_grants = parse_patent(parsed_xmls)
 
-    # TODO: put into configuration file (low priority)
-    xmlclasses = [AssigneeXML, CitationXML, ClassXML, InventorXML, \
-                  PatentXML, PatdescXML, LawyerXML, ScirefXML, UsreldocXML]
-
     total_count = 0
     total_patents = 0
 
