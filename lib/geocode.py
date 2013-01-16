@@ -80,6 +80,7 @@ def fix_city_country(conn):
         DROP TABLE  temp2;
         """)
 
+# TODO: Find a way to unit test fix_state_zip
 def fix_state_zip(conn):
     conn.executescript("""
         CREATE TEMPORARY TABLE temp AS
@@ -104,6 +105,8 @@ def fix_state_zip(conn):
         DROP TABLE  temp2;
         """)
 
+# TODO: Find a way to ensure that the correct indexes are created as
+# the schemas change.
 def create_loc_indexes(conn):
     conn.executescript("""
         CREATE INDEX IF NOT EXISTS loc_idCC3 ON loc (City3,State,Country);
