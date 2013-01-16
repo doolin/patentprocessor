@@ -66,21 +66,24 @@ s.commit()
 
 # TODO: Refactor to function
 ### Run orgClean.py and generate grp
-org = orgClean.orgClean(db = 'assignee.sqlite3', fld = 'assigneeAsc', table = 'assignee_1', other = "")
-org.disambig()
-print"DONE: orgClean"
-#print "   -", datetime.datetime.now()-t1
 
-# Copy assignee num from grp to assignee table
-s.merge(key=[['AsgNum', 'AsgNum2']], on=['AssigneeAsc'], tableFrom='grp')
-print "DONE: Replaced Asgnum!", "\n   -", datetime.datetime.now()-t1
-s.c.execute("""update assignee_1 set City = cc(city, country, 'city'), Country = cc(city, country, 'ctry');""")
-s.attach('hashTbl.sqlite3')
-s.merge(key=['NCity', 'NState', 'NCountry', 'NZipcode', 'NLat', 'NLong'], on=['City', 'State', 'Country'], tableFrom='locMerge', db='db')
-s.commit()
-print "DONE: Asg Locationize!", "\n   -", datetime.datetime.now()-t1
-s.close()
+def run_org_clean():
+    org = orgClean.orgClean(db = 'assignee.sqlite3', fld = 'assigneeAsc', table = 'assignee_1', other = "")
+    org.disambig()
+    print"DONE: orgClean"
+    #print "   -", datetime.datetime.now()-t1
 
+    # Copy assignee num from grp to assignee table
+    s.merge(key=[['AsgNum', 'AsgNum2']], on=['AssigneeAsc'], tableFrom='grp')
+    print "DONE: Replaced Asgnum!", "\n   -", datetime.datetime.now()-t1
+    s.c.execute("""update assignee_1 set City = cc(city, country, 'city'), Country = cc(city, country, 'ctry');""")
+    s.attach('hashTbl.sqlite3')
+    s.merge(key=['NCity', 'NState', 'NCountry', 'NZipcode', 'NLat', 'NLong'], on=['City', 'State', 'Country'], tableFrom='locMerge', db='db')
+    s.commit()
+    print "DONE: Asg Locationize!", "\n   -", datetime.datetime.now()-t1
+    s.close()
+
+run_org_clean()
 
 
  ###########################
@@ -110,6 +113,8 @@ def handle_inventor():
     i.commit()
     i.close()
     print "DONE: Inv Locationize!", "\n   -", datetime.datetime.now()-t1
+
+handle_inventor()
 
 
  ###########################
@@ -141,6 +146,4 @@ def handle_patent():
     p.close()
     print "DONE: Patent Date!", "\n   -", datetime.datetime.now()-t1
 
-
-handle_inventor()
 handle_patent()
