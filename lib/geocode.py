@@ -14,6 +14,8 @@ from fwork import jarow
 from fwork import cityctry
 from fwork import tblExist
 
+# Extract to its own file and unit test.
+# Later, this may be able to go into fwork
 def sep_wrd(word, seq):
     if seq==-1:
         return word
