@@ -89,6 +89,15 @@ class TestParseFile(unittest.TestCase):
         self.assertTrue(all(filter(lambda x: isinstance(x, str), files)))
         self.assertTrue(all(map(lambda x: os.path.exists(x), files)))
 
+    def test_parse_patent(self):
+        patentroot = '.'
+        testdir = [os.path.join(basedir, './fixtures/unittest/fixtures')]
+        xmlregex = r'2012_\d.xml'
+        filelist = parse.list_files(testdir, patentroot, xmlregex)
+        grant_list = parse.parallel_parse(filelist)
+        parsed_grants = parse.parse_patent(grant_list)
+        self.assertTrue(len(parsed_grants) == len(grant_list)*len(xmlclasses))
+
         
 
 
