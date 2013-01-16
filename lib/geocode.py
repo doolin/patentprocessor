@@ -228,6 +228,11 @@ def create_loc_and_locmerge_tables(conn):
           """)
 
 
+# This should be the end of the setup, and all the above should be able
+# to go into its own file and be imported into this script. One benefit
+# of separating it out may be to allow much easier unit testing for the
+# location matching which follows.
+
 # TODO: Unit test extensively.
 def replace_loc(script):
 
