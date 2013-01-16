@@ -39,9 +39,7 @@ class TestParseFile(unittest.TestCase):
         parsed_output = parse.parallel_parse(filelist)
         self.assertTrue(isinstance(parsed_output,list))
         self.assertTrue(len(parsed_output) == 1)
-        self.assertTrue(isinstance(parsed_output[0],list))
-        self.assertTrue(len(parsed_output[0]) == 1)
-        self.assertTrue(isinstance(parsed_output[0][0], str))
+        self.assertTrue(isinstance(parsed_output[0], str))
         self.assertTrue(regex.match(parsed_output[0]))
 
     def test_parse_file_two(self):
@@ -57,18 +55,16 @@ class TestParseFile(unittest.TestCase):
         filelist = [testdir+testfiletwo]
         parsed_output = parse.parallel_parse(filelist)
         self.assertTrue(isinstance(parsed_output,list))
-        self.assertTrue(len(parsed_output) == 1)
-        self.assertTrue(isinstance(parsed_output[0],list))
-        self.assertTrue(len(parsed_output[0]) == 2)
-        self.assertTrue(isinstance(parsed_output[0][0], str))
-        self.assertTrue(isinstance(parsed_output[0][1], str))
+        self.assertTrue(len(parsed_output) == 2)
+        self.assertTrue(isinstance(parsed_output[0], str))
+        self.assertTrue(isinstance(parsed_output[1], str))
         self.assertTrue(regex.match(parsed_output[0]))
         self.assertTrue(regex.match(parsed_output[1]))
     
     def test_use_parallel_parse_one(self):
         filelist = [testdir+testfileone]
         parsed_output = parse.parallel_parse(filelist)
-        parsed_xml = [xmlclass(parsed_output[0][0]) for xmlclass in xmlclasses]
+        parsed_xml = [xmlclass(parsed_output[0]) for xmlclass in xmlclasses]
         self.assertTrue(len(parsed_xml) == len(xmlclasses))
         self.assertTrue(all(parsed_xml))
 
@@ -76,7 +72,7 @@ class TestParseFile(unittest.TestCase):
         filelist = [testdir+testfiletwo]
         parsed_output = parse.parallel_parse(filelist)
         parsed_xml = []
-        for us_patent_grant in parsed_output[0]:
+        for us_patent_grant in parsed_output:
             self.assertTrue(isinstance(us_patent_grant, str))
             for xmlclass in xmlclasses:
                 parsed_xml.append(xmlclass(us_patent_grant))
