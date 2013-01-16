@@ -80,15 +80,8 @@ def fix_city_country(conn):
         DROP TABLE  temp2;
         """)
 
-
-if not(tblExist(c, "locMerge")):
-
-    print datetime.datetime.now()
-
-    fix_city_country(c)
-
-    print datetime.datetime.now()
-    c.executescript("""
+def fix_state_zip(conn):
+    conn.executescript("""
         CREATE TEMPORARY TABLE temp AS
             SELECT  Upper(City) as CityX, Upper(State) as StateX,
                     Upper(Country) as CountryX, Zipcode, count(*) as Cnt
@@ -111,7 +104,8 @@ if not(tblExist(c, "locMerge")):
         DROP TABLE  temp2;
         """)
 
-    c.executescript("""
+def create_loc_indexes(conn):
+    conn.executescript("""
         CREATE INDEX IF NOT EXISTS loc_idCC3 ON loc (City3,State,Country);
         CREATE INDEX IF NOT EXISTS loc_idxCC ON loc (City,Country);
         CREATE INDEX IF NOT EXISTS loc_idx   ON loc (City,State,Country,Zipcode);
@@ -121,9 +115,16 @@ if not(tblExist(c, "locMerge")):
         CREATE INDEX IF NOT EXISTS loc_ixnCS ON loc (NCity,NState);
         """)
 
+
+if not(tblExist(c, "locMerge")):
+
+    print datetime.datetime.now()
+    fix_city_country(c)
+    print datetime.datetime.now()
+    fix_state_zip(c)
+    create_loc_indexes(conn)
     print datetime.datetime.now()
 
-## End of if block
 
 
 c.executescript("""
