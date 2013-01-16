@@ -115,8 +115,6 @@ if __name__ == '__main__':
     files = list_files(DIRECTORIES, PATENTROOT, XMLREGEX)
     logging.info("Total files: %d" % (len(files)))
 
-    # TODO: extract into function
-    # list of parsed xml strings
     parsed_xmls = parallel_parse(files)
     parsed_grants = parse_patent(parsed_xmls)
 
