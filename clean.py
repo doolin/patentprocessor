@@ -1,10 +1,11 @@
+import datetime
 import sys
 
 sys.path.append( '.' )
 sys.path.append( './lib/' )
 
 import SQLite
-import datetime
+
 # ascit was refactored from senAdd in favor of ascit in fwork.
 # They differ by 1 line. Leave this comment until covered
 # by unit test.
@@ -23,11 +24,15 @@ t1 = datetime.datetime.now()
 # or call it from the driver file.
 ##### Run B2_LocationMatch.py
 #import B2_LocationMatch
+ # Geocode needs to run by itself.
+print "START: geocode", t1
 import geocode
-
 #print "   - Loc Merge", "\n   -", datetime.datetime.now()-t1
+print"DONE: geocode"
+print "   -", datetime.datetime.now()-t1
 
 
+# TODO: Refactor assignee statements
 ### Create copy of assignee table, add column for assigneeAsc
 s = SQLite.SQLite(db = 'assignee.sqlite3', tbl = 'assignee_1')
 s.conn.create_function("ascit", 1, ascit)
@@ -56,12 +61,15 @@ s.c.execute("UPDATE assignee_1 SET AsgNum=NULL WHERE AsgNum<0")
 print"DONE: NBER pdpass added to assignee_1 in column AsgNum", "\n   -", datetime.datetime.now()-t1
 s.commit()
 
+
+
+
+# TODO: Refactor to function
 ### Run orgClean.py and generate grp
 org = orgClean.orgClean(db = 'assignee.sqlite3', fld = 'assigneeAsc', table = 'assignee_1', other = "")
 org.disambig()
-
 print"DONE: orgClean"
-print "   -", datetime.datetime.now()-t1
+#print "   -", datetime.datetime.now()-t1
 
 # Copy assignee num from grp to assignee table
 s.merge(key=[['AsgNum', 'AsgNum2']], on=['AssigneeAsc'], tableFrom='grp')
