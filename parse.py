@@ -144,7 +144,7 @@ if __name__ == '__main__':
                 patents += 1
             except Exception as inst:
                 logging.error(type(inst))
-                logging.error("  - Error: %s (%d)  %s" % (us_patent_grant, i, x[175:200]))
+                logging.error("  - Error: %s %s" % (us_patent_grant, us_patent_grant[175:200]))
                 count += 1
 
         logging.info("   - number of patents: %d %s ", len(xmllist), datetime.datetime.now()-t1)
