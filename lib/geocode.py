@@ -55,12 +55,9 @@ c.executescript("""
     """)
 
 
-
-if not(tblExist(c, "locMerge")):
-
-    print datetime.datetime.now()
-
-    c.executescript("""
+# TODO: Find a way to unit test fix_city_country
+def fix_city_country(conn):
+    conn.executescript("""
         CREATE TEMPORARY TABLE temp AS
             SELECT  Upper(City) as CityX, Upper(State) as StateX,
                     Upper(Country) as CountryX, count(*) as Cnt
@@ -82,6 +79,13 @@ if not(tblExist(c, "locMerge")):
         DROP TABLE  temp;
         DROP TABLE  temp2;
         """)
+
+
+if not(tblExist(c, "locMerge")):
+
+    print datetime.datetime.now()
+
+    fix_city_country(c)
 
     print datetime.datetime.now()
     c.executescript("""
