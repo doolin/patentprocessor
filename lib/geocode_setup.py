@@ -52,4 +52,17 @@ def fix_state_zip(conn):
         DROP TABLE  temp2;
         """)
 
+# TODO: Find a way to ensure that the correct indexes are created as
+# the schemas change.
+def create_loc_indexes(conn):
+    conn.executescript("""
+        CREATE INDEX IF NOT EXISTS loc_idCC3 ON loc (City3,State,Country);
+        CREATE INDEX IF NOT EXISTS loc_idxCC ON loc (City,Country);
+        CREATE INDEX IF NOT EXISTS loc_idx   ON loc (City,State,Country,Zipcode);
+        CREATE INDEX IF NOT EXISTS loc_idxCS ON loc (City,State);
+        CREATE INDEX IF NOT EXISTS loc_ixnCC ON loc (NCity,NCountry);
+        CREATE INDEX IF NOT EXISTS loc_ixn   ON loc (NCity,NState,NCountry);
+        CREATE INDEX IF NOT EXISTS loc_ixnCS ON loc (NCity,NState);
+        """)
+
 
