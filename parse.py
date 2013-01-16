@@ -47,6 +47,20 @@ def parallel_parse(filelist):
     parsed = pool.imap_unordered(parse_file, filelist)
     return list(itertools.chain.from_iterable(parsed))
 
+def parse_patent(grant_list):
+    # TODO: put into configuration file (low priority)
+    xmlclasses = [AssigneeXML, CitationXML, ClassXML, InventorXML, \
+                  PatentXML, PatdescXML, LawyerXML, ScirefXML, UsreldocXML]
+
+    parsed_grants = []
+    for us_patent_grant in grant_list:
+        for xmlclass in xmlclasses:
+            try:
+                parsed_grants.append(xmlclass(us_patent_grant))
+            except Exception as inst:
+                logging.error(type(inst))
+                logging.error("  - Error: %s %s" % (us_patent_grant, us_patent_grant[175:200]))
+    return parsed_grants
 
 #TODO: pull out modular functionality into unittest-able methods
 if __name__ == '__main__':
