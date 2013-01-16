@@ -175,18 +175,31 @@ c.executescript("""
     """)
 
 
+# TODO: Unit test this so that it and the unit test can be
+# eliminated in a future redesign.
+def table_temp1_has_rows(conn):
+    return conn.execute("SELECT count(*) FROM temp1").fetchone()[0] > 0
+
+
 # TODO: Unit test extensively.
 def replace_loc(script):
+
+    # TODO: Refactor this next block
     #ALLOWS US TO REPLACE THE PREV LOC DATASET
     c.executescript("""
         DROP TABLE IF EXISTS temp1;
         CREATE TEMPORARY TABLE temp1 AS %s;
         CREATE INDEX IF NOT EXISTS tmp1_idx ON temp1 (CityA, StateA, CountryA, ZipcodeA);;
         """ % script)
+    # TODO: Refactor into its own function, unit test
     field = ["[%s]" % x[1] for x in c.execute("PRAGMA TABLE_INFO(temp1)")][2:6]
     var_f = ",".join(field)
 
-    if c.execute("SELECT count(*) FROM temp1").fetchone()[0]>0:
+    # TODO: Refactor into at least two functions. Main refactor is
+    # Handling the body of the if block. The second refactor is
+    # handling the conditional expression for the if block.
+    #if c.execute("SELECT count(*) FROM temp1").fetchone()[0]>0:
+    if table_temp1_has_rows(c):
         c.executescript("""
             CREATE TEMPORARY TABLE temp2 AS
                 SELECT  count(*) as cnt, CityA, StateA, CountryA, ZipcodeA
@@ -215,7 +228,9 @@ def replace_loc(script):
         VarX = c.execute("select count(*) from loc").fetchone()[0]
         VarY = c.execute("select count(*) from locMerge").fetchone()[0]
         print " - Loc =", VarX, " OkM =", VarY, " Total =", VarX+VarY, "  ", datetime.datetime.now()
+
     conn.commit()
+
 
 print "Loc =", c.execute("select count(*) from loc").fetchone()[0]
 for scnt in range(-1, c.execute("select max(sep_cnt(city)) from loc").fetchone()[0]+1):
