@@ -30,7 +30,7 @@ def jarow(s1,s2):
         mtch2 = "".join(x[1] for x in sorted(mtch2))
         t = 0.0
 
-        for i in range(0, len(mtch)):      
+        for i in range(0, len(mtch)):
           if mtch[i]!=mtch2[i]:
             t += 0.5
 
@@ -305,7 +305,7 @@ def cityctry(city, ctry, ret="city"):
 
 ##    if z != city:
 ##        print z, city, ctry
-    
+
     if ret=="ctry":
         ##CZECH REPUBLIC
         if ctry=="CS":
@@ -488,7 +488,7 @@ def cityctry(city, ctry, ret="city"):
                 city = city[1:]
             if city[-1]==",":
                 city = city[:-1]
-            
+
         #remove dash, excess spaces with single space
         city = re.sub(r"([-]|  +)", " ", city)
         return city.strip()
@@ -511,7 +511,7 @@ def ftpUpload(filename, password="", zips=True, ftp="people.hbs.edu", login="rol
         zfile.close()
     else:
         fname = filename
-        
+
     if debug:
         print("  - uploading "+fname)
     zfile = open(fname, 'rb')
