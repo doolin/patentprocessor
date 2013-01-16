@@ -257,6 +257,8 @@ def replace_loc(script):
 
 print "Loc =", c.execute("select count(*) from loc").fetchone()[0]
 
+# TODO: Refactor the range call into it's own function, unit test
+# that function extensively.
 for scnt in range(-1, c.execute("select max(sep_cnt(city)) from loc").fetchone()[0]+1):
     sep = scnt
     print "------", scnt, "------"
