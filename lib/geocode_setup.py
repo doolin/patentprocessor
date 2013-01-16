@@ -1,6 +1,39 @@
 # sets up the geocoding databases
 
-# Bring in one function at a time.
+
+def geocode_db_initialize(conn):
+    conn.executescript("""
+        PRAGMA CACHE_SIZE=20000;
+        ATTACH DATABASE 'assignee.sqlite3' AS asg;
+        ATTACH DATABASE 'inventor.sqlite3' AS inv;
+        ATTACH DATABASE 'loctbl'   AS loc;
+        """)
+
+
+# TODO: Ensure this is the correct schema, that is, the
+# schema below needs to match the schema in the existing
+# loc table. If it doesn't match, we need to find out
+# why, and figure out what to do about that.
+def loc_create_table(conn):
+    conn.executescript("""
+     /* DROP TABLE IF EXISTS loc; */
+        CREATE TABLE IF NOT EXISTS loc (
+            Cnt INTEGER,
+            City VARCHAR(10),   State VARCHAR(2),
+            Country VARCHAR(2), Zipcode VARCHAR(5),
+            City3 VARCHAR,
+            NCity VARCHAR(10),  NState VARCHAR(2),
+            NCountry VARCHAR(2),
+            UNIQUE(City,State,Country,Zipcode));
+        DROP INDEX IF EXISTS loc_idxCC;
+        DROP INDEX IF EXISTS loc_idx;
+        DROP INDEX IF EXISTS loc_idxCS;
+        DROP INDEX IF EXISTS loc_ixnCC;
+        DROP INDEX IF EXISTS loc_ixn;
+        DROP INDEX IF EXISTS loc_ixnCS;
+        DROP INDEX IF EXISTS loc3_idxCC;
+        """)
+
 
 # TODO: Find a way to unit test fix_city_country
 def fix_city_country(conn):

@@ -37,51 +37,20 @@ conn.create_function("cityctry",  3, cityctry)
 conn.create_function("sep_wrd",   2, sep_wrd)
 conn.create_function("rev_wrd",   2, lambda x,y:x.upper()[::-1][:y])
 
-def geocode_db_initialize(conn):
-    c.executescript("""
-        PRAGMA CACHE_SIZE=20000;
-        ATTACH DATABASE 'assignee.sqlite3' AS asg;
-        ATTACH DATABASE 'inventor.sqlite3' AS inv;
-        ATTACH DATABASE 'loctbl'   AS loc;
-        """)
 
-
-# TODO: Ensure this is the correct schema, that is, the
-# schema below needs to match the schema in the existing
-# loc table. If it doesn't match, we need to find out
-# why, and figure out what to do about that.
-def loc_create_table(conn):
-    c.executescript("""
-     /* DROP TABLE IF EXISTS loc; */
-        CREATE TABLE IF NOT EXISTS loc (
-            Cnt INTEGER,
-            City VARCHAR(10),   State VARCHAR(2),
-            Country VARCHAR(2), Zipcode VARCHAR(5),
-            City3 VARCHAR,
-            NCity VARCHAR(10),  NState VARCHAR(2),
-            NCountry VARCHAR(2),
-            UNIQUE(City,State,Country,Zipcode));
-        DROP INDEX IF EXISTS loc_idxCC;
-        DROP INDEX IF EXISTS loc_idx;
-        DROP INDEX IF EXISTS loc_idxCS;
-        DROP INDEX IF EXISTS loc_ixnCC;
-        DROP INDEX IF EXISTS loc_ixn;
-        DROP INDEX IF EXISTS loc_ixnCS;
-        DROP INDEX IF EXISTS loc3_idxCC;
-        """)
-
-# from geocode_setup import geocode_db_initialize
-# from geocode_setup import loc_create_table
-geocode_db_initialize(c)
-loc_create_table(c)
-
+# NOTE: Keep these imports function-specific until everything
+# is covered with unit tests, and we know that the structure
+# is maintainable.
+from geocode_setup import geocode_db_initialize
+from geocode_setup import loc_create_table
 from geocode_setup import fix_city_country
 from geocode_setup import fix_state_zip
 from geocode_setup import create_loc_indexes
 
+geocode_db_initialize(c)
+loc_create_table(c)
 
 if not(tblExist(c, "locMerge")):
-
     print datetime.datetime.now()
     fix_city_country(c)
     print datetime.datetime.now()
