@@ -74,7 +74,7 @@ if __name__ == '__main__':
     # setup argparse
     parser = argparse.ArgumentParser(description=\
             'Specify source directory/directories for xml files to be parsed')
-    parser.add_argument('--directory','-d', type=str, nargs='+', default='',
+    parser.add_argument('--directory','-d', type=str, nargs='+', default='.',
             help='comma separated list of directories relative to $PATENTROOT that \
             parse.py will search for .xml files')
     parser.add_argument('--patentroot','-p', type=str, nargs='?',
@@ -118,6 +118,9 @@ if __name__ == '__main__':
 
     #get a listing of all files within the directory that follow the naming pattern
     files = list_files(DIRECTORIES, PATENTROOT, XMLREGEX)
+    if not files:
+        logging.error("No files matching {0} found in {1}/{2}".format(XMLREGEX,PATENTROOT,DIRECTORIES))
+        sys.exit(1)
 
     parsed_xmls = parallel_parse(files)
     parsed_grants = parse_patent(parsed_xmls)
