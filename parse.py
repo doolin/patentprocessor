@@ -132,7 +132,7 @@ if __name__ == '__main__':
         parsed_xmls = ['']
 
     # TODO: extract parse_patent method
-    for us_patent_grant in parsed_xmls[0]:
+    for us_patent_grant in parsed_xmls:
 
         xmllist = []
         count = 0
