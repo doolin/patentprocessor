@@ -62,6 +62,11 @@ def parse_patent(grant_list):
                 logging.error("  - Error: %s %s" % (us_patent_grant, us_patent_grant[175:200]))
     return parsed_grants
 
+# TODO: unittest
+def build_tables(parsed_grants):
+    for us_patent_grant in parsed_grants:
+        us_patent_grant.insert_table()
+
 #TODO: pull out modular functionality into unittest-able methods
 if __name__ == '__main__':
 
@@ -116,13 +121,11 @@ if __name__ == '__main__':
 
     parsed_xmls = parallel_parse(files)
     parsed_grants = parse_patent(parsed_xmls)
+    build_tables(parsed_grants)
 
     total_patents = len(parsed_xmls)
     total_errors = len(parsed_xmls) * len(xmlclasses) - len(parsed_grants)
 
-    # TODO: (extract) build_tables on parsed patents
-    for patent in parsed_grants:
-        patent.insert_table()
 
     logging.info("Parsing started at %s", str(datetime.datetime.today()))
     logging.info("Time Elapsed: %s", datetime.datetime.now()-t1)
