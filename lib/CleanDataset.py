@@ -2,9 +2,11 @@ import datetime, math, re, sqlite3, unicodedata
 from fwork import *
 
 class TopX:
+
     def __init__(self):
         self.dList=[]
         self.num = 0
+
     def step(self, val1, val2, cnt, num):
         if num=="":
             self.num = 4
@@ -14,6 +16,7 @@ class TopX:
             self.dList.append(["-".join([val1,val2]), cnt])
         else:
             self.dList.append([val1, cnt])
+
     def finalize(self):
         self.dList.sort(key=lambda x:x[-1])
         dList = {}
@@ -23,6 +26,7 @@ class TopX:
                 dList[x]=1
                 aList.append(x)
         return "/".join(aList[:self.num])
+
 
 def assignees(vers=1):
     print "Assignee %d" % vers
@@ -106,7 +110,7 @@ def assignees(vers=1):
                 (Patent, AsgType, Assignee, City, State, Country, Nationality, Residence, AsgSeq, NCity, NState, NCountry, NLat, NLong)
                 SELECT  *
                   FROM  asg.assignee_1;
-            CREATE INDEX IF NOT EXISTS asg2_uq  ON assignee_2 (Patent, AsgSeq);            
+            CREATE INDEX IF NOT EXISTS asg2_uq  ON assignee_2 (Patent, AsgSeq);
             INSERT OR REPLACE INTO assignee_2
                 SELECT  a.*, b.pdpass
                   FROM  asg.assignee_1 AS a
@@ -114,7 +118,7 @@ def assignees(vers=1):
                     ON  a.assignee = b.asg
                  WHERE  b.pdpass>0;
 
-            CREATE INDEX IF NOT EXISTS asg2_asg ON assignee_2 (Assignee);            
+            CREATE INDEX IF NOT EXISTS asg2_asg ON assignee_2 (Assignee);
             CREATE INDEX IF NOT EXISTS asg2_loc ON assignee_2 (City, State, Country);
             CREATE INDEX IF NOT EXISTS asg2_t   ON assignee_2 (AsgType);
             CREATE INDEX IF NOT EXISTS asg2_ps  ON assignee_2 (Patent, AsgSeq);
@@ -130,6 +134,7 @@ def assignees(vers=1):
         conn.commit()
         c.close()
         conn.close()
+
 
 def classes(vers=1):
     print "Class %d" % vers
@@ -181,6 +186,7 @@ def classes(vers=1):
         c.close()
         conn.close()
 
+
 def inventors(vers=1):
     print "Inventor %d" % vers
     if vers==1:
@@ -196,14 +202,14 @@ def inventors(vers=1):
             CREATE TABLE IF NOT EXISTS inventor_1 (
                 Patent VARCHAR,
                 Firstname VARCHAR,  Lastname VARCHAR,
-                
+
                 Street VARCHAR,     City VARCHAR,       State VARCHAR,
                 Country VARCHAR,    Zipcode VARCHAR,
 
                 NCity VARCHAR,      NState VARCHAR,
                 NCountry VARCHAR,   NZipcode VARCHAR,
-                NLat REAL,          NLong REAL,                
-                
+                NLat REAL,          NLong REAL,
+
                 Nationality VARCHAR,
                 InvSeq INTEGER,
                 UNIQUE(Patent,InvSeq));
@@ -246,6 +252,7 @@ def inventors(vers=1):
         conn.commit()
         c.close()
         conn.close()
+
 
 def lawyers(vers=1):
     print "Lawyer %d" % vers
