@@ -50,8 +50,8 @@ class TestPatentConfig(unittest.TestCase):
         self.assertTrue(exit_status == 1)
 
     def test_argparse_invalid_directory(self):
-        os.rmdir('/tmp/asdf')
-        os.mkdir('/tmp/asdf')
+        if not os.path.exists('/tmp/asdf'):
+            os.mkdir('/tmp/asdf')
         exit_status = subprocess.call('python parse.py --patentroot /tmp/asdf', \
                 stdout=self.null_out, shell=True)
         # specify invalid directory, should not have any files
