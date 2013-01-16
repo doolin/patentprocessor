@@ -54,7 +54,8 @@ s.commit()
 #s.attach(database = 'NBER_asg')
 #print "Tables call from script ", s.tables()
 
-s.merge(key=[['AsgNum', 'pdpass']], on=[['assigneeAsc', 'assignee']], keyType=['INTEGER'], tableFrom='assignee', db='NBER')
+s.merge(key=[['AsgNum', 'pdpass']], on=[['assigneeAsc', 'assignee']],
+        keyType=['INTEGER'], tableFrom='assignee', db='NBER')
 #s.merge(key=[['AsgNum', 'pdpass']], on=['assigneeAsc', 'assignee'], keyType=['INTEGER'], tableFrom='assignee', db='NBER')
 
 s.c.execute("UPDATE assignee_1 SET AsgNum=NULL WHERE AsgNum<0")
@@ -78,12 +79,15 @@ def run_org_clean():
     print "DONE: Replaced Asgnum!", "\n   -", datetime.datetime.now()-t1
     s.c.execute("""update assignee_1 set City = cc(city, country, 'city'), Country = cc(city, country, 'ctry');""")
     s.attach('hashTbl.sqlite3')
-    s.merge(key=['NCity', 'NState', 'NCountry', 'NZipcode', 'NLat', 'NLong'], on=['City', 'State', 'Country'], tableFrom='locMerge', db='db')
+    s.merge(key=['NCity', 'NState', 'NCountry', 'NZipcode', 'NLat', 'NLong'],
+            on=['City', 'State', 'Country'],
+            tableFrom='locMerge', db='db')
     s.commit()
     print "DONE: Asg Locationize!", "\n   -", datetime.datetime.now()-t1
-    s.close()
+
 
 run_org_clean()
+s.close()
 
 
  ###########################
