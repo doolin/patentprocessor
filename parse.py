@@ -23,6 +23,11 @@ regex = re.compile(r"""
 [<][/]us[-]patent[-]grant[>])    #and here is the end tag
 """, re.I+re.S+re.X)
 
+# TODO: put into configuration file (low priority)
+xmlclasses = [AssigneeXML, CitationXML, ClassXML, InventorXML, \
+              PatentXML, PatdescXML, LawyerXML, ScirefXML, UsreldocXML]
+
+
 def list_files(directories, patentroot, xmlregex):
     """
     Returns listing of all files within all directories relative to patentroot
@@ -48,10 +53,6 @@ def parallel_parse(filelist):
     return list(itertools.chain.from_iterable(parsed))
 
 def parse_patent(grant_list):
-    # TODO: put into configuration file (low priority)
-    xmlclasses = [AssigneeXML, CitationXML, ClassXML, InventorXML, \
-                  PatentXML, PatdescXML, LawyerXML, ScirefXML, UsreldocXML]
-
     parsed_grants = []
     for us_patent_grant in grant_list:
         for xmlclass in xmlclasses:
