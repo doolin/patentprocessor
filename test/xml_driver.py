@@ -186,6 +186,15 @@ class Patent(object):
       string = re.sub(gt,"&gt;",string)
       return string
 
+
+  def _flatten(self, ls_of_ls):
+      """
+      Takes in a list of lists, returns a new list of lists
+      where list `i` contains the `i`th element from the original
+      set of lists.
+      """
+      return map(list, list(izip(*ls_of_ls)))
+
   #TODO: fix text encodings 
   def _cit_list(self):
       res = []
