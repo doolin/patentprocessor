@@ -64,17 +64,9 @@ from geocode_setup import create_usloc_table
 create_usloc_table(c)
 print datetime.datetime.now()
 
-
-
 from geocode_setup import create_locMerge_table
 create_locMerge_table(c)
 
-
-# TODO: Unit test this so that it and the unit test can be
-# eliminated in a future redesign. Also, ensure that this
-# is the correct name for this function, and adjust accordingly.
-def table_temp1_has_rows(conn):
-    return conn.execute("SELECT count(*) FROM temp1").fetchone()[0] > 0
 
 # TODO: Find a way to unit test this set of queries
 def create_loc_and_locmerge_tables(conn):
@@ -109,6 +101,14 @@ def create_loc_and_locmerge_tables(conn):
 # to go into its own file and be imported into this script. One benefit
 # of separating it out may be to allow much easier unit testing for the
 # location matching which follows.
+
+
+# TODO: Unit test this so that it and the unit test can be
+# eliminated in a future redesign. Also, ensure that this
+# is the correct name for this function, and adjust accordingly.
+def table_temp1_has_rows(conn):
+    return conn.execute("SELECT count(*) FROM temp1").fetchone()[0] > 0
+
 
 # TODO: Unit test extensively.
 def replace_loc(script):
