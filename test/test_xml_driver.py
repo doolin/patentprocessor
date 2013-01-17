@@ -59,6 +59,36 @@ class Test_XMLElement_Basic(unittest.TestCase):
         self.assertTrue(self.root.a.b.contents_of('c') == ['hello','world','3'])
         self.assertTrue(self.root.a.b[0].contents_of('c') == ['hello','world'])
 
+class Test_Patent_XMLElement(unittest.TestCase):
+    def setUp(self):
+        testfile = 'fixtures/xml/ipg120327.one.xml'
+        self.patent = Patent(open(testfile))
+        self.assertTrue(self.patent)
+
+    def test_flatten(self):
+        testlist = [ [1,4,7], [2,5,8], [3,6,9] ]
+        reslist = self.patent._flatten(testlist)
+        goallist = [ [1,2,3], [4,5,6], [7,8,9] ]
+        self.assertTrue(reslist == goallist, \
+            "{0}\nshould be\n{1}".format(reslist,goallist))
+
+    def test_flatten_with_extend(self):
+        testlist = [ [1,4,7], [2,5,8], [3,6] ]
+        reslist = self.patent._flatten(testlist)
+        goallist = [ [1,2,3], [4,5,6], [7,8,''] ]
+        self.assertTrue(reslist == goallist, \
+            "{0}\nshould be\n{1}".format(reslist,goallist))
+
+    def test_flatten_with_extend_multiple(self):
+        testlist = [ [1,4,7], [2], [3,6] ]
+        reslist = self.patent._flatten(testlist)
+        goallist = [ [1,2,3], [4,'',6], [7,'',''] ]
+        self.assertTrue(reslist == goallist, \
+            "{0}\nshould be\n{1}".format(reslist,goallist))
+
+
+
+
 class Test_Compatibility(unittest.TestCase):
     def setUp(self):
         # sanity check
