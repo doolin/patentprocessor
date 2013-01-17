@@ -225,7 +225,7 @@ class Patent(object):
               newres.append(item)
           res = newres 
           res.append( [''] * max(map(len, res)))
-      contacts = map(list, list(izip(*res)))
+      contacts = self._flatten(res)
       last_records = record[len(contacts):]
       if cits.othercit:
           for rec,cit in zip(last_records,cits.contents_of('othercit')):
@@ -289,7 +289,7 @@ class Patent(object):
       res.append(doc.residence.contents_of('country'))
       maxlen = max(map(len, res))
       res = [x*maxlen if len(x) != maxlen else x for x in res]
-      return map(list, list(izip(*res)))
+      return self._flatten(res)
 
   def _law_list(self):
       doc = self.xml.parties.agents
