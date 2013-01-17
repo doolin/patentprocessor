@@ -128,9 +128,10 @@ def replace_loc(script):
     var_f = ",".join(field)
 
     # TODO: Refactor into at least two functions. Main refactor is
-    # Handling the body of the if block. The second refactor is
-    # handling the conditional expression for the if block.
+    # Handling the body of the if block (DONE). The second refactor is
+    # handling the conditional expression for the if block (DONE).
     #if c.execute("SELECT count(*) FROM temp1").fetchone()[0]>0:
+    # Which tables will pass this conditional?
     if table_temp1_has_rows(c):
         create_loc_and_locmerge_tables(c)
         VarX = c.execute("select count(*) from loc").fetchone()[0]
