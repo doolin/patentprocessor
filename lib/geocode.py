@@ -14,8 +14,8 @@ from fwork import jarow
 from fwork import cityctry
 from fwork import tblExist
 
-# Extract to its own file and unit test.
-# Later, this may be able to go into fwork
+# TODO: switch to import the tested version of sep_wrd.
+# from sep_wrd_geocode import sep_wrd
 def sep_wrd(word, seq):
     if seq==-1:
         return word
@@ -30,6 +30,7 @@ def sep_wrd(word, seq):
 conn = sqlite3.connect("hashTbl.sqlite3")
 c = conn.cursor()
 
+# TODO: Consider replacing the lambdas with functions which can be tested.
 conn.create_function("blk_split", 1, lambda x: re.sub(" ", "", x))
 conn.create_function("sep_cnt",   1, lambda x: len(re.findall("[,|]", x)))
 conn.create_function("jarow",     2, jarow)
@@ -37,6 +38,7 @@ conn.create_function("cityctry",  3, cityctry)
 conn.create_function("sep_wrd",   2, sep_wrd)
 conn.create_function("rev_wrd",   2, lambda x,y:x.upper()[::-1][:y])
 
+# Now set up the databases necessary for the geocoding to proceed.
 
 # NOTE: Keep these imports function-specific until everything
 # is covered with unit tests, and we know that the structure
@@ -46,6 +48,8 @@ from geocode_setup import loc_create_table
 from geocode_setup import fix_city_country
 from geocode_setup import fix_state_zip
 from geocode_setup import create_loc_indexes
+from geocode_setup import create_usloc_table
+from geocode_setup import create_locMerge_table
 
 geocode_db_initialize(c)
 loc_create_table(c)
@@ -58,13 +62,8 @@ if not(tblExist(c, "locMerge")):
     create_loc_indexes(conn)
     print datetime.datetime.now()
 
-
-
-from geocode_setup import create_usloc_table
 create_usloc_table(c)
 print datetime.datetime.now()
-
-from geocode_setup import create_locMerge_table
 create_locMerge_table(c)
 
 
