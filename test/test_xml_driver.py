@@ -73,6 +73,20 @@ class Test_Patent_XMLElement(unittest.TestCase):
         self.assertTrue(reslist == goallist, \
             "{0}\nshould be\n{1}".format(reslist,goallist))
 
+    def test_extend_padding(self):
+        testlist = [ [1,2,3], [4,5], [5,6,7,8] ]
+        reslist = self.patent._extend_padding(testlist,0)
+        goallist = [ [1,2,3,0], [4,5,0,0], [5,6,7,8] ]
+        self.assertTrue(reslist == goallist, \
+            "{0}\nshould be\n{1}".format(reslist,goallist))
+
+    def test_extend_padding_string(self):
+        testlist = [ ['a','b','c'], ['d'] ]
+        reslist = self.patent._extend_padding(testlist)
+        goallist = [ ['a','b','c'], ['d','',''] ]
+        self.assertTrue(reslist == goallist, \
+            "{0}\nshould be\n{1}".format(reslist,goallist))
+
     def test_flatten_with_extend(self):
         testlist = [ [1,4,7], [2,5,8], [3,6] ]
         reslist = self.patent._flatten(testlist)
