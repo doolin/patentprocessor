@@ -16,6 +16,7 @@ sys.path.append( '.' )
 sys.path.append( './lib/' )
 
 from patXML import *
+from argconfig_parse import ArgHandler
 
 regex = re.compile(r"""
  ([<][?]xml[ ]version.*?[>]       #all XML starts with ?xml
@@ -70,46 +71,15 @@ def build_tables(parsed_grants):
 #TODO: pull out modular functionality into unittest-able methods
 if __name__ == '__main__':
 
-    # TODO: extract all argument parsing into fxn (in its own file)
-    # setup argparse
-    parser = argparse.ArgumentParser(description=\
-            'Specify source directory/directories for xml files to be parsed')
-    parser.add_argument('--directory','-d', type=str, nargs='+', default='.',
-            help='comma separated list of directories relative to $PATENTROOT that \
-            parse.py will search for .xml files')
-    parser.add_argument('--patentroot','-p', type=str, nargs='?',
-            default=os.environ['PATENTROOT'] \
-            if os.environ.has_key('PATENTROOT') else '/',
-            help='root directory of all patent files/directories')
-    parser.add_argument('--xmlregex','-x', type=str, 
-            nargs='?', default=r"ipg\d{6}.xml",
-            help='regex used to match xml files in each directory')
-    parser.add_argument('--verbosity', '-v', type = int,
-            nargs='?', default=0,
-            help='Set the level of verbosity for the computation. The higher the \
-            verbosity level, the less restrictive the print policy. 0 (default) \
-            = error, 1 = warning, 2 = info, 3 = debug')
+    args = ArgHandler(sys.argv[1:])
 
-    # double check that variables are actually set
-    # we ignore the verbosity argument when determining
-    # if any variables have been set by the user
-    specified = [arg for arg in sys.argv if arg.startswith('-')]
-    nonverbose = [opt for opt in specified if '-v' not in opt]
-    if len(nonverbose) == 0:
-        parser.print_help()
-        sys.exit(1)
+    if args.invalid_config():
+        args.get_help()
 
-    # parse arguments and assign values
-    args = parser.parse_args()
-    DIRECTORIES = args.directory
-    XMLREGEX = args.xmlregex
-    PATENTROOT = args.patentroot
-    # adjust verbosity levels based on specified input
-    logging_levels = {0: logging.ERROR,
-                      1: logging.WARNING,
-                      2: logging.INFO,
-                      3: logging.DEBUG}
-    VERBOSITY = logging_levels[args.verbosity]
+    DIRECTORIES = args.get_directory_list()
+    XMLREGEX = args.get_xmlregex()
+    PATENTROOT = args.get_patentroot()
+    VERBOSITY = args.get_verbosity()
 
     logfile = "./" + 'xml-parsing.log'
     logging.basicConfig(filename=logfile, level=VERBOSITY)
