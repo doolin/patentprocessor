@@ -24,7 +24,7 @@ for xf in xml_files:
     parsed_xml_old.append(old)
     parsed_xml_new.append(new)
 
-class Test_XMLElement(unittest.TestCase):
+class Test_XMLElement_Basic(unittest.TestCase):
     
     def setUp(self):
         # setup basic.xml parser/handler
