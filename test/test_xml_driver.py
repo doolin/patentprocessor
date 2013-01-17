@@ -6,6 +6,7 @@ import sys
 import unittest
 from xml_driver import XMLElement, XMLHandler, Patent
 from xml.sax import make_parser, handler
+from cgi import escape as html_escape
 
 sys.path.append('../lib')
 from patXML import *
@@ -86,6 +87,21 @@ class Test_Patent_XMLElement(unittest.TestCase):
         self.assertTrue(reslist == goallist, \
             "{0}\nshould be\n{1}".format(reslist,goallist))
 
+    def test_escape_html_nosub(self):
+        teststring = "<tag1> ampersand here: & </tag1>"
+        resstring = self.patent._escape_html_nosub(teststring)
+        goalstring = html_escape(teststring)
+        self.assertTrue(resstring == goalstring, \
+            "{0}\nshould be\n{1}".format(resstring,goalstring))
+
+    def test_escape_html_nosub(self):
+        substart = "<sub>"
+        subend = "</sub>"
+        teststring = "<escape & skip sub tags>"
+        resstring = self.patent._escape_html_nosub(substart+teststring+subend)
+        goalstring = substart+html_escape(teststring)+subend
+        self.assertTrue(resstring == goalstring, \
+            "{0}\nshould be\n{1}".format(resstring,goalstring))
 
 
 
