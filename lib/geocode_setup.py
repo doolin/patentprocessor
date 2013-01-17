@@ -98,6 +98,35 @@ def create_loc_indexes(conn):
         CREATE INDEX IF NOT EXISTS loc_ixnCS ON loc (NCity,NState);
         """)
 
+
+# TODO: unit test
+def create_usloc_table(conn):
+    conn.executescript("""
+        CREATE TABLE IF NOT EXISTS usloc AS
+            SELECT  Zipcode, Latitude, Longitude, Upper(City) as City,
+                    BLK_SPLIT(Upper(City)) as BlkCity,
+                    SUBSTR(UPPER(BLK_SPLIT(City)),1,3) as City3,
+                    REV_WRD(BLK_SPLIT(City), 4) as City4R,
+                    Upper(State) as State, "US" as Country
+              FROM  loc.usloc
+          GROUP BY  City, State;
+        CREATE INDEX If NOT EXISTS usloc_idxZ  on usloc (Zipcode);
+        CREATE INDEX If NOT EXISTS usloc_idxCS on usloc (City, State);
+        CREATE INDEX If NOT EXISTS usloc_idBCS on usloc (BlkCity, State);
+        CREATE INDEX If NOT EXISTS usloc_idC3S on usloc (City3, State);
+        CREATE INDEX If NOT EXISTS usloc_idC4R on usloc (City4R, State);
+        DETACH DATABASE asg;
+        DETACH DATABASE inv;
+        /*DETACH DATABASE loc;
+        CREATE TEMPORARY TABLE gnsloc AS
+            SELECT  '' AS zipcode, lat, long,
+                    UPPER(full_name_nd) AS city, "" AS State, cc1 AS country
+              FROM  loc.gnsloc;
+        CREATE INDEX gnsloc_idxCC on gnsloc (City, Country)
+        */;
+        """)
+
+
 #TODO: unit test
 def create_locMerge_table(conn):
     conn.executescript("""
