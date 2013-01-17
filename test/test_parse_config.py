@@ -82,7 +82,10 @@ class TestPatentConfig(unittest.TestCase):
                 (os.getcwd() + base), stdout=self.null_out, shell=True)
         self.assertTrue(exit_status == 1)
 
+    def test_argparse_directory_withxml(self):
         # parse.py should concatentate the correct directory and find xml files
+        base = '/'.join(testdir.split('/')[:-1])
+        top = testdir.split('/')[-1]
         exit_status = subprocess.call("python parse.py --patentroot %s \
                 --directory %s --xmlregex 'ipg120327.one.xml'" % \
                 (os.getcwd() + base, top), stdout=self.null_out, shell=True)
