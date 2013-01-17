@@ -68,6 +68,13 @@ from geocode_setup import create_locMerge_table
 create_locMerge_table(c)
 
 
+
+# This should be the end of the setup, and all the above should be able
+# to go into its own file and be imported into this script. One benefit
+# of separating it out may be to allow much easier unit testing for the
+# location matching which follows.
+
+
 # TODO: Find a way to unit test this set of queries
 def create_loc_and_locmerge_tables(conn):
     conn.executescript("""
@@ -96,11 +103,6 @@ def create_loc_and_locmerge_tables(conn):
         DROP TABLE IF EXISTS temp3;
           """)
 
-
-# This should be the end of the setup, and all the above should be able
-# to go into its own file and be imported into this script. One benefit
-# of separating it out may be to allow much easier unit testing for the
-# location matching which follows.
 
 
 # TODO: Unit test this so that it and the unit test can be
