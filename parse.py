@@ -68,7 +68,6 @@ def build_tables(parsed_grants):
     for us_patent_grant in parsed_grants:
         us_patent_grant.insert_table()
 
-#TODO: pull out modular functionality into unittest-able methods
 if __name__ == '__main__':
 
     args = ArgHandler(sys.argv[1:])
