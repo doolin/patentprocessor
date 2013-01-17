@@ -186,6 +186,19 @@ class Patent(object):
       string = re.sub(gt,"&gt;",string)
       return string
 
+  def _extend_padding(self, ls_of_ls, padding=''):
+      """
+      Takes in a lists of lists, returns a new list of lists
+      where each list is padded up to the length of the longest
+      list by [padding] (defaults to the empty string)
+      """
+      maxlen = max(map(len, ls_of_ls))
+      newls = []
+      for ls in ls_of_ls:
+          if len(ls) != maxlen:
+              ls.extend([padding]*(maxlen - len(ls)))
+          newls.append(ls)
+      return newls
 
   def _flatten(self, ls_of_ls):
       """
