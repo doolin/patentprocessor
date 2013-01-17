@@ -89,15 +89,17 @@ class Test_Patent_XMLElement(unittest.TestCase):
 
     def test_flatten_with_extend(self):
         testlist = [ [1,4,7], [2,5,8], [3,6] ]
+        testlist = self.patent._extend_padding(testlist,0)
         reslist = self.patent._flatten(testlist)
-        goallist = [ [1,2,3], [4,5,6], [7,8,''] ]
+        goallist = [ [1,2,3], [4,5,6], [7,8,0] ]
         self.assertTrue(reslist == goallist, \
             "{0}\nshould be\n{1}".format(reslist,goallist))
 
     def test_flatten_with_extend_multiple(self):
         testlist = [ [1,4,7], [2], [3,6] ]
+        testlist = self.patent._extend_padding(testlist,0)
         reslist = self.patent._flatten(testlist)
-        goallist = [ [1,2,3], [4,'',6], [7,'',''] ]
+        goallist = [ [1,2,3], [4,0,6], [7,0,0] ]
         self.assertTrue(reslist == goallist, \
             "{0}\nshould be\n{1}".format(reslist,goallist))
 
