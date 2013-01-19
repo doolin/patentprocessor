@@ -88,7 +88,6 @@ if __name__ == '__main__':
 
     t1 = datetime.datetime.now()
 
-    #get a listing of all files within the directory that follow the naming pattern
     files = list_files(DIRECTORIES, PATENTROOT, XMLREGEX)
     parsed_xmls = parallel_parse(files)
     parsed_grants = parse_patent(parsed_xmls)
@@ -96,7 +95,6 @@ if __name__ == '__main__':
 
     total_patents = len(parsed_xmls)
     total_errors = len(parsed_xmls) * len(xmlclasses) - len(parsed_grants)
-
 
     logging.info("Parsing started at %s", str(datetime.datetime.today()))
     logging.info("Time Elapsed: %s", datetime.datetime.now()-t1)
