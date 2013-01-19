@@ -37,6 +37,9 @@ def list_files(directories, patentroot, xmlregex):
     files = [patentroot+'/'+directory+'/'+fi for directory in directories for fi in \
             os.listdir(patentroot+'/'+directory) \
             if re.search(xmlregex, fi, re.I) != None]
+    if not files:
+        logging.error("No files matching {0} found in {1}/{2}".format(XMLREGEX,PATENTROOT,DIRECTORIES))
+        sys.exit(1)
     return files
 
 def parse_file(filename):
@@ -87,10 +90,6 @@ if __name__ == '__main__':
 
     #get a listing of all files within the directory that follow the naming pattern
     files = list_files(DIRECTORIES, PATENTROOT, XMLREGEX)
-    if not files:
-        logging.error("No files matching {0} found in {1}/{2}".format(XMLREGEX,PATENTROOT,DIRECTORIES))
-        sys.exit(1)
-
     parsed_xmls = parallel_parse(files)
     parsed_grants = parse_patent(parsed_xmls)
     build_tables(parsed_grants)
