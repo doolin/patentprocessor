@@ -15,6 +15,27 @@ from fwork import jarow
 from fwork import cityctry
 from fwork import tblExist
 
+# Jill Rabinowitz: Import geocode_replace_loc, with each SQL statement used 
+# to create table temp1 as its own function
+import geocode_replace_loc
+from geocode_replace_loc import replace_loc_domestic
+#from geocode_replace_loc import replace_loc_domestic_block_remove
+#from geocode_replace_loc import replace_loc_domestic_first3_jaro_winkler
+#from geocode_replace_loc import replace_loc_domestic_last4_jaro_winkler
+#from geocode_replace_loc import replace_loc_foreign_country_full_name_1
+#from geocode_replace_loc import replace_loc_foreign_country_full_name_2
+#from geocode_replace_loc import replace_loc_foreign_country_short_form
+#from geocode_replace_loc import replace_loc_foreign_country_block_split
+#from geocode_replace_loc import replace_loc_foreign_country_first3_jaro_winkler
+#from geocode_replace_loc import replace_loc_foreign_country_last4_jaro_winkler
+#from geocode_replace_loc import replace_loc_domestic_2nd_layer
+#from geocode_replace_loc import replace_loc_domestic_first3_2nd_jaro_winkler 
+#from geocode_replace_loc import replace_loc_foreign_full_name_2nd_layer
+#from geocode_replace_loc import replace_loc_foreign_full_nd_2nd_layer
+#from geocode_replace_loc import replace_loc_foreign_no_space_2nd_layer
+#from geocode_replace_loc import replace_loc_foreign_country_first3_2nd_jaro_winkler
+#from geocode_replace_loc import replace_loc_domestic_zipcode
+
 # TODO: switch to import the tested version of sep_wrd.
 # from sep_wrd_geocode import sep_wrd
 
@@ -185,33 +206,33 @@ for scnt in range(-1, c.execute("select max(sep_cnt(city)) from loc").fetchone()
     replace_loc_domestic();
 
     ## DOMESTIC (Blk Remove)
-    replace_loc_domestic_block_remove();
+    #replace_loc_domestic_block_remove();
 
     ## DOMESTIC FIRST3 (Jaro Winkler)
-    replace_loc_domestic_first3_jaro_winkler();
+    #replace_loc_domestic_first3_jaro_winkler();
 
     ## DOMESTIC LAST4 (Jaro Winkler)
-    replace_loc_domestic_last4_jaro_winkler();
+    #replace_loc_domestic_last4_jaro_winkler();
 
     #------------------------------------------#
 
     ## FOREIGN COUNTRY (Full Name 1)
-    replace_loc_foreign_country_full_name_1();
+    #replace_loc_foreign_country_full_name_1();
 
     ## FOREIGN COUNTRY (Full Name 2)
-    replace_loc_foreign_country_full_name_2();
+    #replace_loc_foreign_country_full_name_2();
 
     ## FOREIGN COUNTRY (Short Form)
-    replace_loc_foreign_country_short_form();
+    #replace_loc_foreign_country_short_form();
 
     ## FOREIGN COUNTRY (Blk Split)
-    replace_loc_foreign_country_block_split();
+    #replace_loc_foreign_country_block_split();
 
     ## FOREIGN COUNTRY FIRST3 (JARO WINKLER)
-    replace_loc_foreign_country_first3_jaro_winkler();
+    #replace_loc_foreign_country_first3_jaro_winkler();
 
     ##FOREIGN COUNTRY LAST4 (JARO WINKLER)
-    replace_loc_foreign_country_last4_jaro_winkler();
+    #replace_loc_foreign_country_last4_jaro_winkler();
 
 ####    ##DOMESTIC (State miscode to Country)
 ####    replace_loc("""
@@ -230,100 +251,26 @@ for scnt in range(-1, c.execute("select max(sep_cnt(city)) from loc").fetchone()
 print "------ F ------"
 
 ## DOMESTIC (2nd LAYER)
-replace_loc_domestic_2nd_layer();
-
+#replace_loc_domestic_2nd_layer();
 
 ## DOMESTIC FIRST3 (2nd, JARO WINKLER)
-replace_loc_domestic_first3_2nd_jaro_winkler();
-
+#replace_loc_domestic_first3_2nd_jaro_winkler();
 
 ## FOREIGN FULL NAME (2nd LAYER)
-replace_loc_foreign_full_name_2nd_layer();
+#replace_loc_foreign_full_name_2nd_layer();
 
+## FOREIGN FULL ND (2nd LAYER)
+#replace_loc_foreign_full_nd_2nd_layer();
 
-##FOREIGN FULL ND (2nd LAYER)
-replace_loc("""
-    SELECT  25,
-            a.cnt as cnt,
-            a.city as CityA, 
-            a.state as StateA, 
-            a.country as CountryA, 
-            a.zipcode as ZipcodeA,
-            b.full_name_nd_ro, 
-            '' as state, 
-            b.cc1, 
-            '' as zip, 
-            b.lat, 
-            b.long
-      FROM  (SELECT  * FROM  loc WHERE  NCity IS NOT NULL) AS a
-INNER JOIN  loc.gnsloc AS b
-        ON  a.NCity = b.full_name_nd_ro 
-       AND  a.NCountry = b.cc1;
-    """)
+## FOREIGN NO SPACE (2nd LAYER)
+#replace_loc_foreign_no_space_2nd_layer();
 
-##FOREIGN NO SPACE (2nd LAYER)
-replace_loc("""
-    SELECT  25,
-            a.cnt as cnt,
-            a.city as CityA, 
-            a.state as StateA, 
-            a.country as CountryA, 
-            a.zipcode as ZipcodeA,
-            b.full_name_nd_ro, 
-            '' as state, 
-            b.cc1, 
-            '' as zip, 
-            b.lat, 
-            b.long
-      FROM  (SELECT  * FROM  loc WHERE  NCity IS NOT NULL) AS a
-INNER JOIN  loc.gnsloc AS b
-        ON  BLK_SPLIT(a.NCity) = b.sort_name_ro 
-       AND  a.NCountry = b.cc1;
-    """)
+## FOREIGN COUNTRY FIRST3 (2nd, JARO WINKLER)
+#replace_loc_foreign_country_first3_2nd_jaro_winkler();
 
-##FOREIGN COUNTRY FIRST3 (2nd, JARO WINKLER)
+## DOMESTIC ZIPCODE
+#replace_loc_domestic_zipcode();
 
-replace_loc("""
-    SELECT  24+jarow(BLK_SPLIT(a.NCity), 
-            b.sort_name_ro) AS Jaro,
-            a.cnt as cnt,
-            a.city as CityA, 
-            a.state as StateA, 
-            a.country as CountryA, 
-            a.zipcode as ZipcodeA,
-            b.full_name_nd_ro, 
-            '' as state, 
-            b.cc1, 
-            '' as zip, 
-            b.lat, 
-            b.long
-      FROM  (SELECT  * FROM  loc WHERE  NCity IS NOT NULL) AS a
-INNER JOIN  loc.gnsloc AS b
-        ON  SUBSTR(BLK_SPLIT(a.NCity),1,3) = b.sort_name_ro 
-       AND  a.Ncountry = b.cc1
-     WHERE  jaro > %s
-  ORDER BY  a.NCity, a.NCountry, jaro;
-    """ % "24.95")
-
-##DOMESTIC ZIPCODE
-
-replace_loc("""
-    SELECT  31,
-            a.cnt as cnt,
-            a.city as CityA, 
-            a.state as StateA, 
-            a.country as CountryA, 
-            a.zipcode as ZipcodeA,
-            b.City, 
-            b.State, 
-            'US', 
-            b.zipcode, 
-            b.latitude, 
-            b.longitude
-      FROM  (SELECT  *, (SEP_WRD(zipcode,0)+0) as Zip2 FROM loc WHERE  Zipcode != '' AND Country = 'US') AS a
-     INNER  JOIN usloc AS b
-        ON  a.Zip2 = b.Zipcode;
-    """)
 
 ##MISSING JARO (FIRST 3)
 #replace_loc("""
