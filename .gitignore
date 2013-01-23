@@ -19,3 +19,8 @@ NBER_asg
 loctbl
 latex/
 html/
+*.project
+.pydevproject
+hashTbl
+test1/
+test_loc.sql
