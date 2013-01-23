@@ -15,26 +15,27 @@ from fwork import jarow
 from fwork import cityctry
 from fwork import tblExist
 
-# Jill Rabinowitz: Import geocode_replace_loc, with each SQL statement used 
-# to create table temp1 as its own function
+# Jill Rabinowitz: 1/18/13
+# Import geocode_replace_loc, which consists of a series of functions, each with a SQL statement that is passed as a parameter to replace_loc
+# These SQL statements are what are used to create table temp1.
 import geocode_replace_loc
-from geocode_replace_loc import replace_loc_domestic
-#from geocode_replace_loc import replace_loc_domestic_block_remove
-#from geocode_replace_loc import replace_loc_domestic_first3_jaro_winkler
-#from geocode_replace_loc import replace_loc_domestic_last4_jaro_winkler
-#from geocode_replace_loc import replace_loc_foreign_country_full_name_1
-#from geocode_replace_loc import replace_loc_foreign_country_full_name_2
-#from geocode_replace_loc import replace_loc_foreign_country_short_form
-#from geocode_replace_loc import replace_loc_foreign_country_block_split
-#from geocode_replace_loc import replace_loc_foreign_country_first3_jaro_winkler
-#from geocode_replace_loc import replace_loc_foreign_country_last4_jaro_winkler
-#from geocode_replace_loc import replace_loc_domestic_2nd_layer
-#from geocode_replace_loc import replace_loc_domestic_first3_2nd_jaro_winkler 
-#from geocode_replace_loc import replace_loc_foreign_full_name_2nd_layer
-#from geocode_replace_loc import replace_loc_foreign_full_nd_2nd_layer
-#from geocode_replace_loc import replace_loc_foreign_no_space_2nd_layer
-#from geocode_replace_loc import replace_loc_foreign_country_first3_2nd_jaro_winkler
-#from geocode_replace_loc import replace_loc_domestic_zipcode
+from geocode_replace_loc import get_domestic_sql
+from geocode_replace_loc import get_loc_domestic_block_remove_sql
+from geocode_replace_loc import get_loc_domestic_first3_jaro_winkler_sql
+from geocode_replace_loc import get_loc_domestic_last4_jaro_winkler_sql
+from geocode_replace_loc import get_loc_foreign_country_full_name_1_sql
+from geocode_replace_loc import get_loc_foreign_country_full_name_2_sql
+from geocode_replace_loc import get_loc_foreign_country_short_form_sql
+from geocode_replace_loc import get_loc_foreign_country_block_split_sql
+from geocode_replace_loc import get_loc_foreign_country_first3_jaro_winkler_sql
+from geocode_replace_loc import get_loc_foreign_country_last4_jaro_winkler_sql
+from geocode_replace_loc import get_loc_domestic_2nd_layer_sql
+from geocode_replace_loc import get_loc_domestic_first3_2nd_jaro_winkler_sql 
+from geocode_replace_loc import get_loc_foreign_full_name_2nd_layer_sql
+from geocode_replace_loc import get_loc_foreign_full_nd_2nd_layer_sql
+from geocode_replace_loc import get_loc_foreign_no_space_2nd_layer_sql
+from geocode_replace_loc import get_loc_foreign_country_first3_2nd_jaro_winkler_sql
+from geocode_replace_loc import get_loc_domestic_zipcode_sql
 
 # TODO: switch to import the tested version of sep_wrd.
 # from sep_wrd_geocode import sep_wrd
@@ -166,11 +167,18 @@ def replace_loc(script):
     # TODO: Refactor this next block
     #ALLOWS US TO REPLACE THE PREV LOC DATASET
 
-    c.executescript("""
-        DROP TABLE IF EXISTS temp1;
-        CREATE TEMPORARY TABLE temp1 AS %s;
-        CREATE INDEX IF NOT EXISTS tmp1_idx ON temp1 (CityA, StateA, CountryA, ZipcodeA);;
-        """ % script)
+    #c.executescript("""
+    #   DROP TABLE IF EXISTS temp1;
+    #   CREATE TEMPORARY TABLE temp1 AS %s;
+    #   CREATE INDEX IF NOT EXISTS tmp1_idx ON temp1 (CityA, StateA, CountryA, ZipcodeA);
+    #   """ % script)
+
+    stmt_to_execute = """
+       DROP TABLE IF EXISTS temp1;
+       CREATE TEMPORARY TABLE temp1 AS %s;
+       CREATE INDEX IF NOT EXISTS tmp1_idx ON temp1 (CityA, StateA, CountryA, ZipcodeA);
+       """ % script
+    c.executescript(stmt_to_execute)
 
     # TODO: Refactor into its own function, unit test.
     # Also, consider deleting, as these do not appear to be
@@ -193,46 +201,47 @@ def replace_loc(script):
     conn.commit()
 
 
-print "Loc =", c.execute("select count(*) from loc").fetchone()[0]
+print "Loc =", c.execute("select count(*) from loc.loc").fetchone()[0]		# JR prefixing tablename (loc) with dbname (also loc)
 
 # TODO: Refactor the range call into it's own function, unit test
 # that function extensively.
 
-for scnt in range(-1, c.execute("select max(sep_cnt(city)) from loc").fetchone()[0]+1):
+
+for scnt in range(-1, c.execute("select max(sep_cnt(city)) from loc.loc").fetchone()[0]+1):  	# JR prefixing tablename (loc) with dbname (also loc)
     sep = scnt
     print "------", scnt, "------"
 
-    ## DOMESTIC  
-    replace_loc_domestic();
+    ## DOMESTIC  									   
+    replace_loc(get_domestic_sql() % (sep, scnt))
 
     ## DOMESTIC (Blk Remove)
-    #replace_loc_domestic_block_remove();
+    replace_loc(get_loc_domestic_block_remove_sql() % (sep, scnt))
 
     ## DOMESTIC FIRST3 (Jaro Winkler)
-    #replace_loc_domestic_first3_jaro_winkler();
+    replace_loc(get_loc_domestic_first3_jaro_winkler_sql() % (sep, sep, "10.92", scnt))     	# JR why is this being hard-coded?
 
     ## DOMESTIC LAST4 (Jaro Winkler)
-    #replace_loc_domestic_last4_jaro_winkler();
+    replace_loc(get_loc_domestic_last4_jaro_winkler_sql() % (sep, sep, "10.90", scnt))      	# JR hard-coding?
 
     #------------------------------------------#
 
     ## FOREIGN COUNTRY (Full Name 1)
-    #replace_loc_foreign_country_full_name_1();
+    replace_loc(get_loc_foreign_country_full_name_1_sql() % (sep, scnt))
 
     ## FOREIGN COUNTRY (Full Name 2)
-    #replace_loc_foreign_country_full_name_2();
+    replace_loc(get_loc_foreign_country_full_name_2_sql() % (sep, scnt))      
 
     ## FOREIGN COUNTRY (Short Form)
-    #replace_loc_foreign_country_short_form();
+    replace_loc(get_loc_foreign_country_short_form_sql() % (sep, scnt))
 
     ## FOREIGN COUNTRY (Blk Split)
-    #replace_loc_foreign_country_block_split();
+    replace_loc(get_loc_foreign_country_block_split_sql() % (sep, scnt))
 
     ## FOREIGN COUNTRY FIRST3 (JARO WINKLER)
-    #replace_loc_foreign_country_first3_jaro_winkler();
+    replace_loc(get_loc_foreign_country_first3_jaro_winkler_sql() % (sep, sep, "20.92", scnt))  # JR hard-coding?
 
     ##FOREIGN COUNTRY LAST4 (JARO WINKLER)
-    #replace_loc_foreign_country_last4_jaro_winkler();
+    replace_loc(get_loc_foreign_country_last4_jaro_winkler_sql() % (sep, sep, "20.90", scnt))  # JR hard-coding?
 
 ####    ##DOMESTIC (State miscode to Country)
 ####    replace_loc("""
@@ -246,30 +255,28 @@ for scnt in range(-1, c.execute("select max(sep_cnt(city)) from loc").fetchone()
 
 ### End of for loop
 
-
-
 print "------ F ------"
 
 ## DOMESTIC (2nd LAYER)
-#replace_loc_domestic_2nd_layer();
+replace_loc(get_loc_domestic_2nd_layer_sql())
 
 ## DOMESTIC FIRST3 (2nd, JARO WINKLER)
-#replace_loc_domestic_first3_2nd_jaro_winkler();
+replace_loc(get_loc_domestic_first3_2nd_jaro_winkler_sql() % ("14.95"))   		# JR hard-coding
 
 ## FOREIGN FULL NAME (2nd LAYER)
-#replace_loc_foreign_full_name_2nd_layer();
+replace_loc(get_loc_foreign_full_name_2nd_layer_sql())
 
 ## FOREIGN FULL ND (2nd LAYER)
-#replace_loc_foreign_full_nd_2nd_layer();
+replace_loc(get_loc_foreign_full_nd_2nd_layer_sql())
 
 ## FOREIGN NO SPACE (2nd LAYER)
-#replace_loc_foreign_no_space_2nd_layer();
+replace_loc(get_loc_foreign_no_space_2nd_layer_sql())
 
 ## FOREIGN COUNTRY FIRST3 (2nd, JARO WINKLER)
-#replace_loc_foreign_country_first3_2nd_jaro_winkler();
+replace_loc(get_loc_foreign_country_first3_2nd_jaro_winkler_sql() % ("24.95"))		# JR hard-coding
 
 ## DOMESTIC ZIPCODE
-#replace_loc_domestic_zipcode();
+replace_loc(get_loc_domestic_zipcode_sql())
 
 
 ##MISSING JARO (FIRST 3)
