@@ -26,3 +26,5 @@ class TestCouchPatent(unittest.TestCase):
         self.testfile = XMLPatentBase(open(testdir+'ipg120327.one.xml').read())
         self.assertTrue(self.testfile)
 
+
+unittest.main()
