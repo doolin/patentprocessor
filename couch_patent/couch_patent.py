@@ -28,6 +28,11 @@ class TestCouchPatent(unittest.TestCase):
         #establish test xml file
         self.testfile = XMLPatentBase(open(testdir+'ipg120327.one.xml').read())
         self.assertTrue(self.testfile)
+        self.attrs = ['country', 'patent', 'kind', 'date_grant', 'pat_type', \
+                      'date_app', 'country_app', 'patent_app', 'code_app', \
+                      'clm_num', 'classes', 'abstract', 'invention_title', \
+                      'asg_list', 'cit_list', 'rel_list', \
+                      'inv_list', 'law_list']
 
 
 unittest.main()
