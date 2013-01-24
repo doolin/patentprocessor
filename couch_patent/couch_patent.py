@@ -14,9 +14,10 @@ testdir = os.path.join(basedir, 'fixtures/xml/')
 class TestCouchPatent(unittest.TestCase):
 
     def setUp(self):
+        #setup CouchDB
         self.couch = couchdb.Server()
         self.db = None
-        if not 'patents' in self.couch:
+        if 'patents' in self.couch:
             self.db = self.couch['patents']
         else:
             self.db = self.couch.create('patents')
