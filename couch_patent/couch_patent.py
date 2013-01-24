@@ -7,6 +7,9 @@ import unittest
 sys.path.append('../lib')
 from patXML import *
 
+sys.path.append('..')
+import parse
+
 basedir = os.path.join(os.curdir, '../test')
 testdir = os.path.join(basedir, 'fixtures/xml/')
 
