@@ -35,4 +35,23 @@ class TestCouchPatent(unittest.TestCase):
                       'inv_list', 'law_list']
 
 
+    def test_get_doc_metadata(self):
+        """
+        Tests that get_metadata retrieves the requisite information from a
+        parsed xml file
+        """
+        patentroot = '.'
+        xmlregex = r'ipg120327.one.xml'
+        filelist = parse.list_files([testdir], patentroot, xmlregex)
+        grant_list = parse.parallel_parse(filelist)
+        parsed_grants = parse.parse_patent(grant_list)
+        self.assertTrue(len(parsed_grants) == 9)
+        metadata = parse.get_metadata(parsed_grants[0])
+        self.assertTrue(isinstance(metadata, dict))
+        self.assertTrue(metadata['xml'] == \
+                        open(testdir+'ipg120327.one.xml').read())
+        for attr in self.attrs:
+            self.assertTrue(metadata['attributes'][attr] == \
+                            parsed_grants[0].__getattr__(attr))
+
 unittest.main()
