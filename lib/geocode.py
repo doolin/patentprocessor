@@ -15,9 +15,10 @@ from fwork import jarow
 from fwork import cityctry
 from fwork import tblExist
 
-# Jill Rabinowitz: 1/18/13
-# Import geocode_replace_loc, which consists of a series of functions, each with a SQL statement that is passed as a parameter to replace_loc
-# These SQL statements are what are used to create table temp1.
+# geocode_replace_loc consists of a series of functions,
+# each with a SQL statement that is passed as a parameter
+# to replace_loc. Uses temporary tables for handling 
+# intermediate relations.
 from geocode_replace_loc import *
 
 # TODO: switch to import the tested version of sep_wrd.
