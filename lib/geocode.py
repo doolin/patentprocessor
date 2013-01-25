@@ -195,7 +195,7 @@ for scnt in range(-1, c.execute("select max(sep_cnt(city)) from loc.loc").fetcho
     sep = scnt
     print "------", scnt, "------"
 
-    ## DOMESTIC  									   
+    ## DOMESTIC
     replace_loc(get_domestic_sql() % (sep, scnt))
 
     ## DOMESTIC (Blk Remove)
@@ -213,7 +213,7 @@ for scnt in range(-1, c.execute("select max(sep_cnt(city)) from loc.loc").fetcho
     replace_loc(get_loc_foreign_country_full_name_1_sql() % (sep, scnt))
 
     ## FOREIGN COUNTRY (Full Name 2)
-    replace_loc(get_loc_foreign_country_full_name_2_sql() % (sep, scnt))      
+    replace_loc(get_loc_foreign_country_full_name_2_sql() % (sep, scnt))
 
     ## FOREIGN COUNTRY (Short Form)
     replace_loc(get_loc_foreign_country_short_form_sql() % (sep, scnt))
