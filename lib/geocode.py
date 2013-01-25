@@ -18,24 +18,7 @@ from fwork import tblExist
 # Jill Rabinowitz: 1/18/13
 # Import geocode_replace_loc, which consists of a series of functions, each with a SQL statement that is passed as a parameter to replace_loc
 # These SQL statements are what are used to create table temp1.
-import geocode_replace_loc
-from geocode_replace_loc import get_domestic_sql
-from geocode_replace_loc import get_loc_domestic_block_remove_sql
-from geocode_replace_loc import get_loc_domestic_first3_jaro_winkler_sql
-from geocode_replace_loc import get_loc_domestic_last4_jaro_winkler_sql
-from geocode_replace_loc import get_loc_foreign_country_full_name_1_sql
-from geocode_replace_loc import get_loc_foreign_country_full_name_2_sql
-from geocode_replace_loc import get_loc_foreign_country_short_form_sql
-from geocode_replace_loc import get_loc_foreign_country_block_split_sql
-from geocode_replace_loc import get_loc_foreign_country_first3_jaro_winkler_sql
-from geocode_replace_loc import get_loc_foreign_country_last4_jaro_winkler_sql
-from geocode_replace_loc import get_loc_domestic_2nd_layer_sql
-from geocode_replace_loc import get_loc_domestic_first3_2nd_jaro_winkler_sql 
-from geocode_replace_loc import get_loc_foreign_full_name_2nd_layer_sql
-from geocode_replace_loc import get_loc_foreign_full_nd_2nd_layer_sql
-from geocode_replace_loc import get_loc_foreign_no_space_2nd_layer_sql
-from geocode_replace_loc import get_loc_foreign_country_first3_2nd_jaro_winkler_sql
-from geocode_replace_loc import get_loc_domestic_zipcode_sql
+from geocode_replace_loc import *
 
 # TODO: switch to import the tested version of sep_wrd.
 # from sep_wrd_geocode import sep_wrd
