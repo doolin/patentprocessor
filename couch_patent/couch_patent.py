@@ -81,4 +81,28 @@ class TestCouchPatent(unittest.TestCase):
         db.delete(metadata)
         self.assertFalse(db.get(doc_id))
 
+    def test_query_publication_id(self):
+        metadata = get_metadata(parsed_grants[0])
+        doc_id = add_doc(metadata)
+        stored_doc = dict(db.get(doc_id))
+        db.delete(metadata)
+        queried_doc = query('publication_id',parsed_grants[0].patent)
+        self.assertTrue(queried_doc == metadata)
+
+    def test_query_application_id(self):
+        metadata = get_metadata(parsed_grants[0])
+        doc_id = add_doc(metadata)
+        stored_doc = dict(db.get(doc_id))
+        db.delete(metadata)
+        queried_doc = query('application_id',parsed_grants[0].patent_app)
+        self.assertTrue(queried_doc == metadata)
+
+    def test_query_xml(self):
+        metadata = get_metadata(parsed_grants[0])
+        doc_id = add_doc(metadata)
+        stored_doc = dict(db.get(doc_id))
+        db.delete(metadata)
+        queried_doc = query('xml',parsed_grants[0].orig_xmlstring)
+        self.assertTrue(queried_doc == metadata)
+
 unittest.main()
