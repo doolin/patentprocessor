@@ -54,9 +54,7 @@ def add_doc(metadata):
 class TestCouchPatent(unittest.TestCase):
 
     def setUp(self):
-        #setup CouchDB
         self.assertTrue(testfile)
-
 
     def test_get_doc_metadata(self):
         """
