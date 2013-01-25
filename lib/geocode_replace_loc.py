@@ -10,26 +10,26 @@
 
 
 ## DOMESTIC
-def get_domestic_sql():  
+def get_domestic_sql():
 
-     stmt = """SELECT  11, 
+     stmt = """SELECT  11,
                a.cnt as cnt,
                a.city as CityA,
                a.state as StateA,
                a.country as CountryA,
                a.zipcode as ZipcodeA,
-               b.city, 
+               b.city,
                b.state,
-               'US', 
+               'US',
                b.zipcode,
                b.latitude,
                b.longitude
-         FROM  loc AS a 
-      INNER JOIN  usloc AS b 
-            ON  SEP_WRD(CityA, %d) = b.city 
-           AND  StateA = b.state 
-           AND  CountryA = 'US' 
-          WHERE  SEP_CNT(CityA) >= %d  
+         FROM  loc AS a
+      INNER JOIN  usloc AS b
+            ON  SEP_WRD(CityA, %d) = b.city
+           AND  StateA = b.state
+           AND  CountryA = 'US'
+          WHERE  SEP_CNT(CityA) >= %d
           AND  CityA != '' """
 
      return stmt;
@@ -39,41 +39,41 @@ def get_loc_domestic_block_remove_sql():
 
       stmt = """SELECT  11,
                 a.cnt as cnt,
-                a.city as CityA, 
-                a.state as StateA, 
+                a.city as CityA,
+                a.state as StateA,
                 a.country as CountryA,
                 a.zipcode as ZipcodeA,
-                b.city, 
+                b.city,
                 b.state,
-                'US', 
-                b.zipcode, 
+                'US',
+                b.zipcode,
                 b.latitude,
                 b.longitude
-          FROM  loc AS a 
+          FROM  loc AS a
     INNER JOIN  usloc AS b
             ON  BLK_SPLIT(SEP_WRD(a.City, %d)) = b.blkcity
            AND  a.state = b.state
            AND  a.country = 'US'
          WHERE  SEP_CNT(a.City) >= %d
            AND  a.City != '' """
-        											
+
       return stmt;
 
 ## DOMESTIC FIRST3 JARO WINKLER
 def get_loc_domestic_first3_jaro_winkler_sql():
-   
+
       stmt = """SELECT  (10+jarow(BLK_SPLIT(SEP_WRD(a.City, %d)),
                 b.BlkCity)) AS Jaro,
                 a.cnt as cnt,
-                a.city as CityA, 
-                a.state as StateA, 
+                a.city as CityA,
+                a.state as StateA,
                 a.country as CountryA,
                 a.zipcode as ZipcodeA,
                 b.city,
-                b.state, 
-                'US', 
-                b.zipcode, 
-                b.latitude, 
+                b.state,
+                'US',
+                b.zipcode,
+                b.latitude,
                 b.longitude
           FROM  loc AS a INNER JOIN usloc AS b
             ON  SUBSTR(BLK_SPLIT(SEP_WRD(a.City, %d)),1,3) = b.City3
@@ -89,7 +89,7 @@ def get_loc_domestic_first3_jaro_winkler_sql():
 
 ## DOMESTIC LAST4 JARO WINKLER
 def get_loc_domestic_last4_jaro_winkler_sql():
- 
+
       stmt = """SELECT  (10+jarow(BLK_SPLIT(SEP_WRD(a.City, %d)),
                 b.BlkCity)) AS Jaro,
                 a.cnt as cnt,
@@ -111,12 +111,12 @@ def get_loc_domestic_last4_jaro_winkler_sql():
            AND  SEP_CNT(a.City) >= %d
            AND  a.City != ""
       ORDER BY  a.City, a.State, jaro"""
-        
+
       return stmt;
 
 ## FOREIGN COUNTRY FULL NAME 1
 def get_loc_foreign_country_full_name_1_sql():				# JR Code started taking longer to run at this statement
-    
+
       stmt = """SELECT  21,
                 a.cnt as cnt,
                 a.city as CityA,
@@ -134,7 +134,7 @@ def get_loc_foreign_country_full_name_1_sql():				# JR Code started taking longe
            AND  a.country = b.cc1
          WHERE  SEP_CNT(a.City) >= %d
            AND  a.City!="" """
- 
+
       return stmt;
 
 
@@ -187,7 +187,7 @@ def get_loc_foreign_country_short_form_sql():
 
 
 ## FOREIGN COUNTRY BLOCK SPLIT
-def get_loc_foreign_country_block_split_sql():  
+def get_loc_foreign_country_block_split_sql():
 
       stmt = """SELECT  21,
                 a.cnt as cnt,
@@ -211,7 +211,7 @@ def get_loc_foreign_country_block_split_sql():
 
 ## FOREIGN COUNTRY FIRST3 JARO WINKLER
 def get_loc_foreign_country_first3_jaro_winkler_sql():
- 
+
       stmt = """SELECT  (20+jarow(BLK_SPLIT(SEP_WRD(a.City, %d)),
                 b.sort_name_ro)) AS Jaro,
                 a.cnt as cnt,
@@ -232,14 +232,14 @@ def get_loc_foreign_country_first3_jaro_winkler_sql():
            AND  SEP_CNT(a.City) >= %d
            AND  a.City != ""
       ORDER BY  a.City, a.Country, jaro"""
-   
+
       return stmt;
 
 
 
 ## FOREIGN COUNTRY LAST4 JARO WINKLER
 def get_loc_foreign_country_last4_jaro_winkler_sql():
- 
+
       stmt = """SELECT  (20+jarow(BLK_SPLIT(SEP_WRD(a.City, %d)),
                 b.sort_name_ro)) AS Jaro,
                 a.cnt as cnt,
@@ -357,7 +357,7 @@ def get_loc_foreign_full_nd_2nd_layer_sql():
     INNER JOIN  loc.gnsloc AS b
             ON  a.NCity = b.full_name_nd_ro
            AND  a.NCountry = b.cc1"""
-  
+
       return stmt;
 
 
@@ -366,23 +366,23 @@ def get_loc_foreign_no_space_2nd_layer_sql():
 
       stmt = """SELECT  25,
                 a.cnt as cnt,
-                a.city as CityA, 
-                a.state as StateA, 
+                a.city as CityA,
+                a.state as StateA,
                 a.country as CountryA,
                 a.zipcode as ZipcodeA,
                 b.full_name_nd_ro,
                 '' as state,
                 b.cc1,
                 '' as zip,
-                b.lat,   
+                b.lat,
                 b.long
           FROM  (SELECT  * FROM  loc WHERE  NCity IS NOT NULL) AS a
     INNER JOIN  loc.gnsloc AS b
             ON  BLK_SPLIT(a.NCity) = b.sort_name_ro
            AND  a.NCountry = b.cc1"""
- 
+
       return stmt;
-    
+
 
 ## FOREIGN COUNTRY FIRST3 (2nd, JARO WINKLER)
 def get_loc_foreign_country_first3_2nd_jaro_winkler_sql():
@@ -427,5 +427,5 @@ def get_loc_domestic_zipcode_sql():
           FROM  (SELECT  *, (SEP_WRD(zipcode,0)+0) as Zip2 FROM loc WHERE  Zipcode != '' AND Country = 'US') AS a
          INNER  JOIN usloc AS b
             ON  a.Zip2 = b.Zipcode"""
-    
+
       return stmt;
