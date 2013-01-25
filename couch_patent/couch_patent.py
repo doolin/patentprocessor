@@ -39,6 +39,13 @@ def get_metadata(patent):
         metadata['attributes'][attr] = patent.__getattribute__(attr)
     return metadata
 
+def add_doc(metadata):
+    """
+    Adds metadata to couch database
+    """
+    doc_id, doc_rev = db.save(metadata)
+    return doc_id
+
 
 class TestCouchPatent(unittest.TestCase):
 
