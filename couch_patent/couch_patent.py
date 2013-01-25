@@ -67,4 +67,20 @@ class TestCouchPatent(unittest.TestCase):
             self.assertTrue(metadata['attributes'][attr] == \
                             parsed_grants[0].__getattribute__(attr))
 
+
+    def test_add_doc(self):
+        """
+        Tests adding an xml doc with all its information to the database
+        """
+        patentroot = '.'
+        xmlregex = r'ipg120327.one.xml'
+        filelist = parse.list_files([testdir], patentroot, xmlregex)
+        grant_list = parse.parallel_parse(filelist)
+        parsed_grants = parse.parse_patent(grant_list)
+        self.assertTrue(len(parsed_grants) == 9)
+        metadata = get_metadata(parsed_grants[0])
+        doc_id = add_doc(metadata)
+        stored_doc = dict(couch['patents'].get(doc_id))
+        self.assertTrue(stored_doc == metadata)
+
 unittest.main()
