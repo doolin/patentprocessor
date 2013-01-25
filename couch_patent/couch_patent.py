@@ -48,10 +48,11 @@ class TestCouchPatent(unittest.TestCase):
         self.assertTrue(len(parsed_grants) == 9)
         metadata = get_metadata(parsed_grants[0])
         self.assertTrue(isinstance(metadata, dict))
-        self.assertTrue(metadata['xml'] == \
-                        open(testdir+'ipg120327.one.xml').read())
-        for attr in self.attrs:
+        self.assertTrue(metadata['publication_id'] == parsed_grants[0].patent)
+        self.assertTrue(metadata['application_id'] == parsed_grants[0].patent_app)
+        self.assertTrue(metadata['xml'] == parsed_grants[0].orig_xmlstring)
+        for attr in attrs:
             self.assertTrue(metadata['attributes'][attr] == \
-                            parsed_grants[0].__getattr__(attr))
+                            parsed_grants[0].__getattribute__(attr))
 
 unittest.main()
