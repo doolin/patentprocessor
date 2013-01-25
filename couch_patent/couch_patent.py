@@ -46,7 +46,6 @@ def add_doc(metadata):
     doc_id, doc_rev = db.save(metadata)
     return doc_id
 
-
 class TestCouchPatent(unittest.TestCase):
 
     def setUp(self):
@@ -73,7 +72,6 @@ class TestCouchPatent(unittest.TestCase):
         for attr in attrs:
             self.assertTrue(metadata['attributes'][attr] == \
                             parsed_grants[0].__getattribute__(attr))
-
 
     def test_add_doc(self):
         """
