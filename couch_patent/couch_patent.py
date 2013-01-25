@@ -46,7 +46,7 @@ class TestCouchPatent(unittest.TestCase):
         grant_list = parse.parallel_parse(filelist)
         parsed_grants = parse.parse_patent(grant_list)
         self.assertTrue(len(parsed_grants) == 9)
-        metadata = parse.get_metadata(parsed_grants[0])
+        metadata = get_metadata(parsed_grants[0])
         self.assertTrue(isinstance(metadata, dict))
         self.assertTrue(metadata['xml'] == \
                         open(testdir+'ipg120327.one.xml').read())
