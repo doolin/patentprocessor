@@ -194,16 +194,16 @@ for scnt in range(-1, c.execute("select max(sep_cnt(city)) from loc.loc").fetcho
 
     sep = scnt
     print "------", scnt, "------"
-    replace_loc(get_domestic_sql() % (sep, scnt))
-    replace_loc(get_loc_domestic_block_remove_sql() % (sep, scnt))
-    replace_loc(get_loc_domestic_first3_jaro_winkler_sql() % (sep, sep, "10.92", scnt))
-    replace_loc(get_loc_domestic_last4_jaro_winkler_sql() % (sep, sep, "10.90", scnt))
-    replace_loc(get_loc_foreign_country_full_name_1_sql() % (sep, scnt))
-    replace_loc(get_loc_foreign_country_full_name_2_sql() % (sep, scnt))
-    replace_loc(get_loc_foreign_country_short_form_sql() % (sep, scnt))
-    replace_loc(get_loc_foreign_country_block_split_sql() % (sep, scnt))
+    replace_loc(get_domestic_sql()                                % (sep, scnt))
+    replace_loc(get_loc_domestic_block_remove_sql()               % (sep, scnt))
+    replace_loc(get_loc_domestic_first3_jaro_winkler_sql()        % (sep, sep, "10.92", scnt))
+    replace_loc(get_loc_domestic_last4_jaro_winkler_sql()         % (sep, sep, "10.90", scnt))
+    replace_loc(get_loc_foreign_country_full_name_1_sql()         % (sep, scnt))
+    replace_loc(get_loc_foreign_country_full_name_2_sql()         % (sep, scnt))
+    replace_loc(get_loc_foreign_country_short_form_sql()          % (sep, scnt))
+    replace_loc(get_loc_foreign_country_block_split_sql()         % (sep, scnt))
     replace_loc(get_loc_foreign_country_first3_jaro_winkler_sql() % (sep, sep, "20.92", scnt))
-    replace_loc(get_loc_foreign_country_last4_jaro_winkler_sql() % (sep, sep, "20.90", scnt))
+    replace_loc(get_loc_foreign_country_last4_jaro_winkler_sql()  % (sep, sep, "20.90", scnt))
 
 # TODO: Add this block to its own function, add a commented out call to
 # to that function here.
