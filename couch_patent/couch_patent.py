@@ -18,6 +18,19 @@ attrs = ['country', 'patent', 'kind', 'date_grant', 'pat_type', \
          'asg_list', 'cit_list', 'rel_list', \
          'inv_list', 'law_list']
 
+def get_metadata(patent):
+    """
+    Return metadata dictionary of the patent
+    """
+    metadata = {}
+    metadata['publication_id'] = patent.patent
+    metadata['application_id'] = patent.patent_app
+    metadata['xml'] = patent.orig_xmlstring
+    metadata['attributes'] = {}
+    for attr in attrs:
+        metadata['attributes'][attr] = patent.__getattribute__(attr)
+    return metadata
+
 
 class TestCouchPatent(unittest.TestCase):
 
