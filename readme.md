@@ -85,7 +85,7 @@ Any flavor of unixen with the following installed should work:
 
 * Python 2.7.3
 * scipy package for Python
-* sqlite3
+* sqlite3 --> Note: you need version 3.7.15.1 or higher 
 * More? Please [file an
   issue](https://github.com/funginstitute/patentprocessor/issues) if you find another dependency.
 
