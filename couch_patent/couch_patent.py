@@ -25,6 +25,11 @@ if 'patents' in couch:
     db = couch['patents']
 else:
     db = couch.create('patents')
+patentroot = '.'
+xmlregex = r'ipg120327.one.xml'
+filelist = parse.list_files([testdir], patentroot, xmlregex)
+grant_list = parse.parallel_parse(filelist)
+parsed_grants = parse.parse_patent(grant_list)
 
 def get_metadata(patent):
     """
@@ -58,12 +63,6 @@ class TestCouchPatent(unittest.TestCase):
         Tests that get_metadata retrieves the requisite information from a
         parsed xml file
         """
-        patentroot = '.'
-        xmlregex = r'ipg120327.one.xml'
-        filelist = parse.list_files([testdir], patentroot, xmlregex)
-        grant_list = parse.parallel_parse(filelist)
-        parsed_grants = parse.parse_patent(grant_list)
-        self.assertTrue(len(parsed_grants) == 9)
         metadata = get_metadata(parsed_grants[0])
         self.assertTrue(isinstance(metadata, dict))
         self.assertTrue(metadata['publication_id'] == parsed_grants[0].patent)
@@ -77,12 +76,6 @@ class TestCouchPatent(unittest.TestCase):
         """
         Tests adding an xml doc with all its information to the database
         """
-        patentroot = '.'
-        xmlregex = r'ipg120327.one.xml'
-        filelist = parse.list_files([testdir], patentroot, xmlregex)
-        grant_list = parse.parallel_parse(filelist)
-        parsed_grants = parse.parse_patent(grant_list)
-        self.assertTrue(len(parsed_grants) == 9)
         metadata = get_metadata(parsed_grants[0])
         doc_id = add_doc(metadata)
         stored_doc = dict(couch['patents'].get(doc_id))
