@@ -70,6 +70,7 @@ class XMLPatentBase(object):
         """
         # lowercase all tags
         xmlstring = re.sub(r"<[/]?[A-Za-z-]+?[ >]", lambda x: x.group().lower(), xmlstring)
+        self.orig_xmlstring = xmlstring
         # store the minidom parsed xml doc
         xmldoc = minidom.parseString(xmlstring)
         
