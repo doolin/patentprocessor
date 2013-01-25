@@ -189,44 +189,24 @@ print "Loc =", c.execute("select count(*) from loc.loc").fetchone()[0]		# JR pre
 
 # TODO: Refactor the range call into it's own function, unit test
 # that function extensively.
+# TODO: Figure out what these hardcoded parameters mean.
+for scnt in range(-1, c.execute("select max(sep_cnt(city)) from loc.loc").fetchone()[0]+1):
 
-
-for scnt in range(-1, c.execute("select max(sep_cnt(city)) from loc.loc").fetchone()[0]+1):  	# JR prefixing tablename (loc) with dbname (also loc)
     sep = scnt
     print "------", scnt, "------"
-
-    ## DOMESTIC
     replace_loc(get_domestic_sql() % (sep, scnt))
-
-    ## DOMESTIC (Blk Remove)
     replace_loc(get_loc_domestic_block_remove_sql() % (sep, scnt))
-
-    ## DOMESTIC FIRST3 (Jaro Winkler)
-    replace_loc(get_loc_domestic_first3_jaro_winkler_sql() % (sep, sep, "10.92", scnt))     	# JR why is this being hard-coded?
-
-    ## DOMESTIC LAST4 (Jaro Winkler)
-    replace_loc(get_loc_domestic_last4_jaro_winkler_sql() % (sep, sep, "10.90", scnt))      	# JR hard-coding?
-
-    #------------------------------------------#
-
-    ## FOREIGN COUNTRY (Full Name 1)
+    replace_loc(get_loc_domestic_first3_jaro_winkler_sql() % (sep, sep, "10.92", scnt))
+    replace_loc(get_loc_domestic_last4_jaro_winkler_sql() % (sep, sep, "10.90", scnt))
     replace_loc(get_loc_foreign_country_full_name_1_sql() % (sep, scnt))
-
-    ## FOREIGN COUNTRY (Full Name 2)
     replace_loc(get_loc_foreign_country_full_name_2_sql() % (sep, scnt))
-
-    ## FOREIGN COUNTRY (Short Form)
     replace_loc(get_loc_foreign_country_short_form_sql() % (sep, scnt))
-
-    ## FOREIGN COUNTRY (Blk Split)
     replace_loc(get_loc_foreign_country_block_split_sql() % (sep, scnt))
+    replace_loc(get_loc_foreign_country_first3_jaro_winkler_sql() % (sep, sep, "20.92", scnt))
+    replace_loc(get_loc_foreign_country_last4_jaro_winkler_sql() % (sep, sep, "20.90", scnt))
 
-    ## FOREIGN COUNTRY FIRST3 (JARO WINKLER)
-    replace_loc(get_loc_foreign_country_first3_jaro_winkler_sql() % (sep, sep, "20.92", scnt))  # JR hard-coding?
-
-    ##FOREIGN COUNTRY LAST4 (JARO WINKLER)
-    replace_loc(get_loc_foreign_country_last4_jaro_winkler_sql() % (sep, sep, "20.90", scnt))  # JR hard-coding?
-
+# TODO: Add this block to its own function, add a commented out call to
+# to that function here.
 ####    ##DOMESTIC (State miscode to Country)
 ####    replace_loc("""
 ####        SELECT  31,
@@ -238,6 +218,7 @@ for scnt in range(-1, c.execute("select max(sep_cnt(city)) from loc.loc").fetcho
 ####        """ % (sep, scnt))
 
 ### End of for loop
+
 
 print "------ F ------"
 
