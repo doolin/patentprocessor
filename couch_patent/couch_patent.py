@@ -78,7 +78,9 @@ class TestCouchPatent(unittest.TestCase):
         """
         metadata = get_metadata(parsed_grants[0])
         doc_id = add_doc(metadata)
-        stored_doc = dict(couch['patents'].get(doc_id))
+        stored_doc = dict(db.get(doc_id))
         self.assertTrue(stored_doc == metadata)
+        db.delete(metadata)
+        self.assertFalse(db.get(doc_id))
 
 unittest.main()
