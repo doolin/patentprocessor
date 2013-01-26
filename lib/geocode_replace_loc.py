@@ -10,7 +10,7 @@
 
 
 ## DOMESTIC
-def get_domestic_sql():
+def domestic_sql():
 
      stmt = """SELECT  11,
                a.cnt as cnt,
@@ -35,7 +35,7 @@ def get_domestic_sql():
      return stmt;
 
 ## DOMESTIC BLOCK REMOVE
-def get_loc_domestic_block_remove_sql():
+def domestic_block_remove_sql():
 
       stmt = """SELECT  11,
                 a.cnt as cnt,
@@ -60,7 +60,7 @@ def get_loc_domestic_block_remove_sql():
       return stmt;
 
 ## DOMESTIC FIRST3 JARO WINKLER
-def get_loc_domestic_first3_jaro_winkler_sql():
+def domestic_first3_jaro_winkler_sql():
 
       stmt = """SELECT  (10+jarow(BLK_SPLIT(SEP_WRD(a.City, %d)),
                 b.BlkCity)) AS Jaro,
@@ -88,7 +88,7 @@ def get_loc_domestic_first3_jaro_winkler_sql():
 
 
 ## DOMESTIC LAST4 JARO WINKLER
-def get_loc_domestic_last4_jaro_winkler_sql():
+def domestic_last4_jaro_winkler_sql():
 
       stmt = """SELECT  (10+jarow(BLK_SPLIT(SEP_WRD(a.City, %d)),
                 b.BlkCity)) AS Jaro,
@@ -115,7 +115,7 @@ def get_loc_domestic_last4_jaro_winkler_sql():
       return stmt;
 
 ## FOREIGN COUNTRY FULL NAME 1
-def get_loc_foreign_country_full_name_1_sql():				# JR Code started taking longer to run at this statement
+def foreign_country_full_name_1_sql():				# JR Code started taking longer to run at this statement
 
       stmt = """SELECT  21,
                 a.cnt as cnt,
@@ -139,7 +139,7 @@ def get_loc_foreign_country_full_name_1_sql():				# JR Code started taking longe
 
 
 ## FOREIGN COUNTRY FULL NAME 2
-def get_loc_foreign_country_full_name_2_sql():
+def foreign_country_full_name_2_sql():
 
       stmt = """SELECT  21,
                 a.cnt as cnt,
@@ -163,7 +163,7 @@ def get_loc_foreign_country_full_name_2_sql():
 
 
 ## FOREIGN COUNTRY SHORT FORM
-def get_loc_foreign_country_short_form_sql():
+def foreign_country_short_form_sql():
 
       stmt = """SELECT  21,
                 a.cnt as cnt,
@@ -187,7 +187,7 @@ def get_loc_foreign_country_short_form_sql():
 
 
 ## FOREIGN COUNTRY BLOCK SPLIT
-def get_loc_foreign_country_block_split_sql():
+def foreign_country_block_split_sql():
 
       stmt = """SELECT  21,
                 a.cnt as cnt,
@@ -210,7 +210,7 @@ def get_loc_foreign_country_block_split_sql():
       return stmt;
 
 ## FOREIGN COUNTRY FIRST3 JARO WINKLER
-def get_loc_foreign_country_first3_jaro_winkler_sql():
+def foreign_country_first3_jaro_winkler_sql():
 
       stmt = """SELECT  (20+jarow(BLK_SPLIT(SEP_WRD(a.City, %d)),
                 b.sort_name_ro)) AS Jaro,
@@ -238,7 +238,7 @@ def get_loc_foreign_country_first3_jaro_winkler_sql():
 
 
 ## FOREIGN COUNTRY LAST4 JARO WINKLER
-def get_loc_foreign_country_last4_jaro_winkler_sql():
+def foreign_country_last4_jaro_winkler_sql():
 
       stmt = """SELECT  (20+jarow(BLK_SPLIT(SEP_WRD(a.City, %d)),
                 b.sort_name_ro)) AS Jaro,
@@ -267,7 +267,7 @@ def get_loc_foreign_country_last4_jaro_winkler_sql():
 
 
 ## DOMESTIC 2ND LAYER
-def get_loc_domestic_2nd_layer_sql():
+def domestic_2nd_layer_sql():
 
       stmt = """SELECT  15,
                 a.cnt as cnt,
@@ -290,7 +290,7 @@ def get_loc_domestic_2nd_layer_sql():
       return stmt;
 
 ## DOMESTIC FIRST3 2ND JARO WINKLER
-def get_loc_domestic_first3_2nd_jaro_winkler_sql():
+def domestic_first3_2nd_jaro_winkler_sql():
 
       stmt = """SELECT  14+jarow(BLK_SPLIT(a.NCity),
                 b.BlkCity) AS Jaro,
@@ -316,7 +316,7 @@ def get_loc_domestic_first3_2nd_jaro_winkler_sql():
       return stmt;
 
 ## FOREIGN FULL NAME 2ND LAYER
-def get_loc_foreign_full_name_2nd_layer_sql():
+def foreign_full_name_2nd_layer_sql():
 
       stmt = """SELECT  25,
                 a.cnt as cnt,
@@ -339,7 +339,7 @@ def get_loc_foreign_full_name_2nd_layer_sql():
 
 
 ## FOREIGN FULL ND 2ND LAYER
-def get_loc_foreign_full_nd_2nd_layer_sql():
+def foreign_full_nd_2nd_layer_sql():
 
       stmt = """SELECT  25,
                 a.cnt as cnt,
@@ -362,7 +362,7 @@ def get_loc_foreign_full_nd_2nd_layer_sql():
 
 
 ## FOREIGN NO SPACE (2nd LAYER)
-def get_loc_foreign_no_space_2nd_layer_sql():
+def foreign_no_space_2nd_layer_sql():
 
       stmt = """SELECT  25,
                 a.cnt as cnt,
@@ -385,7 +385,7 @@ def get_loc_foreign_no_space_2nd_layer_sql():
 
 
 ## FOREIGN COUNTRY FIRST3 (2nd, JARO WINKLER)
-def get_loc_foreign_country_first3_2nd_jaro_winkler_sql():
+def foreign_country_first3_2nd_jaro_winkler_sql():
 
       stmt = """SELECT  24+jarow(BLK_SPLIT(a.NCity),
                 b.sort_name_ro) AS Jaro,
@@ -410,7 +410,7 @@ def get_loc_foreign_country_first3_2nd_jaro_winkler_sql():
       return stmt;
 
 ## DOMESTIC ZIPCODE
-def get_loc_domestic_zipcode_sql():
+def domestic_zipcode_sql():
 
       stmt = """SELECT  31,
                 a.cnt as cnt,

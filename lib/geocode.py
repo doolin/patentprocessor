@@ -194,16 +194,16 @@ for scnt in range(-1, c.execute("select max(sep_cnt(city)) from loc.loc").fetcho
 
     sep = scnt
     print "------", scnt, "------"
-    replace_loc(get_domestic_sql()                                % (sep, scnt))
-    replace_loc(get_loc_domestic_block_remove_sql()               % (sep, scnt))
-    replace_loc(get_loc_domestic_first3_jaro_winkler_sql()        % (sep, sep, "10.92", scnt))
-    replace_loc(get_loc_domestic_last4_jaro_winkler_sql()         % (sep, sep, "10.90", scnt))
-    replace_loc(get_loc_foreign_country_full_name_1_sql()         % (sep, scnt))
-    replace_loc(get_loc_foreign_country_full_name_2_sql()         % (sep, scnt))
-    replace_loc(get_loc_foreign_country_short_form_sql()          % (sep, scnt))
-    replace_loc(get_loc_foreign_country_block_split_sql()         % (sep, scnt))
-    replace_loc(get_loc_foreign_country_first3_jaro_winkler_sql() % (sep, sep, "20.92", scnt))
-    replace_loc(get_loc_foreign_country_last4_jaro_winkler_sql()  % (sep, sep, "20.90", scnt))
+    replace_loc(domestic_sql()                                % (sep, scnt))
+    replace_loc(domestic_block_remove_sql()               % (sep, scnt))
+    replace_loc(domestic_first3_jaro_winkler_sql()        % (sep, sep, "10.92", scnt))
+    replace_loc(domestic_last4_jaro_winkler_sql()         % (sep, sep, "10.90", scnt))
+    replace_loc(foreign_country_full_name_1_sql()         % (sep, scnt))
+    replace_loc(foreign_country_full_name_2_sql()         % (sep, scnt))
+    replace_loc(foreign_country_short_form_sql()          % (sep, scnt))
+    replace_loc(foreign_country_block_split_sql()         % (sep, scnt))
+    replace_loc(foreign_country_first3_jaro_winkler_sql() % (sep, sep, "20.92", scnt))
+    replace_loc(foreign_country_last4_jaro_winkler_sql()  % (sep, sep, "20.90", scnt))
 
 # TODO: Add this block to its own function, add a commented out call to
 # to that function here.
@@ -223,25 +223,25 @@ for scnt in range(-1, c.execute("select max(sep_cnt(city)) from loc.loc").fetcho
 print "------ F ------"
 
 ## DOMESTIC (2nd LAYER)
-replace_loc(get_loc_domestic_2nd_layer_sql())
+replace_loc(domestic_2nd_layer_sql())
 
 ## DOMESTIC FIRST3 (2nd, JARO WINKLER)
-replace_loc(get_loc_domestic_first3_2nd_jaro_winkler_sql() % ("14.95"))   		# JR hard-coding
+replace_loc(domestic_first3_2nd_jaro_winkler_sql() % ("14.95"))   		# JR hard-coding
 
 ## FOREIGN FULL NAME (2nd LAYER)
-replace_loc(get_loc_foreign_full_name_2nd_layer_sql())
+replace_loc(foreign_full_name_2nd_layer_sql())
 
 ## FOREIGN FULL ND (2nd LAYER)
-replace_loc(get_loc_foreign_full_nd_2nd_layer_sql())
+replace_loc(foreign_full_nd_2nd_layer_sql())
 
 ## FOREIGN NO SPACE (2nd LAYER)
-replace_loc(get_loc_foreign_no_space_2nd_layer_sql())
+replace_loc(foreign_no_space_2nd_layer_sql())
 
 ## FOREIGN COUNTRY FIRST3 (2nd, JARO WINKLER)
-replace_loc(get_loc_foreign_country_first3_2nd_jaro_winkler_sql() % ("24.95"))		# JR hard-coding
+replace_loc(foreign_country_first3_2nd_jaro_winkler_sql() % ("24.95"))		# JR hard-coding
 
 ## DOMESTIC ZIPCODE
-replace_loc(get_loc_domestic_zipcode_sql())
+replace_loc(domestic_zipcode_sql())
 
 
 ##MISSING JARO (FIRST 3)
