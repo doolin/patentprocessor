@@ -183,8 +183,8 @@ def replace_loc(script):
 
     conn.commit()
 
-
-print "Loc =", c.execute("select count(*) from loc.loc").fetchone()[0]		# JR prefixing tablename (loc) with dbname (also loc)
+# Prefixed tablename (loc) with with dbname (also loc)
+print "Loc =", c.execute("select count(*) from loc.loc").fetchone()[0]
 
 # TODO: Refactor the range call into it's own function, unit test
 # that function extensively.
@@ -193,7 +193,7 @@ for scnt in range(-1, c.execute("select max(sep_cnt(city)) from loc.loc").fetcho
 
     sep = scnt
     print "------", scnt, "------"
-    replace_loc(domestic_sql()                                % (sep, scnt))
+    replace_loc(domestic_sql()                            % (sep, scnt))
     replace_loc(domestic_block_remove_sql()               % (sep, scnt))
     replace_loc(domestic_first3_jaro_winkler_sql()        % (sep, sep, "10.92", scnt))
     replace_loc(domestic_last4_jaro_winkler_sql()         % (sep, sep, "10.90", scnt))
@@ -218,30 +218,15 @@ for scnt in range(-1, c.execute("select max(sep_cnt(city)) from loc.loc").fetcho
 
 ### End of for loop
 
-
 print "------ F ------"
 
-## DOMESTIC (2nd LAYER)
 replace_loc(domestic_2nd_layer_sql())
-
-## DOMESTIC FIRST3 (2nd, JARO WINKLER)
-replace_loc(domestic_first3_2nd_jaro_winkler_sql() % ("14.95"))   		# JR hard-coding
-
-## FOREIGN FULL NAME (2nd LAYER)
+replace_loc(domestic_first3_2nd_jaro_winkler_sql()        % ("14.95"))
 replace_loc(foreign_full_name_2nd_layer_sql())
-
-## FOREIGN FULL ND (2nd LAYER)
 replace_loc(foreign_full_nd_2nd_layer_sql())
-
-## FOREIGN NO SPACE (2nd LAYER)
 replace_loc(foreign_no_space_2nd_layer_sql())
-
-## FOREIGN COUNTRY FIRST3 (2nd, JARO WINKLER)
-replace_loc(foreign_country_first3_2nd_jaro_winkler_sql() % ("24.95"))		# JR hard-coding
-
-## DOMESTIC ZIPCODE
+replace_loc(foreign_country_first3_2nd_jaro_winkler_sql() % ("24.95"))
 replace_loc(domestic_zipcode_sql())
-
 
 ##MISSING JARO (FIRST 3)
 #replace_loc("""
