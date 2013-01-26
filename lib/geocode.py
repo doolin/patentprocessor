@@ -64,18 +64,17 @@ from geocode_setup import create_locMerge_table
 geocode_db_initialize(c)
 loc_create_table(c)
 
+print datetime.datetime.now()
+
 if not(tblExist(c, "locMerge")):
-    print datetime.datetime.now()
     fix_city_country(c)
-    print datetime.datetime.now()
     fix_state_zip(c)
     create_loc_indexes(conn)
-    print datetime.datetime.now()
 
 create_usloc_table(c)
-print datetime.datetime.now()
 create_locMerge_table(c)
 
+print datetime.datetime.now()
 
 
 # This should be the end of the setup, and all the above should be able
