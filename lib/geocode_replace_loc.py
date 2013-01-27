@@ -5,6 +5,19 @@
 # modularize the process.
 
 
+# TODO: Unit test this so that it and the unit test can be
+# eliminated in a future redesign. Also, ensure that this
+# is the correct name for this function, and adjust accordingly.
+def table_temp1_has_rows(conn):
+    return conn.execute("SELECT count(*) FROM temp1").fetchone()[0] > 0
+
+def print_table_info(c):
+    field = ["[%s]" % x[1] for x in c.execute("PRAGMA TABLE_INFO(temp1)")][2:6]
+    var_f = ",".join(field)
+    print "var_f: ", var_f
+
+
+
 # TODO: Find a way to unit test this set of queries
 def create_loc_and_locmerge_tables(conn):
     conn.executescript("""

@@ -51,29 +51,7 @@ create_usloc_table(c)
 create_locMerge_table(c)
 print datetime.datetime.now()
 
-
-# This should be the end of the setup, and all the above should be able
-# to go into its own file and be imported into this script. One benefit
-# of separating it out may be to allow much easier unit testing for the
-# location matching which follows.
-
-
-
-
-# TODO: Unit test this so that it and the unit test can be
-# eliminated in a future redesign. Also, ensure that this
-# is the correct name for this function, and adjust accordingly.
-def table_temp1_has_rows(conn):
-    return conn.execute("SELECT count(*) FROM temp1").fetchone()[0] > 0
-
-def print_table_info(c):
-    # TODO: Refactor into its own function, unit test.
-    # Also, consider deleting, as these do not appear to be
-    # used anywhere in the code.
-    field = ["[%s]" % x[1] for x in c.execute("PRAGMA TABLE_INFO(temp1)")][2:6]
-    var_f = ",".join(field)
-    print "var_f: ", var_f
-
+# End of setup.
 
 
 # TODO: Unit test extensively.
