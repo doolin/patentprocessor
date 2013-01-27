@@ -1,15 +1,15 @@
-#Non_US http://earth-info.nga.mil/gns/html/gis_countryfiles.htm
-#US     http://geonames.usgs.gov/domestic/download_data.htm
+# Non_US http://earth-info.nga.mil/gns/html/gis_countryfiles.htm
+# US     http://geonames.usgs.gov/domestic/download_data.htm
 
-##NEED TO DO...
-##    CREATE INDEX IF NOT EXISTS idx_ctc0 ON gnsloc (SORT_NAME, CC1);
+# NEED TO DO...
+# CREATE INDEX IF NOT EXISTS idx_ctc0 ON gnsloc (SORT_NAME, CC1);
 
 import datetime, csv, os, re, sqlite3
 
-#from fwork import *
 # We need to import these one at a time because many of these functions are
 # duplicated in multiple places. That is, there are 3 or 4 identical or
 # slightly different versions located in different files.
+#from fwork import *
 from fwork import jarow
 from fwork import cityctry
 from fwork import tblExist
@@ -27,8 +27,6 @@ from sep_wrd_geocode import sep_wrd
 
 conn = sqlite3.connect("hashTbl.sqlite3")
 c = conn.cursor()
-
-
 # TODO: Consider replacing the lambdas with functions which can be tested.
 conn.create_function("blk_split", 1, lambda x: re.sub(" ", "", x))
 conn.create_function("sep_cnt",   1, lambda x: len(re.findall("[,|]", x)))
