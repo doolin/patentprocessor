@@ -25,7 +25,7 @@ from geocode_replace_loc import *
 from sep_wrd_geocode import sep_wrd
 
 
-conn = sqlite4.connect("hashTbl.sqlite3")
+conn = sqlite3.connect("hashTbl.sqlite3")
 c = conn.cursor()
 
 
@@ -133,6 +133,15 @@ def create_loc_and_locmerge_tables(conn):
 def table_temp1_has_rows(conn):
     return conn.execute("SELECT count(*) FROM temp1").fetchone()[0] > 0
 
+def print_table_info(c):
+    # TODO: Refactor into its own function, unit test.
+    # Also, consider deleting, as these do not appear to be
+    # used anywhere in the code.
+    field = ["[%s]" % x[1] for x in c.execute("PRAGMA TABLE_INFO(temp1)")][2:6]
+    var_f = ",".join(field)
+    print "var_f: ", var_f
+
+
 
 # TODO: Unit test extensively.
 def replace_loc(script):
@@ -144,11 +153,7 @@ def replace_loc(script):
        """ % script
     c.executescript(stmt_to_execute)
 
-    # TODO: Refactor into its own function, unit test.
-    # Also, consider deleting, as these do not appear to be
-    # used anywhere in the code.
-    field = ["[%s]" % x[1] for x in c.execute("PRAGMA TABLE_INFO(temp1)")][2:6]
-    var_f = ",".join(field)
+    print_table_info(c)
 
     # TODO: Refactor into at least two functions. Main refactor is
     # Handling the body of the if block (DONE). The second refactor is
