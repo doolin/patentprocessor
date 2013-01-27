@@ -37,25 +37,13 @@ conn.create_function("cityctry",  3, cityctry)
 conn.create_function("sep_wrd",   2, sep_wrd)
 conn.create_function("rev_wrd",   2, lambda x,y:x.upper()[::-1][:y])
 
-# Now set up the databases necessary for the geocoding to proceed.
 
-# NOTE: Keep these imports function-specific until everything
-# is covered with unit tests, and we know that the structure
-# is maintainable.
-
-from geocode_setup import geocode_db_initialize
-from geocode_setup import loc_create_table
-from geocode_setup import fix_city_country
-from geocode_setup import fix_state_zip
-from geocode_setup import create_loc_indexes
-from geocode_setup import create_usloc_table
-from geocode_setup import create_locMerge_table
-
-geocode_db_initialize(c)
-loc_create_table(c)
+# TODO: cover geocode setup functions with unit tests.
+from geocode_setup import *
 
 print datetime.datetime.now()
-
+geocode_db_initialize(c)
+loc_create_table(c)
 if not(tblExist(c, "locMerge")):
     fix_city_country(c)
     fix_state_zip(c)
@@ -63,7 +51,6 @@ if not(tblExist(c, "locMerge")):
 
 create_usloc_table(c)
 create_locMerge_table(c)
-
 print datetime.datetime.now()
 
 
