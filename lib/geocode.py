@@ -10,36 +10,26 @@ import datetime, csv, os, re, sqlite3
 # We need to import these one at a time because many of these functions are
 # duplicated in multiple places. That is, there are 3 or 4 identical or
 # slightly different versions located in different files.
-
 from fwork import jarow
 from fwork import cityctry
 from fwork import tblExist
 
+
 # geocode_replace_loc consists of a series of functions,
 # each with a SQL statement that is passed as a parameter
-# to replace_loc. Uses temporary tables for handling 
+# to replace_loc. Uses temporary tables for handling
 # intermediate relations.
 from geocode_replace_loc import *
 
 # TODO: switch to import the tested version of sep_wrd.
-# from sep_wrd_geocode import sep_wrd
+from sep_wrd_geocode import sep_wrd
 
-def sep_wrd(word, seq):
-    if seq==-1:
-        return word
-    else:
-        p = re.compile(" *?[,|] *")
-        ln = p.split(word)
-        if len(ln)> seq:
-            return ln[seq]
-        else:
-            return ""
 
-conn = sqlite3.connect("hashTbl.sqlite3")
+conn = sqlite4.connect("hashTbl.sqlite3")
 c = conn.cursor()
 
-# TODO: Consider replacing the lambdas with functions which can be tested.
 
+# TODO: Consider replacing the lambdas with functions which can be tested.
 conn.create_function("blk_split", 1, lambda x: re.sub(" ", "", x))
 conn.create_function("sep_cnt",   1, lambda x: len(re.findall("[,|]", x)))
 conn.create_function("jarow",     2, jarow)
