@@ -88,38 +88,38 @@ def create_loc_and_locmerge_tables(conn):
     conn.executescript("""
 
         CREATE TEMPORARY TABLE temp2 AS
-            SELECT  CityA, 
-                    StateA, 
-                    CountryA, 
-                    ZipcodeA, 
+            SELECT  CityA,
+                    StateA,
+                    CountryA,
+                    ZipcodeA,
                     count(*) as cnt
               FROM  temp1
-          GROUP BY  CityA, 
-                    StateA, 
-                    CountryA, 
+          GROUP BY  CityA,
+                    StateA,
+                    CountryA,
                     ZipcodeA;
 
         CREATE INDEX IF NOT EXISTS t1_idx ON temp1 (CityA, StateA, CountryA, ZipcodeA);
         CREATE INDEX IF NOT EXISTS t2_idx ON temp2 (CityA, StateA, CountryA, ZipcodeA);
 
         INSERT OR REPLACE INTO locMerge
-            SELECT  b.cnt, 
-                    a.*, 
+            SELECT  b.cnt,
+                    a.*,
                     SUBSTR(a.CityA,1,3)
               FROM  temp1 AS a
         INNER JOIN  temp2 AS b
-                ON  a.CityA = b.CityA 
-               AND  a.StateA = b.StateA 
-               AND  a.CountryA = b.CountryA 
+                ON  a.CityA = b.CityA
+               AND  a.StateA = b.StateA
+               AND  a.CountryA = b.CountryA
                AND  a.ZipcodeA = b.ZipcodeA;
 
         CREATE TEMPORARY TABLE temp3 AS
             SELECT  a.*
-              FROM  LOC AS a 
+              FROM  LOC AS a
               LEFT JOIN locMerge AS b
-                ON  a.City = b.City 
-               AND  a.State = b.State 
-               AND  a.Country = b.Country 
+                ON  a.City = b.City
+               AND  a.State = b.State
+               AND  a.Country = b.Country
                AND  a.Zipcode = b.Zipcode
              WHERE  b.Zipcode IS NULL;
 
@@ -147,15 +147,6 @@ def table_temp1_has_rows(conn):
 # TODO: Unit test extensively.
 def replace_loc(script):
 
-    # TODO: Refactor this next block
-    #ALLOWS US TO REPLACE THE PREV LOC DATASET
-
-    #c.executescript("""
-    #   DROP TABLE IF EXISTS temp1;
-    #   CREATE TEMPORARY TABLE temp1 AS %s;
-    #   CREATE INDEX IF NOT EXISTS tmp1_idx ON temp1 (CityA, StateA, CountryA, ZipcodeA);
-    #   """ % script)
-
     stmt_to_execute = """
        DROP TABLE IF EXISTS temp1;
        CREATE TEMPORARY TABLE temp1 AS %s;
@@ -174,7 +165,6 @@ def replace_loc(script):
     # handling the conditional expression for the if block (DONE).
     #if c.execute("SELECT count(*) FROM temp1").fetchone()[0]>0:
     # Which tables will pass this conditional?
-
     if table_temp1_has_rows(c):
         create_loc_and_locmerge_tables(c)
         VarX = c.execute("select count(*) from loc").fetchone()[0]
@@ -204,18 +194,6 @@ for scnt in range(-1, c.execute("select max(sep_cnt(city)) from loc.loc").fetcho
     replace_loc(foreign_country_first3_jaro_winkler_sql() % (sep, sep, "20.92", scnt))
     replace_loc(foreign_country_last4_jaro_winkler_sql()  % (sep, sep, "20.90", scnt))
 
-# TODO: Add this block to its own function, add a commented out call to
-# to that function here.
-####    ##DOMESTIC (State miscode to Country)
-####    replace_loc("""
-####        SELECT  31,
-####                a.cnt, a.city, a.state, a.country, a.zipcode,
-####                b.city, b.state, 'US', b.zipcode, b.lat, b.long
-####          FROM  loc AS a INNER JOIN usloc AS b
-####            ON  SEP_WRD(a.City, %d)=b.city AND a.country=b.state
-####         WHERE  SEP_CNT(a.City)>=%d AND a.City!="";
-####        """ % (sep, scnt))
-
 ### End of for loop
 
 print "------ F ------"
@@ -227,17 +205,6 @@ replace_loc(foreign_full_nd_2nd_layer_sql())
 replace_loc(foreign_no_space_2nd_layer_sql())
 replace_loc(foreign_country_first3_2nd_jaro_winkler_sql() % ("24.95"))
 replace_loc(domestic_zipcode_sql())
-
-##MISSING JARO (FIRST 3)
-#replace_loc("""
-#    SELECT  30+jarow(a.City, b.City) AS Jaro,
-#            a.cnt, a.city, a.state, a.country, a.zipcode,
-#            b.ncity, b.nstate, b.ncountry, b.nzipcode, b.nlat, b.nlong
-#      FROM  loc AS a INNER JOIN locMerge AS b
-#        ON  a.City3=b.City3 AND a.state=b.state AND a.country=b.country
-#     WHERE  jaro>%s AND a.City!=""
-#  ORDER BY  a.City, a.State, a.Country, jaro;
-#    """ % ("30.95"))
 
 conn.commit()
 c.close()

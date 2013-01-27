@@ -1,12 +1,8 @@
 
-#######################################################################################################
-# geocode_replace_loc.py
-# Jill Rabinowitz
-# 1/18/2013
-# This program consists of the SQL statement that are passed in to function replace_loc in geocode.py. 
-# These statements were originally in geocode.py and have been put here both for debugging purposes and to 
-# modularize the process.  Each call to replace_loc is now from the functions below.
-#######################################################################################################
+# Create SQL statements for passing in to function replace_loc
+# in geocode.py. These statements were originally in geocode.py
+# and have been put here both for debugging purposes and to
+# modularize the process.
 
 
 ## DOMESTIC
@@ -429,3 +425,28 @@ def domestic_zipcode_sql():
             ON  a.Zip2 = b.Zipcode"""
 
       return stmt;
+
+
+# TODO: Add this block to its own function, add a commented out call to
+# to that function here.
+####    ##DOMESTIC (State miscode to Country)
+####    replace_loc("""
+####        SELECT  31,
+####                a.cnt, a.city, a.state, a.country, a.zipcode,
+####                b.city, b.state, 'US', b.zipcode, b.lat, b.long
+####          FROM  loc AS a INNER JOIN usloc AS b
+####            ON  SEP_WRD(a.City, %d)=b.city AND a.country=b.state
+####         WHERE  SEP_CNT(a.City)>=%d AND a.City!="";
+####        """ % (sep, scnt))
+
+
+##MISSING JARO (FIRST 3)
+#replace_loc("""
+#    SELECT  30+jarow(a.City, b.City) AS Jaro,
+#            a.cnt, a.city, a.state, a.country, a.zipcode,
+#            b.ncity, b.nstate, b.ncountry, b.nzipcode, b.nlat, b.nlong
+#      FROM  loc AS a INNER JOIN locMerge AS b
+#        ON  a.City3=b.City3 AND a.state=b.state AND a.country=b.country
+#     WHERE  jaro>%s AND a.City!=""
+#  ORDER BY  a.City, a.State, a.Country, jaro;
+#    """ % ("30.95"))
