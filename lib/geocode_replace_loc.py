@@ -72,7 +72,6 @@ def create_loc_and_locmerge_tables(conn):
 
 
 
-## DOMESTIC
 def domestic_sql():
 
      stmt = """SELECT  11,
@@ -94,10 +93,9 @@ def domestic_sql():
            AND  CountryA = 'US'
           WHERE  SEP_CNT(CityA) >= %d
           AND  CityA != '' """
-
      return stmt;
 
-## DOMESTIC BLOCK REMOVE
+
 def domestic_block_remove_sql():
 
       stmt = """SELECT  11,
@@ -119,10 +117,9 @@ def domestic_block_remove_sql():
            AND  a.country = 'US'
          WHERE  SEP_CNT(a.City) >= %d
            AND  a.City != '' """
-
       return stmt;
 
-## DOMESTIC FIRST3 JARO WINKLER
+
 def domestic_first3_jaro_winkler_sql():
 
       stmt = """SELECT  (10+jarow(BLK_SPLIT(SEP_WRD(a.City, %d)),
@@ -146,11 +143,9 @@ def domestic_first3_jaro_winkler_sql():
            AND  SEP_CNT(a.City) >= %d
            AND  a.City != ''
       ORDER BY  a.City, a.State, jaro"""
-
       return stmt;
 
 
-## DOMESTIC LAST4 JARO WINKLER
 def domestic_last4_jaro_winkler_sql():
 
       stmt = """SELECT  (10+jarow(BLK_SPLIT(SEP_WRD(a.City, %d)),
@@ -174,11 +169,11 @@ def domestic_last4_jaro_winkler_sql():
            AND  SEP_CNT(a.City) >= %d
            AND  a.City != ""
       ORDER BY  a.City, a.State, jaro"""
-
       return stmt;
 
-## FOREIGN COUNTRY FULL NAME 1
-def foreign_full_name_1_sql():				# JR Code started taking longer to run at this statement
+
+# JR Code started taking longer to run at this statement
+def foreign_full_name_1_sql():
 
       stmt = """SELECT  21,
                 a.cnt as cnt,
@@ -197,11 +192,9 @@ def foreign_full_name_1_sql():				# JR Code started taking longer to run at this
            AND  a.country = b.cc1
          WHERE  SEP_CNT(a.City) >= %d
            AND  a.City!="" """
-
       return stmt;
 
 
-## FOREIGN COUNTRY FULL NAME 2
 def foreign_full_name_2_sql():
 
       stmt = """SELECT  21,
@@ -221,11 +214,9 @@ def foreign_full_name_2_sql():
            AND  a.country = b.cc1
          WHERE  SEP_CNT(a.City) >= %d
            AND  a.City != "" """
-
       return stmt;
 
 
-## FOREIGN COUNTRY SHORT FORM
 def foreign_short_form_sql():
 
       stmt = """SELECT  21,
@@ -245,11 +236,9 @@ def foreign_short_form_sql():
            AND  a.country = b.cc1
          WHERE  SEP_CNT(a.City) >= %d
            AND  a.City != "" """
-
       return stmt;
 
 
-## FOREIGN COUNTRY BLOCK SPLIT
 def foreign_block_split_sql():
 
       stmt = """SELECT  21,
@@ -269,10 +258,9 @@ def foreign_block_split_sql():
            AND  a.country = b.cc1
          WHERE  SEP_CNT(a.City) >= %d
            AND  a.City != "" """
-
       return stmt;
 
-## FOREIGN COUNTRY FIRST3 JARO WINKLER
+
 def foreign_first3_jaro_winkler_sql():
 
       stmt = """SELECT  (20+jarow(BLK_SPLIT(SEP_WRD(a.City, %d)),
@@ -295,12 +283,10 @@ def foreign_first3_jaro_winkler_sql():
            AND  SEP_CNT(a.City) >= %d
            AND  a.City != ""
       ORDER BY  a.City, a.Country, jaro"""
-
       return stmt;
 
 
 
-## FOREIGN COUNTRY LAST4 JARO WINKLER
 def foreign_last4_jaro_winkler_sql():
 
       stmt = """SELECT  (20+jarow(BLK_SPLIT(SEP_WRD(a.City, %d)),
@@ -323,13 +309,10 @@ def foreign_last4_jaro_winkler_sql():
            AND  SEP_CNT(a.City) >= %d
            AND  a.City != ""
       ORDER BY  a.City, a.Country, jaro"""
-
-        #""" % (sep, sep, "20.90", scnt))
-
+      #""" % (sep, sep, "20.90", scnt))
       return stmt;
 
 
-## DOMESTIC 2ND LAYER
 def domestic_2nd_layer_sql():
 
       stmt = """SELECT  15,
@@ -349,10 +332,9 @@ def domestic_2nd_layer_sql():
             ON  a.NCity = b.city
            AND  a.NState = b.state
            AND  a.NCountry = 'US'"""
-
       return stmt;
 
-## DOMESTIC FIRST3 2ND JARO WINKLER
+
 def domestic_first3_2nd_jaro_winkler_sql():
 
       stmt = """SELECT  14+jarow(BLK_SPLIT(a.NCity),
@@ -375,10 +357,9 @@ def domestic_first3_2nd_jaro_winkler_sql():
            AND  a.Ncountry ='US'
          WHERE  jaro > %s
       ORDER BY  a.NCity, a.NState, jaro"""
-
       return stmt;
 
-## FOREIGN FULL NAME 2ND LAYER
+
 def foreign_full_name_2nd_layer_sql():
 
       stmt = """SELECT  25,
@@ -397,11 +378,9 @@ def foreign_full_name_2nd_layer_sql():
     INNER JOIN  loc.gnsloc AS b
             ON  a.NCity = b.full_name_ro
            AND  a.NCountry = b.cc1"""
-
       return stmt;
 
 
-## FOREIGN FULL ND 2ND LAYER
 def foreign_full_nd_2nd_layer_sql():
 
       stmt = """SELECT  25,
@@ -420,11 +399,9 @@ def foreign_full_nd_2nd_layer_sql():
     INNER JOIN  loc.gnsloc AS b
             ON  a.NCity = b.full_name_nd_ro
            AND  a.NCountry = b.cc1"""
-
       return stmt;
 
 
-## FOREIGN NO SPACE (2nd LAYER)
 def foreign_no_space_2nd_layer_sql():
 
       stmt = """SELECT  25,
@@ -443,7 +420,6 @@ def foreign_no_space_2nd_layer_sql():
     INNER JOIN  loc.gnsloc AS b
             ON  BLK_SPLIT(a.NCity) = b.sort_name_ro
            AND  a.NCountry = b.cc1"""
-
       return stmt;
 
 
@@ -469,10 +445,9 @@ def foreign_first3_2nd_jaro_winkler_sql():
            AND  a.Ncountry = b.cc1
          WHERE  jaro > %s
       ORDER BY  a.NCity, a.NCountry, jaro"""
-
       return stmt;
 
-## DOMESTIC ZIPCODE
+
 def domestic_zipcode_sql():
 
       stmt = """SELECT  31,
@@ -490,7 +465,6 @@ def domestic_zipcode_sql():
           FROM  (SELECT  *, (SEP_WRD(zipcode,0)+0) as Zip2 FROM loc WHERE  Zipcode != '' AND Country = 'US') AS a
          INNER  JOIN usloc AS b
             ON  a.Zip2 = b.Zipcode"""
-
       return stmt;
 
 
