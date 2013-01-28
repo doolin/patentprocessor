@@ -7,8 +7,12 @@
 make spotless > /dev/null
 ./parse.py -d test/fixtures/xml/ -p. -x ipg120327.two.xml
 mkdir -p /tmp/integration/ipg120327.two
+
+
+echo Starting clean...
 python clean.py
 
+echo Starting diffs...
 for table in inventor inventor_1
 do
   sqlite3 inventor.sqlite3 -csv "select * from ${table}"  > /tmp/integration/ipg120327.two/${table}.csv
@@ -33,8 +37,11 @@ done
 make spotless > /dev/null
 ./parse.py -d test/fixtures/xml/ -p. -x ipg120327.18.xml
 mkdir -p /tmp/integration/ipg120327.18
+
+echo Starting clean...
 python clean.py
 
+echo Starting diffs...
 for table in inventor inventor_1
 do
   sqlite3 inventor.sqlite3 -csv "select * from ${table}"  > /tmp/integration/ipg120327.18/${table}.csv
