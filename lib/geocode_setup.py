@@ -1,8 +1,8 @@
 # sets up the geocoding databases
 
 
-def geocode_db_initialize(conn):
-    conn.executescript("""
+def geocode_db_initialize(cursor):
+    cursor.executescript("""
         PRAGMA CACHE_SIZE=20000;
         ATTACH DATABASE 'assignee.sqlite3' AS assignees;
         ATTACH DATABASE 'inventor.sqlite3' AS inventors;
@@ -14,8 +14,8 @@ def geocode_db_initialize(conn):
 # schema below needs to match the schema in the existing
 # loc table. If it doesn't match, we need to find out
 # why, and figure out what to do about that.
-def loc_create_table(conn):
-    conn.executescript("""
+def loc_create_table(cursor):
+    cursor.executescript("""
      /* DROP TABLE IF EXISTS loc; */
         CREATE TABLE IF NOT EXISTS loc (
             Cnt INTEGER,
@@ -40,8 +40,8 @@ def loc_create_table(conn):
 
 
 # TODO: Find a way to unit test fix_city_country
-def fix_city_country(conn):
-    conn.executescript("""
+def fix_city_country(cursor):
+    cursor.executescript("""
         CREATE TEMPORARY TABLE temp AS
             SELECT  Upper(City) as CityX,
                     Upper(State) as StateX,
@@ -78,8 +78,8 @@ def fix_city_country(conn):
         """)
 
 # TODO: Find a way to unit test fix_state_zip
-def fix_state_zip(conn):
-    conn.executescript("""
+def fix_state_zip(cursor):
+    cursor.executescript("""
         CREATE TEMPORARY TABLE temp AS
             SELECT  Upper(City) as CityX,
                     Upper(State) as StateX,
@@ -119,8 +119,8 @@ def fix_state_zip(conn):
 
 # TODO: Find a way to ensure that the correct indexes are created as
 # the schemas change.
-def create_loc_indexes(conn):
-    conn.executescript("""
+def create_loc_indexes(cursor):
+    cursor.executescript("""
         CREATE INDEX IF NOT EXISTS loc_idCC3 ON loc (City3,State,Country);
         CREATE INDEX IF NOT EXISTS loc_idxCC ON loc (City,Country);
         CREATE INDEX IF NOT EXISTS loc_idx   ON loc (City,State,Country,Zipcode);
@@ -132,8 +132,8 @@ def create_loc_indexes(conn):
 
 
 # TODO: unit test
-def create_usloc_table(conn):
-    conn.executescript("""
+def create_usloc_table(cursor):
+    cursor.executescript("""
         CREATE TABLE IF NOT EXISTS usloc AS
             SELECT  Zipcode,
                     Latitude,
@@ -167,8 +167,8 @@ def create_usloc_table(conn):
 
 
 # TODO: unit test
-def create_locMerge_table(conn):
-    conn.executescript("""
+def create_locMerge_table(cursor):
+    cursor.executescript("""
         CREATE TABLE IF NOT EXISTS locMerge (
             Mtch INTEGER,
             Val FLOAT,
