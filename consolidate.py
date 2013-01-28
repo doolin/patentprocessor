@@ -18,8 +18,30 @@ ip.c.execute("""CREATE TABLE invpat(Firstname TEXT, Middlename TEXT, Lastname TE
 
 ##From inventor.sqlite3: Firstname, Lastname, Street, City, State, Country, Zipcode, Latitude, Longitude, InvSeq
 ip.attach('inventor.sqlite3')
-ip.c.execute("""INSERT INTO invpat (Firstname, Lastname, Street, City, State, Country, Zipcode, Latitude, Longitude, Patent, InvSeq)
-                SELECT Firstname, Lastname, Street, NCity, NState, NCountry, NZipcode, NLat, NLong, Patent, InvSeq FROM db.inventor_1""")
+ip.c.execute("""INSERT INTO invpat (
+                  Firstname,
+                  Lastname,
+                  Street,
+                  City,
+                  State,
+                  Country,
+                  Zipcode,
+                  Latitude,
+                  Longitude,
+                  Patent,
+                  InvSeq)
+               SELECT  Firstname,
+                       Lastname,
+                       Street,
+                       NCity,
+                       NState,
+                       NCountry,
+                       NZipcode,
+                       NLat,
+                       NLong,
+                       Patent,
+                       InvSeq
+                 FROM  db.inventor_1""")
 ip.detach()
 
 ##From patent.sqlite3: Patent, AppYear, GYear, AppDate
