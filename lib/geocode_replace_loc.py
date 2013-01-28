@@ -178,7 +178,7 @@ def domestic_last4_jaro_winkler_sql():
       return stmt;
 
 ## FOREIGN COUNTRY FULL NAME 1
-def foreign_country_full_name_1_sql():				# JR Code started taking longer to run at this statement
+def foreign_full_name_1_sql():				# JR Code started taking longer to run at this statement
 
       stmt = """SELECT  21,
                 a.cnt as cnt,
@@ -202,7 +202,7 @@ def foreign_country_full_name_1_sql():				# JR Code started taking longer to run
 
 
 ## FOREIGN COUNTRY FULL NAME 2
-def foreign_country_full_name_2_sql():
+def foreign_full_name_2_sql():
 
       stmt = """SELECT  21,
                 a.cnt as cnt,
@@ -226,7 +226,7 @@ def foreign_country_full_name_2_sql():
 
 
 ## FOREIGN COUNTRY SHORT FORM
-def foreign_country_short_form_sql():
+def foreign_short_form_sql():
 
       stmt = """SELECT  21,
                 a.cnt as cnt,
@@ -250,7 +250,7 @@ def foreign_country_short_form_sql():
 
 
 ## FOREIGN COUNTRY BLOCK SPLIT
-def foreign_country_block_split_sql():
+def foreign_block_split_sql():
 
       stmt = """SELECT  21,
                 a.cnt as cnt,
@@ -273,7 +273,7 @@ def foreign_country_block_split_sql():
       return stmt;
 
 ## FOREIGN COUNTRY FIRST3 JARO WINKLER
-def foreign_country_first3_jaro_winkler_sql():
+def foreign_first3_jaro_winkler_sql():
 
       stmt = """SELECT  (20+jarow(BLK_SPLIT(SEP_WRD(a.City, %d)),
                 b.sort_name_ro)) AS Jaro,
@@ -301,7 +301,7 @@ def foreign_country_first3_jaro_winkler_sql():
 
 
 ## FOREIGN COUNTRY LAST4 JARO WINKLER
-def foreign_country_last4_jaro_winkler_sql():
+def foreign_last4_jaro_winkler_sql():
 
       stmt = """SELECT  (20+jarow(BLK_SPLIT(SEP_WRD(a.City, %d)),
                 b.sort_name_ro)) AS Jaro,
@@ -448,7 +448,7 @@ def foreign_no_space_2nd_layer_sql():
 
 
 ## FOREIGN COUNTRY FIRST3 (2nd, JARO WINKLER)
-def foreign_country_first3_2nd_jaro_winkler_sql():
+def foreign_first3_2nd_jaro_winkler_sql():
 
       stmt = """SELECT  24+jarow(BLK_SPLIT(a.NCity),
                 b.sort_name_ro) AS Jaro,
