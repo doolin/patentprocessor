@@ -65,7 +65,8 @@ def replace_loc(script):
 
     c.execute("DROP TABLE IF EXISTS temp1")
     c.execute("CREATE TEMPORARY TABLE temp1 AS %s" % script)
-    c.execute("CREATE INDEX IF NOT EXISTS tmp1_idx ON temp1 (CityA, StateA, CountryA, ZipcodeA)")
+    # Apparently, this tmp1_idx is either superfluous or redundant.
+    #c.execute("CREATE INDEX IF NOT EXISTS tmp1_idx ON temp1 (CityA, StateA, CountryA, ZipcodeA)")
 
     #print_table_info(c)
 
