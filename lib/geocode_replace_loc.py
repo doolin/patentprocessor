@@ -90,11 +90,11 @@ def domestic_sql():
                b.latitude,
                b.longitude
          FROM  loc AS a
-      INNER JOIN  usloc AS b
-            ON  SEP_WRD(CityA, %d) = b.city
-           AND  StateA = b.state
-           AND  CountryA = 'US'
-          WHERE  SEP_CNT(CityA) >= %d
+   INNER JOIN  usloc AS b
+           ON  SEP_WRD(CityA, %d) = b.city
+          AND  StateA = b.state
+          AND  CountryA = 'US'
+        WHERE  SEP_CNT(CityA) >= %d
           AND  CityA != '' """
      return stmt;
 
@@ -239,18 +239,18 @@ def foreign_short_form_sql():
       print sys._getframe().f_code.co_name
 
       stmt = """SELECT  21,
-                a.cnt as cnt,
-                a.city as CityA,
-                a.state as StateA,
-                a.country as CountryA,
-                a.zipcode as ZipcodeA,
+                a.cnt     AS cnt,
+                a.city    AS CityA,
+                a.state   AS StateA,
+                a.country AS CountryA,
+                a.zipcode AS ZipcodeA,
                 b.full_name_nd_ro,
                 "",
                 b.cc1,
                 "",
                 b.lat,
                 b.long
-          FROM  loc AS a
+          FROM  loc           AS a
     INNER JOIN  loctbl.gnsloc AS b
             ON  SEP_WRD(a.City, %d) = b.short_form
            AND  a.country = b.cc1
@@ -264,11 +264,11 @@ def foreign_block_split_sql():
       print sys._getframe().f_code.co_name
 
       stmt = """SELECT  21,
-                a.cnt as cnt,
-                a.city as CityA,
-                a.state as StateA,
-                a.country as CountryA,
-                a.zipcode as ZipcodeA,
+                a.cnt     AS cnt,
+                a.city    AS CityA,
+                a.state   AS StateA,
+                a.country AS CountryA,
+                a.zipcode AS ZipcodeA,
                 b.full_name_nd_ro,
                 "",
                 b.cc1,
