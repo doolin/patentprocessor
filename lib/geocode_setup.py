@@ -19,12 +19,16 @@ def loc_create_table(conn):
      /* DROP TABLE IF EXISTS loc; */
         CREATE TABLE IF NOT EXISTS loc (
             Cnt INTEGER,
-            City VARCHAR(10),   State VARCHAR(2),
-            Country VARCHAR(2), Zipcode VARCHAR(5),
+            City VARCHAR(10),
+            State VARCHAR(2),
+            Country VARCHAR(2),
+            Zipcode VARCHAR(5),
             City3 VARCHAR,
-            NCity VARCHAR(10),  NState VARCHAR(2),
+            NCity VARCHAR(10),
+            NState VARCHAR(2),
             NCountry VARCHAR(2),
             UNIQUE(City,State,Country,Zipcode));
+
         DROP INDEX IF EXISTS loc_idxCC;
         DROP INDEX IF EXISTS loc_idx;
         DROP INDEX IF EXISTS loc_idxCS;
@@ -132,15 +136,21 @@ def create_locMerge_table(conn):
     conn.executescript("""
         CREATE TABLE IF NOT EXISTS locMerge (
             Mtch INTEGER,
-            Val FLOAT,          Cnt INTEGER,
-            City VARCHAR,       State VARCHAR,
-            Country VARCHAR,    Zipcode VARCHAR,
-
-            NCity VARCHAR,     NState VARCHAR,
-            NCountry VARCHAR,  NZipcode VARCHAR,
-            NLat FLOAT,        NLong FLOAT,
+            Val FLOAT,
+            Cnt INTEGER,
+            City VARCHAR,
+            State VARCHAR,
+            Country VARCHAR,
+            Zipcode VARCHAR,
+            NCity VARCHAR,
+            NState VARCHAR,
+            NCountry VARCHAR,
+            NZipcode VARCHAR,
+            NLat FLOAT,
+            NLong FLOAT,
             City3 VARCHAR,
             UNIQUE(City, State, Country, Zipcode));
+
         CREATE INDEX IF NOT EXISTS okM_idxCC ON locMerge (City,Country);
         CREATE INDEX IF NOT EXISTS okM_idx   ON locMerge (City,State,Country,Zipcode);
         CREATE INDEX IF NOT EXISTS okM_idxCS ON locMerge (City,State);
