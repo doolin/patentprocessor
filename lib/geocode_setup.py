@@ -43,23 +43,36 @@ def loc_create_table(conn):
 def fix_city_country(conn):
     conn.executescript("""
         CREATE TEMPORARY TABLE temp AS
-            SELECT  Upper(City) as CityX, Upper(State) as StateX,
-                    Upper(Country) as CountryX, count(*) as Cnt
+            SELECT  Upper(City) as CityX,
+                    Upper(State) as StateX,
+                    Upper(Country) as CountryX,
+                    count(*) as Cnt
               FROM  assignees.assignee
              WHERE  City!=""
           GROUP BY  CityX, StateX, CountryX;
+
         CREATE TEMPORARY TABLE temp2 AS
             SELECT  sum(Cnt) as Cnt,
-                    cityctry(CityX, CountryX, 'city') as CityY, StateX as StateY,
-                    cityctry(CityX, CountryX, 'ctry') as CtryY, '' as ZipcodeY
+                    cityctry(CityX, CountryX, 'city') as CityY,
+                    StateX as StateY,
+                    cityctry(CityX, CountryX, 'ctry') as CtryY,
+                    '' as ZipcodeY
               FROM  temp
              WHERE  CityY!=""
           GROUP BY  CityY, StateY, CtryY;
+
         INSERT OR REPLACE INTO loc
-            SELECT  a.*, SUBSTR(CityY,1,3), b.NewCity, b.NewState, b.NewCountry
+            SELECT  a.*,
+                    SUBSTR(CityY,1,3),
+                    b.NewCity,
+                    b.NewState,
+                    b.NewCountry
               FROM  temp2 AS a
          LEFT JOIN  loc.typos AS b
-                ON  a.CityY=b.City AND a.StateY=b.State AND a.CtryY=b.Country;
+                ON  a.CityY=b.City
+               AND  a.StateY=b.State
+               AND  a.CtryY=b.Country;
+
         DROP TABLE  temp;
         DROP TABLE  temp2;
         """)
@@ -68,23 +81,38 @@ def fix_city_country(conn):
 def fix_state_zip(conn):
     conn.executescript("""
         CREATE TEMPORARY TABLE temp AS
-            SELECT  Upper(City) as CityX, Upper(State) as StateX,
-                    Upper(Country) as CountryX, Zipcode, count(*) as Cnt
+            SELECT  Upper(City) as CityX,
+                    Upper(State) as StateX,
+                    Upper(Country) as CountryX,
+                    Zipcode,
+                    count(*) as Cnt
               FROM  inventors.inventor
-             WHERE  City!="" OR (City="" AND Zipcode!="")
+             WHERE  City!=""
+                OR (City="" AND Zipcode!="")
           GROUP BY  CityX, StateX, CountryX, Zipcode;
+
         CREATE TEMPORARY TABLE temp2 AS
             SELECT  sum(Cnt) as Cnt,
-                    cityctry(CityX, CountryX, 'city') as CityY, StateX as StateY,
-                    cityctry(CityX, CountryX, 'ctry') as CtryY, Zipcode as ZipcodeY
+                    cityctry(CityX, CountryX, 'city') as CityY,
+                    StateX as StateY,
+                    cityctry(CityX, CountryX, 'ctry') as CtryY,
+                    Zipcode as ZipcodeY
               FROM  temp
              WHERE  CityY!=""
           GROUP BY  CityY, StateY, CtryY, ZipcodeY;
+
         INSERT OR REPLACE INTO loc
-            SELECT  a.*, SUBSTR(CityY,1,3), b.NewCity, b.NewState, b.NewCountry
+            SELECT  a.*,
+                    SUBSTR(CityY,1,3),
+                    b.NewCity,
+                    b.NewState,
+                    b.NewCountry
               FROM  temp2 AS a
          LEFT JOIN  loc.typos AS b
-                ON  a.CityY=b.City AND a.StateY=b.State AND a.CtryY=b.Country;
+                ON  a.CityY=b.City
+               AND  a.StateY=b.State
+               AND  a.CtryY=b.Country;
+
         DROP TABLE  temp;
         DROP TABLE  temp2;
         """)
@@ -107,20 +135,27 @@ def create_loc_indexes(conn):
 def create_usloc_table(conn):
     conn.executescript("""
         CREATE TABLE IF NOT EXISTS usloc AS
-            SELECT  Zipcode, Latitude, Longitude, Upper(City) as City,
+            SELECT  Zipcode,
+                    Latitude,
+                    Longitude,
+                    Upper(City) as City,
                     BLK_SPLIT(Upper(City)) as BlkCity,
                     SUBSTR(UPPER(BLK_SPLIT(City)),1,3) as City3,
                     REV_WRD(BLK_SPLIT(City), 4) as City4R,
-                    Upper(State) as State, "US" as Country
+                    Upper(State) as State,
+                    "US" as Country
               FROM  loc.usloc
           GROUP BY  City, State;
+
         CREATE INDEX If NOT EXISTS usloc_idxZ  on usloc (Zipcode);
         CREATE INDEX If NOT EXISTS usloc_idxCS on usloc (City, State);
         CREATE INDEX If NOT EXISTS usloc_idBCS on usloc (BlkCity, State);
         CREATE INDEX If NOT EXISTS usloc_idC3S on usloc (City3, State);
         CREATE INDEX If NOT EXISTS usloc_idC4R on usloc (City4R, State);
+
         DETACH DATABASE assignees;
         DETACH DATABASE inventors;
+
         /*DETACH DATABASE loc;
         CREATE TEMPORARY TABLE gnsloc AS
             SELECT  '' AS zipcode, lat, long,
