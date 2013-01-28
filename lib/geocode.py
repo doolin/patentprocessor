@@ -57,8 +57,8 @@ print datetime.datetime.now()
 # TODO: Unit test extensively.
 def replace_loc(script):
 
+    c.execute("DROP TABLE IF EXISTS temp1")
     stmt_to_execute = """
-       DROP TABLE IF EXISTS temp1;
        CREATE TEMPORARY TABLE temp1 AS %s;
        CREATE INDEX IF NOT EXISTS tmp1_idx ON temp1 (CityA, StateA, CountryA, ZipcodeA);
        """ % script
