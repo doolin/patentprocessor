@@ -51,6 +51,17 @@ def add_doc(metadata):
     doc_id, doc_rev = db.save(metadata)
     return doc_id
 
+def query(tag, value):
+    """
+    Composes a javascript query to be run on the database
+    """
+    mapfun = """function(doc) {{
+                  if(doc.{0} == "{1}")
+                    emit(doc, doc.{0})
+                }}""".format(tag,value)
+    res = db.query(mapfun).rows
+    return res[0].key['xml'] if res else None
+
 class TestCouchPatent(unittest.TestCase):
 
     def setUp(self):
