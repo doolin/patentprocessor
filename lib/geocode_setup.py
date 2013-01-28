@@ -4,8 +4,8 @@
 def geocode_db_initialize(conn):
     conn.executescript("""
         PRAGMA CACHE_SIZE=20000;
-        ATTACH DATABASE 'assignee.sqlite3' AS asg;
-        ATTACH DATABASE 'inventor.sqlite3' AS inv;
+        ATTACH DATABASE 'assignee.sqlite3' AS assignees;
+        ATTACH DATABASE 'inventor.sqlite3' AS inventors;
         ATTACH DATABASE 'loctbl'   AS loc;
         """)
 
@@ -41,7 +41,7 @@ def fix_city_country(conn):
         CREATE TEMPORARY TABLE temp AS
             SELECT  Upper(City) as CityX, Upper(State) as StateX,
                     Upper(Country) as CountryX, count(*) as Cnt
-              FROM  asg.assignee
+              FROM  assignees.assignee
              WHERE  City!=""
           GROUP BY  CityX, StateX, CountryX;
         CREATE TEMPORARY TABLE temp2 AS
@@ -66,7 +66,7 @@ def fix_state_zip(conn):
         CREATE TEMPORARY TABLE temp AS
             SELECT  Upper(City) as CityX, Upper(State) as StateX,
                     Upper(Country) as CountryX, Zipcode, count(*) as Cnt
-              FROM  inv.inventor
+              FROM  inventors.inventor
              WHERE  City!="" OR (City="" AND Zipcode!="")
           GROUP BY  CityX, StateX, CountryX, Zipcode;
         CREATE TEMPORARY TABLE temp2 AS
@@ -115,8 +115,8 @@ def create_usloc_table(conn):
         CREATE INDEX If NOT EXISTS usloc_idBCS on usloc (BlkCity, State);
         CREATE INDEX If NOT EXISTS usloc_idC3S on usloc (City3, State);
         CREATE INDEX If NOT EXISTS usloc_idC4R on usloc (City4R, State);
-        DETACH DATABASE asg;
-        DETACH DATABASE inv;
+        DETACH DATABASE assignees;
+        DETACH DATABASE inventors;
         /*DETACH DATABASE loc;
         CREATE TEMPORARY TABLE gnsloc AS
             SELECT  '' AS zipcode, lat, long,
@@ -127,7 +127,7 @@ def create_usloc_table(conn):
         """)
 
 
-#TODO: unit test
+# TODO: unit test
 def create_locMerge_table(conn):
     conn.executescript("""
         CREATE TABLE IF NOT EXISTS locMerge (
