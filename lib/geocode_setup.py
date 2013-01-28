@@ -4,8 +4,8 @@
 def geocode_db_initialize(cursor):
     cursor.executescript("""
         PRAGMA CACHE_SIZE=20000;
-        ATTACH DATABASE 'assignee.sqlite3' AS assignees;
-        ATTACH DATABASE 'inventor.sqlite3' AS inventors;
+        ATTACH DATABASE 'assignee.sqlite3' AS assigneesdb;
+        ATTACH DATABASE 'inventor.sqlite3' AS inventorsdb;
         ATTACH DATABASE 'loctbl'   AS loc;
         """)
 
@@ -18,14 +18,14 @@ def loc_create_table(cursor):
     cursor.executescript("""
      /* DROP TABLE IF EXISTS loc; */
         CREATE TABLE IF NOT EXISTS loc (
-            Cnt INTEGER,
-            City VARCHAR(10),
-            State VARCHAR(2),
-            Country VARCHAR(2),
-            Zipcode VARCHAR(5),
-            City3 VARCHAR,
-            NCity VARCHAR(10),
-            NState VARCHAR(2),
+            Cnt      INTEGER,
+            City     VARCHAR(10),
+            State    VARCHAR(2),
+            Country  VARCHAR(2),
+            Zipcode  VARCHAR(5),
+            City3    VARCHAR,
+            NCity    VARCHAR(10),
+            NState   VARCHAR(2),
             NCountry VARCHAR(2),
             UNIQUE(City,State,Country,Zipcode));
 
@@ -47,7 +47,7 @@ def fix_city_country(cursor):
                     Upper(State) as StateX,
                     Upper(Country) as CountryX,
                     count(*) as Cnt
-              FROM  assignees.assignee
+              FROM  assigneesdb.assignee
              WHERE  City!=""
           GROUP BY  CityX, StateX, CountryX;
 
@@ -86,7 +86,7 @@ def fix_state_zip(cursor):
                     Upper(Country) as CountryX,
                     Zipcode,
                     count(*) as Cnt
-              FROM  inventors.inventor
+              FROM  inventorsdb.inventor
              WHERE  City!=""
                 OR (City="" AND Zipcode!="")
           GROUP BY  CityX, StateX, CountryX, Zipcode;
@@ -153,8 +153,8 @@ def create_usloc_table(cursor):
         CREATE INDEX If NOT EXISTS usloc_idC3S on usloc (City3, State);
         CREATE INDEX If NOT EXISTS usloc_idC4R on usloc (City4R, State);
 
-        DETACH DATABASE assignees;
-        DETACH DATABASE inventors;
+        DETACH DATABASE assigneesdb;
+        DETACH DATABASE inventorsdb;
 
         /*DETACH DATABASE loc;
         CREATE TEMPORARY TABLE gnsloc AS
@@ -170,20 +170,20 @@ def create_usloc_table(cursor):
 def create_locMerge_table(cursor):
     cursor.executescript("""
         CREATE TABLE IF NOT EXISTS locMerge (
-            Mtch INTEGER,
-            Val FLOAT,
-            Cnt INTEGER,
-            City VARCHAR,
-            State VARCHAR,
-            Country VARCHAR,
-            Zipcode VARCHAR,
-            NCity VARCHAR,
-            NState VARCHAR,
+            Mtch     INTEGER,
+            Val      FLOAT,
+            Cnt      INTEGER,
+            City     VARCHAR,
+            State    VARCHAR,
+            Country  VARCHAR,
+            Zipcode  VARCHAR,
+            NCity    VARCHAR,
+            NState   VARCHAR,
             NCountry VARCHAR,
             NZipcode VARCHAR,
-            NLat FLOAT,
-            NLong FLOAT,
-            City3 VARCHAR,
+            NLat     FLOAT,
+            NLong    FLOAT,
+            City3    VARCHAR,
             UNIQUE(City, State, Country, Zipcode));
 
         CREATE INDEX IF NOT EXISTS okM_idxCC ON locMerge (City,Country);
