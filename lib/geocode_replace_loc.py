@@ -187,7 +187,7 @@ def foreign_full_name_1_sql():
                 "",
                 b.lat,
                 b.long
-          FROM  loc AS a INNER JOIN loc.gnsloc AS b
+          FROM  loc AS a INNER JOIN loctbl.gnsloc AS b
             ON  SEP_WRD(a.City, %d) = b.full_name_ro
            AND  a.country = b.cc1
          WHERE  SEP_CNT(a.City) >= %d
@@ -209,7 +209,7 @@ def foreign_full_name_2_sql():
                 "",
                 b.lat,
                 b.long
-          FROM  loc AS a INNER JOIN loc.gnsloc AS b
+          FROM  loc AS a INNER JOIN loctbl.gnsloc AS b
             ON  SEP_WRD(a.City, %d) = b.full_name_nd_ro
            AND  a.country = b.cc1
          WHERE  SEP_CNT(a.City) >= %d
@@ -231,7 +231,7 @@ def foreign_short_form_sql():
                 "",
                 b.lat,
                 b.long
-          FROM  loc AS a INNER JOIN loc.gnsloc AS b
+          FROM  loc AS a INNER JOIN loctbl.gnsloc AS b
             ON  SEP_WRD(a.City, %d) = b.short_form
            AND  a.country = b.cc1
          WHERE  SEP_CNT(a.City) >= %d
@@ -253,7 +253,7 @@ def foreign_block_split_sql():
                 "",
                 b.lat,
                 b.long
-          FROM  loc AS a INNER JOIN loc.gnsloc AS b
+          FROM  loc AS a INNER JOIN loctbl.gnsloc AS b
             ON  BLK_SPLIT(SEP_WRD(a.City, %d)) = b.sort_name_ro
            AND  a.country = b.cc1
          WHERE  SEP_CNT(a.City) >= %d
@@ -276,7 +276,7 @@ def foreign_first3_jaro_winkler_sql():
                 "",
                 b.lat,
                 b.long
-          FROM  loc AS a INNER JOIN loc.gnsloc AS b
+          FROM  loc AS a INNER JOIN loctbl.gnsloc AS b
             ON  SUBSTR(BLK_SPLIT(SEP_WRD(a.City, %d)),1,3) = b.sort_name_ro
            AND  a.country = b.cc1
          WHERE  jaro > %s
@@ -302,7 +302,7 @@ def foreign_last4_jaro_winkler_sql():
                 "",
                 b.lat,
                 b.long
-          FROM  loc AS a INNER JOIN loc.gnsloc AS b
+          FROM  loc AS a INNER JOIN loctbl.gnsloc AS b
             ON  REV_WRD(BLK_SPLIT(SEP_WRD(a.City, %d)),4) = b.sort_name_ro
            AND  a.country = b.cc1
          WHERE  jaro > %s
@@ -375,7 +375,7 @@ def foreign_full_name_2nd_layer_sql():
                 b.lat,
                 b.long
           FROM  (SELECT  * FROM  loc WHERE  NCity IS NOT NULL) AS a
-    INNER JOIN  loc.gnsloc AS b
+    INNER JOIN  loctbl.gnsloc AS b
             ON  a.NCity = b.full_name_ro
            AND  a.NCountry = b.cc1"""
       return stmt;
@@ -396,7 +396,7 @@ def foreign_full_nd_2nd_layer_sql():
                 b.lat,
                 b.long
           FROM  (SELECT  * FROM  loc WHERE  NCity IS NOT NULL) AS a
-    INNER JOIN  loc.gnsloc AS b
+    INNER JOIN  loctbl.gnsloc AS b
             ON  a.NCity = b.full_name_nd_ro
            AND  a.NCountry = b.cc1"""
       return stmt;
@@ -417,7 +417,7 @@ def foreign_no_space_2nd_layer_sql():
                 b.lat,
                 b.long
           FROM  (SELECT  * FROM  loc WHERE  NCity IS NOT NULL) AS a
-    INNER JOIN  loc.gnsloc AS b
+    INNER JOIN  loctbl.gnsloc AS b
             ON  BLK_SPLIT(a.NCity) = b.sort_name_ro
            AND  a.NCountry = b.cc1"""
       return stmt;
@@ -440,7 +440,7 @@ def foreign_first3_2nd_jaro_winkler_sql():
                 b.lat,
                 b.long
           FROM  (SELECT  * FROM  loc WHERE  NCity IS NOT NULL) AS a
-    INNER JOIN  loc.gnsloc AS b
+    INNER JOIN  loctbl.gnsloc AS b
             ON  SUBSTR(BLK_SPLIT(a.NCity),1,3) = b.sort_name_ro
            AND  a.Ncountry = b.cc1
          WHERE  jaro > %s

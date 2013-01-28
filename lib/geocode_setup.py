@@ -6,7 +6,7 @@ def geocode_db_initialize(cursor):
         PRAGMA CACHE_SIZE=20000;
         ATTACH DATABASE 'assignee.sqlite3' AS assigneesdb;
         ATTACH DATABASE 'inventor.sqlite3' AS inventorsdb;
-        ATTACH DATABASE 'loctbl'   AS loc;
+        ATTACH DATABASE 'loctbl'   AS loctbl;
         """)
 
 
@@ -68,7 +68,7 @@ def fix_city_country(cursor):
                     b.NewState,
                     b.NewCountry
               FROM  temp2 AS a
-         LEFT JOIN  loc.typos AS b
+         LEFT JOIN  loctbl.typos AS b
                 ON  a.CityY=b.City
                AND  a.StateY=b.State
                AND  a.CtryY=b.Country;
@@ -108,7 +108,7 @@ def fix_state_zip(cursor):
                     b.NewState,
                     b.NewCountry
               FROM  temp2 AS a
-         LEFT JOIN  loc.typos AS b
+         LEFT JOIN  loctbl.typos AS b
                 ON  a.CityY=b.City
                AND  a.StateY=b.State
                AND  a.CtryY=b.Country;
@@ -144,7 +144,7 @@ def create_usloc_table(cursor):
                     REV_WRD(BLK_SPLIT(City), 4) as City4R,
                     Upper(State) as State,
                     "US" as Country
-              FROM  loc.usloc
+              FROM  loctbl.usloc
           GROUP BY  City, State;
 
         CREATE INDEX If NOT EXISTS usloc_idxZ  on usloc (Zipcode);
@@ -160,7 +160,7 @@ def create_usloc_table(cursor):
         CREATE TEMPORARY TABLE gnsloc AS
             SELECT  '' AS zipcode, lat, long,
                     UPPER(full_name_nd) AS city, "" AS State, cc1 AS country
-              FROM  loc.gnsloc;
+              FROM  loctbl.gnsloc;
         CREATE INDEX gnsloc_idxCC on gnsloc (City, Country)
         */;
         """)
