@@ -105,17 +105,33 @@ def handle_inventor():
 
     i = SQLite.SQLite(db = 'inventor.sqlite3', tbl = 'inventor_1')
     i.conn.create_function("ascit", 1, ascit)
-    i.conn.create_function("cc", 3, locFunc.cityctry)
+    i.conn.create_function("cc",    3, locFunc.cityctry)
     i.c.execute('drop table if exists inventor_1')
     i.replicate(tableTo = 'inventor_1', table = 'inventor')
     i.c.execute('insert or ignore into inventor_1 select * from inventor  %s' % (debug and "LIMIT 2500" or ""))
 
-    i.c.execute("""update inventor_1 set firstname = ascit(firstname), lastname = ascit(lastname), street = ascit(street), City = cc(city, country, 'city'), Country = cc(city, country, 'ctry');""")
+    i.c.execute("""
+            UPDATE  inventor_1
+               SET  firstname = ascit(firstname),
+                    lastname  = ascit(lastname),
+                    street    = ascit(street),
+                    City      = cc(city, country, 'city'),
+                    Country   = cc(city, country, 'ctry');
+                """)
+
     i.commit()
 
     i.attach('hashTbl.sqlite3')
-    i.merge(key=['NCity', 'NState', 'NCountry', 'NZipcode', 'NLat', 'NLong'], on=['City', 'State', 'Country'], tableFrom='locMerge', db='db')
-    i.merge(key=['NCity', 'NState', 'NCountry', 'NZipcode', 'NLat', 'NLong'], on=['City', 'State', 'Country', 'Zipcode'], tableFrom='locMerge', db='db')
+    i.merge(key=['NCity', 'NState', 'NCountry', 'NZipcode', 'NLat', 'NLong'],
+            on=['City', 'State', 'Country'],
+            tableFrom='locMerge',
+            db='db')
+
+    i.merge(key=['NCity', 'NState', 'NCountry', 'NZipcode', 'NLat', 'NLong'],
+            on=['City', 'State', 'Country', 'Zipcode'],
+            tableFrom='locMerge',
+            db='db')
+
     i.commit()
     i.close()
     print "DONE: Inv Locationize!", "\n   -", datetime.datetime.now()-t1
