@@ -49,7 +49,7 @@ if not(tblExist(c, "locMerge")):
 
 create_usloc_table(c)
 create_locMerge_table(c)
-print "Finsh setup for geocoding: ", datetime.datetime.now()
+print "Finish setup for geocoding: ", datetime.datetime.now()
 
 # End of setup.
 
