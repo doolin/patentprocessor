@@ -56,7 +56,7 @@ print datetime.datetime.now()
 
 def print_loc_and_merge(c):
     VarX = c.execute("select count(*) from loc").fetchone()[0]
-    VarY = c.execute("select count(*) from locMerge").fetchone()[1]
+    VarY = c.execute("select count(*) from locMerge").fetchone()[0]
     print " - Loc =", VarX, " OkM =", VarY, " Total =", VarX+VarY, "  ", datetime.datetime.now()
 
 
