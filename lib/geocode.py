@@ -39,7 +39,7 @@ conn.create_function("rev_wrd",   2, lambda x,y:x.upper()[::-1][:y])
 # TODO: cover geocode setup functions with unit tests.
 from geocode_setup import *
 
-print datetime.datetime.now()
+print "Start setup for geocoding: ", datetime.datetime.now()
 geocode_db_initialize(c)
 loc_create_table(c)
 if not(tblExist(c, "locMerge")):
@@ -49,7 +49,7 @@ if not(tblExist(c, "locMerge")):
 
 create_usloc_table(c)
 create_locMerge_table(c)
-print datetime.datetime.now()
+print "Finsh setup for geocoding: ", datetime.datetime.now()
 
 # End of setup.
 
