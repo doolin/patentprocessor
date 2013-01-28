@@ -60,25 +60,16 @@ def print_loc_and_merge(c):
     print " - Loc =", VarX, " OkM =", VarY, " Total =", VarX+VarY, "  ", datetime.datetime.now()
 
 
-
 # TODO: Unit test extensively.
 def replace_loc(script):
 
     c.execute("DROP TABLE IF EXISTS temp1")
-#    stmt_to_execute = """
-#       CREATE TEMPORARY TABLE temp1 AS %s;
-#       """ % script
-#    c.executescript(stmt_to_execute)
     c.execute("CREATE TEMPORARY TABLE temp1 AS %s" % script)
     c.execute("CREATE INDEX IF NOT EXISTS tmp1_idx ON temp1 (CityA, StateA, CountryA, ZipcodeA)")
 
     #print_table_info(c)
 
-    # TODO: Refactor into at least two functions. Main refactor is
-    # Handling the body of the if block (DONE). The second refactor is
-    # handling the conditional expression for the if block (DONE).
-    #if c.execute("SELECT count(*) FROM temp1").fetchone()[0]>0:
-    # Which tables will pass this conditional?
+    # TODO: Which tables will pass this conditional?
     if table_temp1_has_rows(c):
         create_loc_and_locmerge_tables(c)
         print_loc_and_merge(c)
