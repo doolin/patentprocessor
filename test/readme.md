@@ -12,7 +12,7 @@ The integration tests require two types of databases:
    of a succesful parse, and
 2. Databases `loctbl` and `NBER_asg` linked from elsewhere like so:
     * `ln -s /data/patentdata/NBER/NBER_asg .`
-    * `ln -s /data/patentdata/location/loctbl.sqlite3/NBER_asg loctbl`
+    * `ln -s /data/patentdata/location/loctbl.sqlite3 loctbl`
 
 (Your links may be different.)
 
