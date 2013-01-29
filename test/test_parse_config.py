@@ -43,7 +43,7 @@ class TestPatentConfig(unittest.TestCase):
 
     def test_argparse_patentroot(self):
         # test that argparse is setting the variables correctly for patentroot
-        exit_status = subprocess.call('python parse.py --patentroot %s' % \
+        exit_status = subprocess.call('python parse.py -xasdf --patentroot %s' % \
                 (os.getcwd() + testdir), \
                 stdout=self.null_out, shell=True)
         # valid directory, but no xml files
