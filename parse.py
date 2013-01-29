@@ -43,6 +43,7 @@ def list_files(directories, patentroot, xmlregex):
     return files
 
 def parse_file(filename):
+    if not filename: return
     parsed_xmls = []
     size = os.stat(filename).st_size
     with open(filename,'r') as f:
@@ -51,6 +52,7 @@ def parse_file(filename):
     return parsed_xmls
 
 def parallel_parse(filelist):
+    if not filelist: return
     pool = multiprocessing.Pool(multiprocessing.cpu_count())
     parsed = pool.imap_unordered(parse_file, filelist)
     return list(itertools.chain.from_iterable(parsed))
