@@ -53,9 +53,8 @@ def parse_file(filename):
 
 def parallel_parse(filelist):
     if not filelist: return
-    poolsize = min( max(len(filelist),1), multiprocessing.cpu_count() )
-    pool = multiprocessing.Pool(poolsize)
-    parsed = pool.map(parse_file, filelist)
+    pool = multiprocessing.Pool(multiprocessing.cpu_count())
+    parsed = pool.imap_unordered(parse_file, filelist)
     return list(itertools.chain.from_iterable(parsed))
 
 def parse_patent(grant_list):
