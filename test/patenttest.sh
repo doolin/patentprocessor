@@ -19,5 +19,6 @@ done
 if [ -f /tmp/res ] ;
   then rm /tmp/res ;
 fi
+printf "\e[0m"
 
 rm -rf *.sqlite3 *.pyc
