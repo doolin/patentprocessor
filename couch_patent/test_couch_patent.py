@@ -1,7 +1,11 @@
 #!/usr/bin/env python
 
+import sys
 import unittest
 from couch_patent import *
+
+sys.path.append('..')
+import parse
 
 basedir = os.path.join(os.curdir, '../test')
 testdir = os.path.join(basedir, 'fixtures/xml/')
