@@ -2,9 +2,13 @@
 
 import sys
 import unittest
-from couch_patent import *
 
 sys.path.append('..')
+from couch_patent import *
+
+sys.path.append('../lib/')
+from patXML import *
+
 import parse
 
 basedir = os.path.join(os.curdir, '../test')
