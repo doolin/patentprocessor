@@ -83,6 +83,11 @@ def build_tables(parsed_grants):
     for pg in parsed_grants:
       pg.insert_table()
 
+def add_to_couch_db(parsed_grants):
+    for us_patent_grant in parsed_grants:
+        metadata = couch_patent.get_metadata(us_patent_grant)
+        couch_patent.add_doc(metadata)
+
 if __name__ == '__main__':
 
     args = ArgHandler(sys.argv[1:])
@@ -104,6 +109,7 @@ if __name__ == '__main__':
     parsed_xmls = parallel_parse(files)
     parsed_grants = parse_patent(parsed_xmls)
     build_tables(parsed_grants)
+    add_to_couch_db(parsed_grants)
 
     #total_patents = len(parsed_xmls)
     #total_errors = len(parsed_xmls) * len(xmlclasses) - len(parsed_grants)
