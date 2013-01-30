@@ -1,5 +1,15 @@
 # Test suite for patent preprocessing
 
+#### tl;dr
+
+* `./pattesttest.sh`
+* `./parse_integration.sh`
+* `./clean_integration.sh`
+* `./consolidation_integration.sh`
+
+----
+
+
 We're intending on conforming to PEP guidelines,
 please note where implementation is not meeting
 a relevant PEP.
