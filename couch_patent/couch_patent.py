@@ -3,9 +3,6 @@
 import sys
 import couchdb
 
-sys.path.append('../lib')
-from patXML import *
-
 attrs = ['country', 'patent', 'kind', 'date_grant', 'pat_type', \
          'date_app', 'country_app', 'patent_app', 'code_app', \
          'clm_num', 'classes', 'abstract', 'invention_title', \
