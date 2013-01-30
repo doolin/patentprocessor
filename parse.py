@@ -17,6 +17,8 @@ sys.path.append( './lib/' )
 
 from patXML import *
 from argconfig_parse import ArgHandler
+import couch_patent
+
 
 regex = re.compile(r"""
  ([<][?]xml[ ]version.*?[>]       #all XML starts with ?xml
