@@ -68,9 +68,9 @@ class XMLPatentBase(object):
         [xmlstring]: string containing xml document. Should be provided by 
         parse.py
         """
+        self.orig_xmlstring = xmlstring
         # lowercase all tags
         xmlstring = re.sub(r"<[/]?[A-Za-z-]+?[ >]", lambda x: x.group().lower(), xmlstring)
-        self.orig_xmlstring = xmlstring
         # store the minidom parsed xml doc
         xmldoc = minidom.parseString(xmlstring)
         
