@@ -73,10 +73,13 @@ def parse_patent(grant_list):
     parsed_grants = map(list, parsed_grants)
     return itertools.chain.from_iterable(parsed_grants)
 
+def insert_table(patent):
+    patent.insert_table()
+
 # TODO: unittest
 def build_tables(parsed_grants):
-    for us_patent_grant in parsed_grants:
-        us_patent_grant.insert_table()
+    pool = multiprocessing.Pool(multiprocessing.cpu_count())
+    res = pool.imap_unordered(insert_table, parsed_grants)
 
 if __name__ == '__main__':
 
