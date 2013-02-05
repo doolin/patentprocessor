@@ -57,16 +57,21 @@ def parallel_parse(filelist):
     parsed = pool.imap_unordered(parse_file, filelist)
     return list(itertools.chain.from_iterable(parsed))
 
-def parse_patent(grant_list):
+def apply_xmlclass(us_patent_grant):
     parsed_grants = []
-    for us_patent_grant in grant_list:
-        for xmlclass in xmlclasses:
-            try:
-                parsed_grants.append(xmlclass(us_patent_grant))
-            except Exception as inst:
-                logging.error(type(inst))
-                logging.error("  - Error: %s %s" % (us_patent_grant, us_patent_grant[175:200]))
+    for xmlclass in xmlclasses:
+        try:
+            parsed_grants.append(xmlclass(us_patent_grant))
+        except Exception as inst:
+            logging.error(type(inst))
+            logging.error("  - Error: %s" % (us_patent_grant[175:200]))
     return parsed_grants
+
+def parse_patent(grant_list):
+    pool = multiprocessing.Pool(multiprocessing.cpu_count())
+    parsed_grants = pool.imap_unordered(apply_xmlclass, grant_list)
+    parsed_grants = map(list, parsed_grants)
+    return itertools.chain.from_iterable(parsed_grants)
 
 # TODO: unittest
 def build_tables(parsed_grants):
