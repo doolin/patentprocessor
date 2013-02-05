@@ -95,11 +95,11 @@ if __name__ == '__main__':
     parsed_grants = parse_patent(parsed_xmls)
     build_tables(parsed_grants)
 
-    total_patents = len(parsed_xmls)
-    total_errors = len(parsed_xmls) * len(xmlclasses) - len(parsed_grants)
+    #total_patents = len(parsed_xmls)
+    #total_errors = len(parsed_xmls) * len(xmlclasses) - len(parsed_grants)
 
-    logging.info("Parsing started at %s", str(datetime.datetime.today()))
-    logging.info("Time Elapsed: %s", datetime.datetime.now()-t1)
-    logging.info("Total Patent Files: %d" % (len(files)))
-    logging.info("Total Errors: %d", total_errors)
-    logging.info("Total Patents: %d", total_patents)
+    #logging.info("Parsing started at %s", str(datetime.datetime.today()))
+    #logging.info("Time Elapsed: %s", datetime.datetime.now()-t1)
+    #logging.info("Total Patent Files: %d" % (len(files)))
+    #logging.info("Total Errors: %d", total_errors)
+    #logging.info("Total Patents: %d", total_patents)
