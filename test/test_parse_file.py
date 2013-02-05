@@ -96,7 +96,7 @@ class TestParseFile(unittest.TestCase):
         filelist = parse.list_files(testdir, patentroot, xmlregex)
         grant_list = parse.parallel_parse(filelist)
         parsed_grants = parse.parse_patent(grant_list)
-        self.assertTrue(len(parsed_grants) == len(grant_list)*len(xmlclasses))
+        self.assertTrue(len(list(parsed_grants)) == len(grant_list)*len(xmlclasses))
 
 
 if __name__ == '__main__':
