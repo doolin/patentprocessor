@@ -78,8 +78,8 @@ def insert_table(patent):
 
 # TODO: unittest
 def build_tables(parsed_grants):
-    pool = multiprocessing.Pool(multiprocessing.cpu_count())
-    res = pool.imap_unordered(insert_table, parsed_grants)
+    for pg in parsed_grants:
+      pg.insert_table()
 
 if __name__ == '__main__':
 
