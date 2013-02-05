@@ -69,36 +69,39 @@ class XMLPatentBase(object):
         parse.py
         """
         # lowercase all tags
-        self.xmlstring = re.sub(r"<[/]?[A-Za-z-]+?[ >]", lambda x: x.group().lower(), xmlstring)
+        xmlstring = re.sub(r"<[/]?[A-Za-z-]+?[ >]", lambda x: x.group().lower(), xmlstring)
         # store the minidom parsed xml doc
-        self.xmldoc = minidom.parseString(self.xmlstring)
+        xmldoc = minidom.parseString(xmlstring)
         
         # country, patent, kind, date_grant
-        self.country, self.patent, self.kind, self.date_grant = self.__tagNme__(self.xmldoc, ["publication-reference", ["country", "doc-number", "kind", "date"]])
+        self.country, self.patent, self.kind, self.date_grant = self.__tagNme__(xmldoc, ["publication-reference", ["country", "doc-number", "kind", "date"]])
         # pat_type
-        self.pat_type = self.__tagNme__(self.xmldoc, ["application-reference"], iHTML=False)[0].attributes["appl-type"].value
+        self.pat_type = self.__tagNme__(xmldoc, ["application-reference"], iHTML=False)[0].attributes["appl-type"].value
         # date_app, country_app, patent_app
-        self.date_app, self.country_app, self.patent_app = self.__tagNme__(self.xmldoc, ["application-reference", ["date", "country", "doc-number"]])
+        self.date_app, self.country_app, self.patent_app = self.__tagNme__(xmldoc, ["application-reference", ["date", "country", "doc-number"]])
         # code_app
-        self.code_app = self.__tagNme__(self.xmldoc, ["us-application-series-code"])
+        self.code_app = self.__tagNme__(xmldoc, ["us-application-series-code"])
         # clm_num
-        self.clm_num = self.__tagNme__(self.xmldoc, ["number-of-claims"])
+        self.clm_num = self.__tagNme__(xmldoc, ["number-of-claims"])
         # classes
-        self.classes = [[x[:3].replace(' ',''), x[3:].replace(' ','')] for x in self.__tagNme__(self.xmldoc, ["classification-national", ["main-classification", "further-classification"]], idx=1, listType=True)]
+        self.classes = [[x[:3].replace(' ',''), x[3:].replace(' ','')] for x in self.__tagNme__(xmldoc, ["classification-national", ["main-classification", "further-classification"]], idx=1, listType=True)]
         # abstract
-        self.abstract = self.__allHTML__(self.xmldoc, ["abstract", "p"])
+        self.abstract = self.__allHTML__(xmldoc, ["abstract", "p"])
         # invention_title
-        self.invention_title = self.__allHTML__(self.xmldoc, ["invention-title"])
+        self.invention_title = self.__allHTML__(xmldoc, ["invention-title"])
         # asg_list
-        self.asg_list = self.__asg_detail__(self.__tagNme__(self.xmldoc, ["assignees", "assignee"], iHTML=False))
+        self.asg_list = self.__asg_detail__(self.__tagNme__(xmldoc, ["assignees", "assignee"], iHTML=False))
         # cit_list
-        self.cit_list = self.__cit_detail__(self.__tagNme__(self.xmldoc, ["references-cited", "citation"], iHTML=False))
+        self.cit_list = self.__cit_detail__(self.__tagNme__(xmldoc, ["references-cited", "citation"], iHTML=False))
         # rel_list
-        self.rel_list = self.__rel_detail__(self.__tagNme__(self.xmldoc, ["us-related-documents"], iHTML=False))
+        self.rel_list = self.__rel_detail__(self.__tagNme__(xmldoc, ["us-related-documents"], iHTML=False))
         # inv_list
-        self.inv_list = self.__tagSplit__(self.xmldoc, ["parties", "applicant"], [["addressbook", ["last-name", "first-name"]], ["addressbook", "address", ["street", "city", "state", "country", "postcode"]], [["nationality", "residence"], "country"]], blank=True)
+        self.inv_list = self.__tagSplit__(xmldoc, ["parties", "applicant"], [["addressbook", ["last-name", "first-name"]], ["addressbook", "address", ["street", "city", "state", "country", "postcode"]], [["nationality", "residence"], "country"]], blank=True)
         # law_list
-        self.law_list = self.__tagSplit__(self.xmldoc, ["parties", "agents", "agent"], [["addressbook", ["last-name", "first-name", "country", "orgname"]]], blank=True)
+        self.law_list = self.__tagSplit__(xmldoc, ["parties", "agents", "agent"], [["addressbook", ["last-name", "first-name", "country", "orgname"]]], blank=True)
+
+        del xmldoc
+        del xmlstring
 
     def build_table(self):
       raise NotImplementedError("build_table not defined for XMLPatentBase")
