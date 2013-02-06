@@ -87,6 +87,7 @@ def add_to_couch_db(parsed_grants):
     for us_patent_grant in parsed_grants:
         metadata = couch_patent.get_metadata(us_patent_grant)
         couch_patent.add_doc(metadata)
+        del us_patent_grant.orig_xmlstring
 
 if __name__ == '__main__':
 
