@@ -18,7 +18,7 @@ patentroot = '.'
 xmlregex = r'ipg120327.one.xml'
 filelist = parse.list_files([testdir], patentroot, xmlregex)
 grant_list = parse.parallel_parse(filelist)
-parsed_grants = parse.parse_patent(grant_list)
+parsed_grants = list(parse.parse_patent(grant_list))
 
 class TestCouchPatent(unittest.TestCase):
 
