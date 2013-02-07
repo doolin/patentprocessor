@@ -5,9 +5,9 @@ import datetime
 import csv
 import os
 import re
-import sqlite3
 import copy
 import unicodedata
+from patSQL import *
 
 def uniasc(x, form='NFKD', action='replace', debug=False):
     # unicode to ascii format
@@ -286,18 +286,7 @@ class AssigneeXML(XMLPatentBase):
         return ack
 
     def insert_table(self):
-        conn = sqlite3.connect("assignee.sqlite3")
-        c = conn.cursor()
-        c.executescript("""
-            CREATE TABLE IF NOT EXISTS assignee (
-                Patent VARCHAR(8),      AsgType INTEGER,        Assignee VARCHAR(30),
-                City VARCHAR(10),       State VARCHAR(2),       Country VARCHAR(2),
-                Nationality VARCHAR(2), Residence VARCHAR(2),   AsgSeq INTEGER);
-            CREATE UNIQUE INDEX IF NOT EXISTS uqAsg ON assignee (Patent, AsgSeq);
-            """)
-        c.executemany("""INSERT OR IGNORE INTO assignee VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)""",  \
-            self.build_table())
-        conn.commit()
+        assignee_table.inserts.extend(self.build_table())
 
 class CitationXML(XMLPatentBase):
     def build_table(self):
@@ -307,18 +296,7 @@ class CitationXML(XMLPatentBase):
         return ack
 
     def insert_table(self):
-        conn = sqlite3.connect("citation.sqlite3")
-        c = conn.cursor()
-        c.executescript("""
-            CREATE TABLE IF NOT EXISTS citation (
-                Patent VARCHAR(8),      Cit_Date INTEGER,       Cit_Name VARCHAR(10),
-                Cit_Kind VARCHAR(1),    Cit_Country VARCHAR(2), Citation VARCHAR(8),
-                Category VARCHAR(15),   CitSeq INTEGER);
-            CREATE UNIQUE INDEX IF NOT EXISTS uqCit ON citation (Patent, CitSeq);
-            """)
-        c.executemany("""INSERT OR IGNORE INTO citation VALUES (?, ?, ?, ?, ?, ?, ?, ?)""" , \
-            self.build_table())
-        conn.commit()
+        citation_table.inserts.extend(self.build_table())
 
 class ClassXML(XMLPatentBase):
     def build_table(self):
@@ -328,17 +306,7 @@ class ClassXML(XMLPatentBase):
         return ack
 
     def insert_table(self):
-        conn = sqlite3.connect("class.sqlite3")
-        c = conn.cursor()
-        c.executescript("""
-            CREATE TABLE IF NOT EXISTS class (
-                Patent VARCHAR(8),      Prim INTEGER,
-                Class VARCHAR(3),       SubClass VARCHAR(3));
-            CREATE UNIQUE INDEX IF NOT EXISTS uqClass ON class (Patent, Class, SubClass);
-            """)
-        c.executemany("""INSERT OR IGNORE INTO class VALUES (?, ?, ?, ?)""" , \
-            self.build_table())
-        conn.commit()
+        class_table.inserts.extend(self.build_table())
 
 class InventorXML(XMLPatentBase):
     def build_table(self):
@@ -348,39 +316,14 @@ class InventorXML(XMLPatentBase):
         return ack
 
     def insert_table(self):
-        conn = sqlite3.connect("inventor.sqlite3")
-        c = conn.cursor()
-        c.executescript("""
-            CREATE TABLE IF NOT EXISTS inventor (
-                Patent VARCHAR(8),      Firstname VARCHAR(15),  Lastname VARCHAR(15),
-                Street VARCHAR(15),     City VARCHAR(10),
-                State VARCHAR(2),       Country VARCHAR(12),
-                Zipcode VARCHAR(5),     Nationality VARCHAR(2), InvSeq INTEGER);
-            CREATE UNIQUE INDEX IF NOT EXISTS uqInv ON inventor (Patent, InvSeq);
-            """)
-        c.executemany("""INSERT OR IGNORE INTO inventor VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""" , \
-            self.build_table())
-        conn.commit()
-
+        inventor_table.inserts.extend(self.build_table())
 
 class PatentXML(XMLPatentBase):
     def build_table(self):
         return [[self.patent, self.kind, self.clm_num, self.code_app, self.patent_app, self.date_grant, self.date_grant[:4], self.date_app, self.date_app[:4], self.pat_type]]
 
     def insert_table(self):
-        conn = sqlite3.connect("patent.sqlite3")
-        c = conn.cursor()
-        c.executescript("""
-            CREATE TABLE IF NOT EXISTS patent (
-                Patent VARCHAR(8),      Kind VARCHAR(3),        Claims INTEGER,
-                AppType INTEGER,        AppNum VARCHAR(8),
-                GDate INTEGER,          GYear INTEGER,
-                AppDate INTEGER,        AppYear INTEGER, PatType VARCHAR(15) );
-            CREATE UNIQUE INDEX IF NOT EXISTS uqPat on patent (Patent);
-            """)
-        c.executemany("""INSERT OR IGNORE INTO patent VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""" , \
-            self.build_table())
-        conn.commit()
+        patent_table.inserts.extend(self.build_table())
 
 
 class PatdescXML(XMLPatentBase):
@@ -388,17 +331,7 @@ class PatdescXML(XMLPatentBase):
         return [[self.patent, self.abstract, self.invention_title]]
 
     def insert_table(self):
-        conn = sqlite3.connect("patdesc.sqlite3")
-        c = conn.cursor()
-        c.executescript("""
-            CREATE TABLE IF NOT EXISTS patdesc (
-                Patent VARCHAR(8),
-                Abstract VARCHAR(50),   Title VARCHAR(20));
-            CREATE UNIQUE INDEX IF NOT EXISTS uqPatDesc ON patdesc (Patent);
-            """)
-        c.executemany("""INSERT OR IGNORE INTO patdesc VALUES (?, ?, ?)""" , \
-            self.build_table())
-        conn.commit()
+        patdesc_table.inserts.extend(self.build_table())
 
 
 class LawyerXML(XMLPatentBase):
@@ -409,17 +342,7 @@ class LawyerXML(XMLPatentBase):
         return ack
 
     def insert_table(self):
-        conn = sqlite3.connect("lawyer.sqlite3")
-        c = conn.cursor()
-        c.executescript("""
-            CREATE TABLE IF NOT EXISTS lawyer (
-                Patent VARCHAR(8),      Firstname VARCHAR(15),  Lastname VARCHAR(15),
-                LawCountry VARCHAR(2),  OrgName VARCHAR(20),    LawSeq INTEGER);
-            CREATE UNIQUE INDEX IF NOT EXISTS uqLawyer ON lawyer (Patent, LawSeq);
-            """)
-        c.executemany("""INSERT OR IGNORE INTO lawyer VALUES (?, ?, ?, ?, ?, ?)""" , \
-            self.build_table())
-        conn.commit()
+        lawyer_table.inserts.extend(self.build_table())
 
 
 class ScirefXML(XMLPatentBase):
@@ -430,16 +353,7 @@ class ScirefXML(XMLPatentBase):
         return ack
 
     def insert_table(self):
-        conn = sqlite3.connect("sciref.sqlite3")
-        c = conn.cursor()
-        c.executescript("""
-            CREATE TABLE IF NOT EXISTS sciref (
-                Patent VARCHAR(8),      Descrip VARCHAR(20),    CitSeq INTEGER);
-            CREATE UNIQUE INDEX IF NOT EXISTS uqSciref ON sciref (Patent, CitSeq);
-            """)
-        c.executemany("""INSERT OR IGNORE INTO sciref VALUES (?, ?, ?)""" , \
-            self.build_table())
-        conn.commit()
+        sciref_table.inserts.extend(self.build_table())
 
 
 class UsreldocXML(XMLPatentBase):
@@ -453,17 +367,4 @@ class UsreldocXML(XMLPatentBase):
         return ack
 
     def insert_table(self):
-        conn = sqlite3.connect("usreldoc.sqlite3")
-        c = conn.cursor()
-        c.executescript("""
-            CREATE TABLE IF NOT EXISTS usreldoc (
-                Patent VARCHAR(8),      DocType VARCHAR(10),    OrderSeq INTEGER,
-                Country VARCHAR(2),     RelPatent VARCHAR(8),   Kind VARCHAR(2),
-                RelDate INTEGER,        Status VARCHAR(10));
-            CREATE UNIQUE INDEX IF NOT EXISTS uqUSRelDoc ON usreldoc (Patent, OrderSeq);
-            """)
-        c.executemany("""INSERT OR IGNORE INTO usreldoc VALUES (?, ?, ?, ?, ?, ?, ?, ?)""" , \
-            self.build_table())
-        conn.commit()
-
-
+        usreldoc_table.inserts.extend(self.build_table())
