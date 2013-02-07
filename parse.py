@@ -16,6 +16,7 @@ sys.path.append( '.' )
 sys.path.append( './lib/' )
 
 from patXML import *
+from patSQL import *
 from argconfig_parse import ArgHandler
 import couch_patent
 
@@ -88,6 +89,18 @@ def add_to_couch_db(parsed_grants):
         metadata = couch_patent.get_metadata(us_patent_grant)
         couch_patent.add_doc(metadata)
         del us_patent_grant.orig_xmlstring
+
+def commit_tables():
+    assignee_table.commit();
+    citation_table.commit();
+    class_table.commit();
+    inventor_table.commit();
+    patent_table.commit();
+    patdesc_table.commit();
+    lawyer_table.commit();
+    sciref_table.commit();
+    usreldoc_table.commit();
+
 
 if __name__ == '__main__':
 
