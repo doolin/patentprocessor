@@ -20,17 +20,14 @@ from patSQL import *
 from argconfig_parse import ArgHandler
 import couch_patent
 
+xmlclasses = [AssigneeXML, CitationXML, ClassXML, InventorXML, \
+              PatentXML, PatdescXML, LawyerXML, ScirefXML, UsreldocXML]
 
 regex = re.compile(r"""
  ([<][?]xml[ ]version.*?[>]       #all XML starts with ?xml
 .*?
 [<][/]us[-]patent[-]grant[>])    #and here is the end tag
 """, re.I+re.S+re.X)
-
-# TODO: put into configuration file (low priority)
-xmlclasses = [AssigneeXML, CitationXML, ClassXML, InventorXML, \
-              PatentXML, PatdescXML, LawyerXML, ScirefXML, UsreldocXML]
-
 
 def list_files(directories, patentroot, xmlregex):
     """
