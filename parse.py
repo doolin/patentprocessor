@@ -73,13 +73,12 @@ def parse_patent(grant_list):
     parsed_grants = map(list, parsed_grants)
     return itertools.chain.from_iterable(parsed_grants)
 
-def insert_table(patent):
+def load_sql(patent):
     patent.insert_table()
 
 # TODO: unittest
 def build_tables(parsed_grants):
-    for pg in parsed_grants:
-      pg.insert_table()
+    map(load_sql, parsed_grants)
 
 def add_to_couch_db(parsed_grants):
     for us_patent_grant in parsed_grants:
@@ -120,6 +119,7 @@ if __name__ == '__main__':
     parsed_xmls = parallel_parse(files)
     parsed_grants = parse_patent(parsed_xmls)
     build_tables(parsed_grants)
+    commit_tables()
     add_to_couch_db(parsed_grants)
 
     #total_patents = len(parsed_xmls)
