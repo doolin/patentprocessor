@@ -70,6 +70,6 @@ for file in `ls "$datadir"/*.zip`; do
   found=`ls $file | rev | cut -d'/' -f1 | rev`
   if have_file $found ; then
     echo "=> Found $found"
-    echo $found >> $csvfile
+    echo $found,`date +"%T@%m-%d-%Y"` >> $csvfile
   fi
 done
