@@ -40,16 +40,6 @@ if [[ ! -f $csvfile ]] ; then
   touch $csvfile
 fi
 
-# populate CSV file with previously downloaded files
-printf "\e[32m" ;
-for file in `ls "$datadir"/*.zip`; do
-  found=`ls $file | rev | cut -d'/' -f1 | rev`
-  if have_file $found ; then
-    echo "=> Found $found"
-    echo $found >> $csvfile
-  fi
-done
-
 printf "\e[34m" ;
 echo "Logfile location: ${logfile}"
 if [[ ! -f $logfile ]] ; then
@@ -60,3 +50,16 @@ if [[ ! -f $logfile ]] ; then
   touch $logfile
 fi
 
+##################################################
+#
+#   Populate CSV file
+#
+##################################################
+printf "\e[32m" ;
+for file in `ls "$datadir"/*.zip`; do
+  found=`ls $file | rev | cut -d'/' -f1 | rev`
+  if have_file $found ; then
+    echo "=> Found $found"
+    echo $found >> $csvfile
+  fi
+done
