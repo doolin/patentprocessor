@@ -11,6 +11,11 @@ csvfile=${PATENT_CSVFILE:?"Need to set PATENT_CSVFILE to destination of state fi
 datadir=${PATENT_DATADIR:?"Need to set PATENT_DATADIR to desired destination of downloaded files"}
 logfile=${PATENT_LOGFILE:?"Need to set PATENT_LOGFILE to location of log file"}
 
+##################################################
+#
+#   Function Definitions
+#
+##################################################
 function have_file() {
   while IFS=, read col1 col2 ; do
     if [[ "$col1" == "$1" ]] ; then
@@ -20,6 +25,11 @@ function have_file() {
   return 0
 }
 
+##################################################
+#
+#   Create state files if necessary
+#
+##################################################
 printf "\e[34m" ;
 echo "Data directory location: ${datadir}"
 if [[ ! -d $datadir ]] ; then
