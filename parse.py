@@ -18,7 +18,11 @@ sys.path.append( './lib/' )
 from patXML import *
 from patSQL import *
 from argconfig_parse import ArgHandler
-import couch_patent
+have_couch = True
+try:
+    import couch_patent
+except:
+    have_couch = False
 
 xmlclasses = [AssigneeXML, CitationXML, ClassXML, InventorXML, \
               PatentXML, PatdescXML, LawyerXML, ScirefXML, UsreldocXML]
@@ -120,7 +124,8 @@ if __name__ == '__main__':
     parsed_grants = parse_patent(parsed_xmls)
     build_tables(parsed_grants)
     commit_tables()
-    #add_to_couch_db(parsed_grants)
+    if have_couch:
+        add_to_couch_db(parsed_grants)
 
     #total_patents = len(parsed_xmls)
     #total_errors = len(parsed_xmls) * len(xmlclasses) - len(parsed_grants)
