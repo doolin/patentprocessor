@@ -129,3 +129,17 @@ for file in `ls "$datadir"/*.zip`; do
 done
 
 download_next `sort $csvfile | tail -n1`
+
+
+#################################################
+#
+#    Run preprocessor
+#
+#################################################
+
+echo "Parsing..."
+python parse.py -p. -d $datadir
+echo "Cleaning..."
+python clean.py
+echo "Consolidating..."
+python consolidate.py
