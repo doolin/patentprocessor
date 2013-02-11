@@ -5,7 +5,6 @@
 # PATENT_LOGFILE: destination of log file
 
 
-printf "\e[31m" ;
 # check that all requisite variables are set
 csvfile=${PATENT_CSVFILE:?"Need to set PATENT_CSVFILE to destination of state file."}
 datadir=${PATENT_DATADIR:?"Need to set PATENT_DATADIR to desired destination of downloaded files"}
