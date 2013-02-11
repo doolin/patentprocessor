@@ -114,4 +114,18 @@ for file in `ls "$datadir"/*.zip`; do
   fi
 done
 
+################################################
+#
+#    Download latest files and unzip them all
+#
+###############################################
+
+for file in `ls "$datadir"/*.zip`; do
+  found=`ls $datadir/$file | rev | cut -d'/' -f1 | rev`
+  xml=`echo $found | rev | cut -d'.' -f2 | rev`
+  if [[ ! -f $datadir/$xml.xml ]] ; then
+    unzip $datadir/$found -d $datadir
+  fi
+done
+
 download_next `sort $csvfile | tail -n1`
