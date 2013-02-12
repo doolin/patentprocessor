@@ -16,19 +16,19 @@ echo Starting diffs...
 for table in inventor inventor_1
 do
   sqlite3 -csv inventor.sqlite3 "select * from ${table}"  > /tmp/integration/ipg120327.two/${table}.csv
-  `diff test/integration/clean/ipg120327.two/${table}.csv /tmp/integration/ipg120327.two/${table}.csv`
+  diff test/integration/clean/ipg120327.two/${table}.csv /tmp/integration/ipg120327.two/${table}.csv
 done
 
 for table in assignee assignee_1 grp wrd
 do
   sqlite3 -csv assignee.sqlite3 "select * from ${table}"  > /tmp/integration/ipg120327.two/${table}.csv
-  `diff test/integration/clean/ipg120327.two/${table}.csv /tmp/integration/ipg120327.two/${table}.csv`
+  diff test/integration/clean/ipg120327.two/${table}.csv /tmp/integration/ipg120327.two/${table}.csv
 done
 
 for table in patent
 do
   sqlite3 -csv patent.sqlite3 "select * from ${table}"  > /tmp/integration/ipg120327.two/${table}.csv
-  `diff test/integration/clean/ipg120327.two/${table}.csv /tmp/integration/ipg120327.two/${table}.csv`
+  diff test/integration/clean/ipg120327.two/${table}.csv /tmp/integration/ipg120327.two/${table}.csv
 done
 
 
@@ -45,19 +45,19 @@ echo Starting diffs...
 for table in inventor inventor_1
 do
   sqlite3 -csv inventor.sqlite3 "select * from ${table}"  > /tmp/integration/ipg120327.18/${table}.csv
-  `diff test/integration/clean/ipg120327.18/${table}.csv /tmp/integration/ipg120327.18/${table}.csv`
+  diff test/integration/clean/ipg120327.18/${table}.csv /tmp/integration/ipg120327.18/${table}.csv
 done
 
 for table in assignee assignee_1 grp wrd
 do
   sqlite3 -csv assignee.sqlite3 "select * from ${table}"  > /tmp/integration/ipg120327.18/${table}.csv
-  `diff test/integration/clean/ipg120327.18/${table}.csv /tmp/integration/ipg120327.18/${table}.csv`
+  diff test/integration/clean/ipg120327.18/${table}.csv /tmp/integration/ipg120327.18/${table}.csv
 done
 
 for table in patent
 do
   sqlite3 -csv patent.sqlite3 "select * from ${table}"  > /tmp/integration/ipg120327.18/${table}.csv
-  `diff test/integration/clean/ipg120327.18/${table}.csv /tmp/integration/ipg120327.18/${table}.csv`
+  diff test/integration/clean/ipg120327.18/${table}.csv /tmp/integration/ipg120327.18/${table}.csv
 done
 
 
