@@ -30,13 +30,15 @@ def get_cursor(conn):
 c = get_cursor(conn)
 
 # TODO: Consider replacing the lambdas with functions which can be tested.
-conn.create_function("blk_split", 1, lambda x: re.sub(" ", "", x))
-conn.create_function("sep_cnt",   1, lambda x: len(re.findall("[,|]", x)))
-conn.create_function("jarow",     2, jarow)
-conn.create_function("cityctry",  3, cityctry)
-conn.create_function("sep_wrd",   2, sep_wrd)
-conn.create_function("rev_wrd",   2, lambda x,y:x.upper()[::-1][:y])
+def create_sql_helper_functions(conn):
+    conn.create_function("blk_split", 1, lambda x: re.sub(" ", "", x))
+    conn.create_function("sep_cnt",   1, lambda x: len(re.findall("[,|]", x)))
+    conn.create_function("jarow",     2, jarow)
+    conn.create_function("cityctry",  3, cityctry)
+    conn.create_function("sep_wrd",   2, sep_wrd)
+    conn.create_function("rev_wrd",   2, lambda x,y:x.upper()[::-1][:y])
 
+create_sql_helper_functions(conn)
 
 # TODO: cover geocode setup functions with unit tests.
 from geocode_setup import *
