@@ -38,6 +38,16 @@ def loc_create_table(cursor):
         """)
 
 
+# This feels a little overboard, but this DRYs up
+# code in a couple of methods where the line count
+# is already too long.
+def drop_temp_tables(cursor):
+    cursor.executescript("""
+        DROP TABLE  temp;
+        DROP TABLE  temp2;
+        """)
+
+
 def update_table_loc(cursor):
     cursor.executescript("""
         INSERT OR REPLACE INTO loc
@@ -78,11 +88,8 @@ def fix_city_country(cursor):
         """)
 
     update_table_loc(cursor)
+    drop_temp_tables(cursor)
 
-    cursor.executescript("""
-        DROP TABLE  temp;
-        DROP TABLE  temp2;
-        """)
 
 
 # TODO: Find a way to unit test fix_state_zip
@@ -111,11 +118,7 @@ def fix_state_zip(cursor):
         """)
 
     update_table_loc(cursor)
-
-    cursor.executescript("""
-        DROP TABLE  temp;
-        DROP TABLE  temp2;
-        """)
+    drop_temp_tables(cursor)
 
 
 # TODO: Find a way to ensure that the correct indexes are created as
