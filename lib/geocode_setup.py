@@ -38,6 +38,22 @@ def loc_create_table(cursor):
         """)
 
 
+def update_table_loc(cursor):
+    cursor.executescript("""
+        INSERT OR REPLACE INTO loc
+            SELECT  a.*,
+                    SUBSTR(CityY,1,3),
+                    b.NewCity,
+                    b.NewState,
+                    b.NewCountry
+              FROM  temp2 AS a
+         LEFT JOIN  loctbl.typos AS b
+                ON  a.CityY=b.City
+               AND  a.StateY=b.State
+               AND  a.CtryY=b.Country;
+        """)
+
+
 # TODO: Find a way to unit test fix_city_country
 def fix_city_country(cursor):
     cursor.executescript("""
@@ -59,22 +75,15 @@ def fix_city_country(cursor):
               FROM  temp
              WHERE  CityY!=""
           GROUP BY  CityY, StateY, CtryY;
+        """)
 
-        INSERT OR REPLACE INTO loc
-            SELECT  a.*,
-                    SUBSTR(CityY,1,3),
-                    b.NewCity,
-                    b.NewState,
-                    b.NewCountry
-              FROM  temp2 AS a
-         LEFT JOIN  loctbl.typos AS b
-                ON  a.CityY=b.City
-               AND  a.StateY=b.State
-               AND  a.CtryY=b.Country;
+    update_table_loc(cursor)
 
+    cursor.executescript("""
         DROP TABLE  temp;
         DROP TABLE  temp2;
         """)
+
 
 # TODO: Find a way to unit test fix_state_zip
 def fix_state_zip(cursor):
@@ -99,22 +108,15 @@ def fix_state_zip(cursor):
               FROM  temp
              WHERE  CityY!=""
           GROUP BY  CityY, StateY, CtryY, ZipcodeY;
+        """)
 
-        INSERT OR REPLACE INTO loc
-            SELECT  a.*,
-                    SUBSTR(CityY,1,3),
-                    b.NewCity,
-                    b.NewState,
-                    b.NewCountry
-              FROM  temp2 AS a
-         LEFT JOIN  loctbl.typos AS b
-                ON  a.CityY=b.City
-               AND  a.StateY=b.State
-               AND  a.CtryY=b.Country;
+    update_table_loc(cursor)
 
+    cursor.executescript("""
         DROP TABLE  temp;
         DROP TABLE  temp2;
         """)
+
 
 # TODO: Find a way to ensure that the correct indexes are created as
 # the schemas change.
@@ -190,5 +192,3 @@ def create_locMerge_table(cursor):
         CREATE INDEX IF NOT EXISTS okM_idxCS ON locMerge (City,State);
         CREATE INDEX IF NOT EXISTS okM_idx3  ON locMerge (City3,State,Country);
         """)
-
-
