@@ -139,9 +139,9 @@ def create_usloc_table(cursor):
                     Latitude,
                     Longitude,
                     Upper(City) as City,
-                    BLK_SPLIT(Upper(City)) as BlkCity,
-                    SUBSTR(UPPER(BLK_SPLIT(City)),1,3) as City3,
-                    REV_WRD(BLK_SPLIT(City), 4) as City4R,
+                    blk_split(Upper(City)) as BlkCity,
+                    SUBSTR(UPPER(blk_split(City)),1,3) as City3,
+                    REV_WRD(blk_split(City), 4) as City4R,
                     Upper(State) as State,
                     "US" as Country
               FROM  loctbl.usloc
