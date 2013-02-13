@@ -1,4 +1,4 @@
-*.journal
+*-journal
 bmschema.txt
 dump.sql
 tmp*
