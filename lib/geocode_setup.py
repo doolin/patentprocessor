@@ -63,8 +63,8 @@ def update_table_loc_from_typos(cursor):
 
 
 def create_table_temp_assignees(cursor):
+    cursor.execute("ATTACH DATABASE 'assignee.sqlite3' AS assigneesdb;")
     cursor.executescript("""
-        ATTACH DATABASE 'assignee.sqlite3' AS assigneesdb;
         CREATE TEMPORARY TABLE temp AS
             SELECT  Upper(City) as CityX,
                     Upper(State) as StateX,
@@ -73,8 +73,25 @@ def create_table_temp_assignees(cursor):
               FROM  assigneesdb.assignee
              WHERE  City!=""
           GROUP BY  CityX, StateX, CountryX;
-        DETACH DATABASE assigneesdb;
         """)
+    cursor.execute("DETACH DATABASE assigneesdb;")
+
+
+def create_table_temp_inventors(cursor):
+    cursor.execute("ATTACH DATABASE 'inventor.sqlite3' AS inventorsdb;")
+    cursor.executescript("""
+        CREATE TEMPORARY TABLE temp AS
+            SELECT  Upper(City) as CityX,
+                    Upper(State) as StateX,
+                    Upper(Country) as CountryX,
+                    Zipcode,
+                    count(*) as Cnt
+              FROM  inventorsdb.inventor
+             WHERE  City!=""
+                OR (City="" AND Zipcode!="")
+          GROUP BY  CityX, StateX, CountryX, Zipcode;
+        """)
+    cursor.execute("DETACH DATABASE inventorsdb;")
 
 
 # TODO: Find a way to unit test fix_city_country
@@ -99,21 +116,8 @@ def fix_city_country(cursor):
 
 # TODO: Find a way to unit test fix_state_zip
 def fix_state_zip(cursor):
-    cursor.executescript("""
-        ATTACH DATABASE 'inventor.sqlite3' AS inventorsdb;
-        CREATE TEMPORARY TABLE temp AS
-            SELECT  Upper(City) as CityX,
-                    Upper(State) as StateX,
-                    Upper(Country) as CountryX,
-                    Zipcode,
-                    count(*) as Cnt
-              FROM  inventorsdb.inventor
-             WHERE  City!=""
-                OR (City="" AND Zipcode!="")
-          GROUP BY  CityX, StateX, CountryX, Zipcode;
-        DETACH DATABASE inventorsdb;
-        """)
 
+    create_table_temp_inventors(cursor)
     cursor.executescript("""
         CREATE TEMPORARY TABLE temp2 AS
             SELECT  sum(Cnt) as Cnt,
