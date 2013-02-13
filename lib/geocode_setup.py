@@ -16,7 +16,6 @@ def geocode_db_initialize(cursor):
 # why, and figure out what to do about that.
 def loc_create_table(cursor):
     cursor.executescript("""
-     /* DROP TABLE IF EXISTS loc; */
         CREATE TABLE IF NOT EXISTS loc (
             Cnt      INTEGER,
             City     VARCHAR(10),
