@@ -52,6 +52,9 @@ create_locMerge_table(c)
 print "Finish setup for geocoding: ", datetime.datetime.now()
 
 # End of setup.
+# Exiting here gets the initial hashTbl.sqlite3 file when
+# executed as `python lib/geocode.py`
+#exit()
 
 
 def print_loc_and_merge(c):

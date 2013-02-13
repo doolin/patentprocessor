@@ -167,12 +167,12 @@ def create_usloc_table(cursor):
             SELECT  Zipcode,
                     Latitude,
                     Longitude,
-                    Upper(City) as City,
-                    blk_split(Upper(City)) as BlkCity,
-                    SUBSTR(UPPER(blk_split(City)),1,3) as City3,
-                    REV_WRD(blk_split(City), 4) as City4R,
-                    Upper(State) as State,
-                    "US" as Country
+                    UPPER(City)                        AS City,
+                    blk_split(Upper(City))             AS BlkCity,
+                    SUBSTR(UPPER(blk_split(City)),1,3) AS City3,
+                    rev_wrd(blk_split(City), 4)        AS City4R,
+                    UPPER(State)                       AS State,
+                    "US"                               AS Country
               FROM  loctbl.usloc
           GROUP BY  City, State;
 
@@ -183,7 +183,8 @@ def create_usloc_table(cursor):
         CREATE INDEX If NOT EXISTS usloc_idC4R on usloc (City4R, State);
 
 
-        /*DETACH DATABASE loc;
+        /*
+        DETACH DATABASE loc;
         CREATE TEMPORARY TABLE gnsloc AS
             SELECT  '' AS zipcode, lat, long,
                     UPPER(full_name_nd) AS city, "" AS State, cc1 AS country
@@ -193,7 +194,6 @@ def create_usloc_table(cursor):
         """)
 
 
-# TODO: unit test
 def create_locMerge_table(cursor):
     cursor.executescript("""
         CREATE TABLE IF NOT EXISTS locMerge (
