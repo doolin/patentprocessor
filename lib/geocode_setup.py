@@ -4,7 +4,6 @@
 def geocode_db_initialize(cursor):
     cursor.executescript("""
         PRAGMA CACHE_SIZE=20000;
-        ATTACH DATABASE 'assignee.sqlite3' AS assigneesdb;
         ATTACH DATABASE 'inventor.sqlite3' AS inventorsdb;
         ATTACH DATABASE 'loctbl'   AS loctbl;
         """)
@@ -67,6 +66,7 @@ def update_table_loc(cursor):
 # TODO: Find a way to unit test fix_city_country
 def fix_city_country(cursor):
     cursor.executescript("""
+        ATTACH DATABASE 'assignee.sqlite3' AS assigneesdb;
         CREATE TEMPORARY TABLE temp AS
             SELECT  Upper(City) as CityX,
                     Upper(State) as StateX,
@@ -75,6 +75,7 @@ def fix_city_country(cursor):
               FROM  assigneesdb.assignee
              WHERE  City!=""
           GROUP BY  CityX, StateX, CountryX;
+        DETACH DATABASE assigneesdb;
 
         CREATE TEMPORARY TABLE temp2 AS
             SELECT  sum(Cnt) as Cnt,
@@ -157,7 +158,6 @@ def create_usloc_table(cursor):
         CREATE INDEX If NOT EXISTS usloc_idC3S on usloc (City3, State);
         CREATE INDEX If NOT EXISTS usloc_idC4R on usloc (City4R, State);
 
-        DETACH DATABASE assigneesdb;
         DETACH DATABASE inventorsdb;
 
         /*DETACH DATABASE loc;
