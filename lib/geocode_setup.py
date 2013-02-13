@@ -62,8 +62,7 @@ def update_table_loc_from_typos(cursor):
         """)
 
 
-# TODO: Find a way to unit test fix_city_country
-def fix_city_country(cursor):
+def create_table_temp_assignees(cursor):
     cursor.executescript("""
         ATTACH DATABASE 'assignee.sqlite3' AS assigneesdb;
         CREATE TEMPORARY TABLE temp AS
@@ -77,6 +76,11 @@ def fix_city_country(cursor):
         DETACH DATABASE assigneesdb;
         """)
 
+
+# TODO: Find a way to unit test fix_city_country
+def fix_city_country(cursor):
+
+    create_table_temp_assignees(cursor)
     cursor.executescript("""
         CREATE TEMPORARY TABLE temp2 AS
             SELECT  sum(Cnt) as Cnt,
