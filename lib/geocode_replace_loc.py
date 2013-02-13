@@ -35,12 +35,7 @@ def create_table_temp2(cursor):
         CREATE INDEX IF NOT EXISTS t2_idx ON temp2 (CityA, StateA, CountryA, ZipcodeA);
           """)
 
-
-# TODO: Find a way to unit test this set of queries
-def create_loc_and_locmerge_tables(cursor):
-
-    create_table_temp2(cursor)
-
+def update_table_locmerge(cursor):
     cursor.executescript("""
         CREATE INDEX IF NOT EXISTS t1_idx ON temp1 (CityA, StateA, CountryA, ZipcodeA);
 
@@ -54,17 +49,28 @@ def create_loc_and_locmerge_tables(cursor):
                AND  a.StateA = b.StateA
                AND  a.CountryA = b.CountryA
                AND  a.ZipcodeA = b.ZipcodeA;
+          """)
 
+
+# TODO: Find a way to unit test this set of queries
+def create_loc_and_locmerge_tables(cursor):
+
+    create_table_temp2(cursor)
+    update_table_locmerge(cursor)
+
+    cursor.executescript("""
         CREATE TEMPORARY TABLE temp3 AS
             SELECT  a.*
-              FROM  LOC AS a
-              LEFT JOIN locMerge AS b
-                ON  a.City = b.City
-               AND  a.State = b.State
+              FROM  loc      AS a
+         LEFT JOIN  locMerge AS b
+                ON  a.City    = b.City
+               AND  a.State   = b.State
                AND  a.Country = b.Country
                AND  a.Zipcode = b.Zipcode
              WHERE  b.Zipcode IS NULL;
+          """)
 
+    cursor.executescript("""
         DROP TABLE IF EXISTS loc;
 
         CREATE TABLE loc AS SELECT * FROM temp3;
