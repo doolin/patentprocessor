@@ -1,5 +1,36 @@
 # sets up the geocoding databases
 
+import datetime, csv, os, re, sqlite3
+
+# TODO: switch to import the tested version of sep_wrd.
+from sep_wrd_geocode import sep_wrd
+
+# We need to import these one at a time because many of these functions are
+# duplicated in multiple places. That is, there are 3 or 4 identical or
+# slightly different versions located in different files.
+#from fwork import *
+from fwork import jarow
+from fwork import cityctry
+
+
+def get_connection(db):
+    conn = sqlite3.connect(db)
+    return conn
+
+
+def get_cursor(conn):
+    return conn.cursor()
+
+
+# TODO: Consider replacing the lambdas with functions which can be tested.
+def create_sql_helper_functions(conn):
+    conn.create_function("blk_split", 1, lambda x: re.sub(" ", "", x))
+    conn.create_function("sep_cnt",   1, lambda x: len(re.findall("[,|]", x)))
+    conn.create_function("jarow",     2, jarow)
+    conn.create_function("cityctry",  3, cityctry)
+    conn.create_function("sep_wrd",   2, sep_wrd)
+    conn.create_function("rev_wrd",   2, lambda x,y:x.upper()[::-1][:y])
+
 
 def geocode_db_initialize(cursor):
     cursor.executescript("""

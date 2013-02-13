@@ -4,44 +4,20 @@
 # NEED TO DO...
 # CREATE INDEX IF NOT EXISTS idx_ctc0 ON gnsloc (SORT_NAME, CC1);
 
-import datetime, csv, os, re, sqlite3
+import datetime
+import csv
+import os
+import re
+import sqlite3
 
-# We need to import these one at a time because many of these functions are
-# duplicated in multiple places. That is, there are 3 or 4 identical or
-# slightly different versions located in different files.
-#from fwork import *
-from fwork import jarow
-from fwork import cityctry
 from fwork import tblExist
-
-# TODO: switch to import the tested version of sep_wrd.
-from sep_wrd_geocode import sep_wrd
-
-
-def get_connection(db):
-    conn = sqlite3.connect(db)
-    return conn
-
-conn = get_connection("hashTbl.sqlite3")
-
-def get_cursor(conn):
-    return conn.cursor()
-
-c = get_cursor(conn)
-
-# TODO: Consider replacing the lambdas with functions which can be tested.
-def create_sql_helper_functions(conn):
-    conn.create_function("blk_split", 1, lambda x: re.sub(" ", "", x))
-    conn.create_function("sep_cnt",   1, lambda x: len(re.findall("[,|]", x)))
-    conn.create_function("jarow",     2, jarow)
-    conn.create_function("cityctry",  3, cityctry)
-    conn.create_function("sep_wrd",   2, sep_wrd)
-    conn.create_function("rev_wrd",   2, lambda x,y:x.upper()[::-1][:y])
-
-create_sql_helper_functions(conn)
 
 # TODO: cover geocode setup functions with unit tests.
 from geocode_setup import *
+
+conn = get_connection("hashTbl.sqlite3")
+c = get_cursor(conn)
+create_sql_helper_functions(conn)
 
 print "Start setup for geocoding: ", datetime.datetime.now()
 geocode_db_initialize(c)
