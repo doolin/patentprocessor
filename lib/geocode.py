@@ -92,6 +92,7 @@ for scnt in range(-1, c.execute("select max(sep_cnt(city)) from loctbl.loc").fet
 
 print "------ F ------"
 
+# TODO: Put these calls into a function.
 replace_loc(domestic_2nd_layer_sql())
 replace_loc(domestic_first3_2nd_jaro_winkler_sql() % ("14.95"))
 replace_loc(foreign_full_name_2nd_layer_sql())
