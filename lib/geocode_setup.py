@@ -41,12 +41,12 @@ def loc_create_table(cursor):
 # is already too long.
 def drop_temp_tables(cursor):
     cursor.executescript("""
-        DROP TABLE  temp;
-        DROP TABLE  temp2;
+        DROP TABLE temp;
+        DROP TABLE temp2;
         """)
 
 
-def update_table_loc(cursor):
+def update_table_loc_from_typos(cursor):
     cursor.executescript("""
         INSERT OR REPLACE INTO loc
             SELECT  a.*,
@@ -56,9 +56,9 @@ def update_table_loc(cursor):
                     b.NewCountry
               FROM  temp2 AS a
          LEFT JOIN  loctbl.typos AS b
-                ON  a.CityY=b.City
-               AND  a.StateY=b.State
-               AND  a.CtryY=b.Country;
+                ON  a.CityY  = b.City
+               AND  a.StateY = b.State
+               AND  a.CtryY  = b.Country;
         """)
 
 
@@ -75,7 +75,9 @@ def fix_city_country(cursor):
              WHERE  City!=""
           GROUP BY  CityX, StateX, CountryX;
         DETACH DATABASE assigneesdb;
+        """)
 
+    cursor.executescript("""
         CREATE TEMPORARY TABLE temp2 AS
             SELECT  sum(Cnt) as Cnt,
                     cityctry(CityX, CountryX, 'city') as CityY,
@@ -87,9 +89,8 @@ def fix_city_country(cursor):
           GROUP BY  CityY, StateY, CtryY;
         """)
 
-    update_table_loc(cursor)
+    update_table_loc_from_typos(cursor)
     drop_temp_tables(cursor)
-
 
 
 # TODO: Find a way to unit test fix_state_zip
@@ -107,7 +108,9 @@ def fix_state_zip(cursor):
                 OR (City="" AND Zipcode!="")
           GROUP BY  CityX, StateX, CountryX, Zipcode;
         DETACH DATABASE inventorsdb;
+        """)
 
+    cursor.executescript("""
         CREATE TEMPORARY TABLE temp2 AS
             SELECT  sum(Cnt) as Cnt,
                     cityctry(CityX, CountryX, 'city') as CityY,
@@ -119,7 +122,7 @@ def fix_state_zip(cursor):
           GROUP BY  CityY, StateY, CtryY, ZipcodeY;
         """)
 
-    update_table_loc(cursor)
+    update_table_loc_from_typos(cursor)
     drop_temp_tables(cursor)
 
 
