@@ -24,7 +24,10 @@ def get_connection(db):
 
 conn = get_connection("hashTbl.sqlite3")
 
-c = conn.cursor()
+def get_cursor(conn):
+    return conn.cursor()
+
+c = get_cursor(conn)
 
 # TODO: Consider replacing the lambdas with functions which can be tested.
 conn.create_function("blk_split", 1, lambda x: re.sub(" ", "", x))
