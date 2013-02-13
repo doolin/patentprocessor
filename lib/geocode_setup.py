@@ -63,41 +63,47 @@ def update_table_loc_from_typos(cursor):
 
 
 def create_table_temp_assignees(cursor):
-    cursor.execute("ATTACH DATABASE 'assignee.sqlite3' AS assigneesdb;")
     cursor.executescript("""
         CREATE TEMPORARY TABLE temp AS
-            SELECT  Upper(City) as CityX,
-                    Upper(State) as StateX,
-                    Upper(Country) as CountryX,
-                    count(*) as Cnt
+            SELECT  UPPER(City)    AS CityX,
+                    UPPER(State)   AS StateX,
+                    UPPER(Country) AS CountryX,
+                    count(*)       AS Cnt
               FROM  assigneesdb.assignee
-             WHERE  City!=""
+             WHERE  City != ""
           GROUP BY  CityX, StateX, CountryX;
         """)
-    cursor.execute("DETACH DATABASE assigneesdb;")
 
 
 def create_table_temp_inventors(cursor):
-    cursor.execute("ATTACH DATABASE 'inventor.sqlite3' AS inventorsdb;")
     cursor.executescript("""
         CREATE TEMPORARY TABLE temp AS
-            SELECT  Upper(City) as CityX,
-                    Upper(State) as StateX,
-                    Upper(Country) as CountryX,
+            SELECT  UPPER(City)    AS CityX,
+                    UPPER(State)   AS StateX,
+                    UPPER(Country) AS CountryX,
                     Zipcode,
-                    count(*) as Cnt
+                    count(*)       AS Cnt
               FROM  inventorsdb.inventor
-             WHERE  City!=""
-                OR (City="" AND Zipcode!="")
+             WHERE  City != ""
+                OR (City = "" AND Zipcode != "")
           GROUP BY  CityX, StateX, CountryX, Zipcode;
         """)
+
+
+def create_table_temp_assignees_db(cursor):
+    cursor.execute("ATTACH DATABASE 'assignee.sqlite3' AS assigneesdb;")
+    create_table_temp_assignees(cursor)
+    cursor.execute("DETACH DATABASE assigneesdb;")
+
+def create_table_temp_inventors_db(cursor):
+    cursor.execute("ATTACH DATABASE 'inventor.sqlite3' AS inventorsdb;")
+    create_table_temp_inventors(cursor)
     cursor.execute("DETACH DATABASE inventorsdb;")
 
 
 # TODO: Find a way to unit test fix_city_country
 def fix_city_country(cursor):
-
-    create_table_temp_assignees(cursor)
+    create_table_temp_assignees_db(cursor)
     cursor.executescript("""
         CREATE TEMPORARY TABLE temp2 AS
             SELECT  sum(Cnt) as Cnt,
@@ -109,15 +115,13 @@ def fix_city_country(cursor):
              WHERE  CityY!=""
           GROUP BY  CityY, StateY, CtryY;
         """)
-
     update_table_loc_from_typos(cursor)
     drop_temp_tables(cursor)
 
 
 # TODO: Find a way to unit test fix_state_zip
 def fix_state_zip(cursor):
-
-    create_table_temp_inventors(cursor)
+    create_table_temp_inventors_db(cursor)
     cursor.executescript("""
         CREATE TEMPORARY TABLE temp2 AS
             SELECT  sum(Cnt) as Cnt,
@@ -129,7 +133,6 @@ def fix_state_zip(cursor):
              WHERE  CityY!=""
           GROUP BY  CityY, StateY, CtryY, ZipcodeY;
         """)
-
     update_table_loc_from_typos(cursor)
     drop_temp_tables(cursor)
 
