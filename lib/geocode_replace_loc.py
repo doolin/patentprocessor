@@ -111,7 +111,7 @@ def domestic_sql():
            ON  SEP_WRD(CityA, %d) = b.city
           AND  StateA = b.state
           AND  CountryA = 'US'
-        WHERE  SEP_CNT(CityA) >= %d
+        WHERE  sep_cnt(CityA) >= %d
           AND  CityA != '' """
      return stmt;
 
@@ -137,7 +137,7 @@ def domestic_block_remove_sql():
             ON  BLK_SPLIT(SEP_WRD(a.City, %d)) = b.blkcity
            AND  a.state = b.state
            AND  a.country = 'US'
-         WHERE  SEP_CNT(a.City) >= %d
+         WHERE  sep_cnt(a.City) >= %d
            AND  a.City != '' """
       return stmt;
 
@@ -165,7 +165,7 @@ def domestic_first3_jaro_winkler_sql():
            AND  a.state = b.state
            AND  a.country = 'US'
          WHERE  jaro > %s
-           AND  SEP_CNT(a.City) >= %d
+           AND  sep_cnt(a.City) >= %d
            AND  a.City != ''
       ORDER BY  a.City, a.State, jaro"""
       return stmt;
@@ -194,7 +194,7 @@ def domestic_last4_jaro_winkler_sql():
            AND  a.state = b.state
            AND  a.country = 'US'
          WHERE  jaro > %s
-           AND  SEP_CNT(a.City) >= %d
+           AND  sep_cnt(a.City) >= %d
            AND  a.City != ""
       ORDER BY  a.City, a.State, jaro"""
       return stmt;
@@ -221,7 +221,7 @@ def foreign_full_name_1_sql():
     INNER JOIN  loctbl.gnsloc AS b
             ON  SEP_WRD(a.City, %d) = b.full_name_ro
            AND  a.country = b.cc1
-         WHERE  SEP_CNT(a.City) >= %d
+         WHERE  sep_cnt(a.City) >= %d
            AND  a.City!="" """
       return stmt;
 
@@ -246,7 +246,7 @@ def foreign_full_name_2_sql():
     INNER JOIN  loctbl.gnsloc AS b
             ON  SEP_WRD(a.City, %d) = b.full_name_nd_ro
            AND  a.country = b.cc1
-         WHERE  SEP_CNT(a.City) >= %d
+         WHERE  sep_cnt(a.City) >= %d
            AND  a.City != "" """
       return stmt;
 
@@ -271,7 +271,7 @@ def foreign_short_form_sql():
     INNER JOIN  loctbl.gnsloc AS b
             ON  SEP_WRD(a.City, %d) = b.short_form
            AND  a.country = b.cc1
-         WHERE  SEP_CNT(a.City) >= %d
+         WHERE  sep_cnt(a.City) >= %d
            AND  a.City != "" """
       return stmt;
 
@@ -296,7 +296,7 @@ def foreign_block_split_sql():
     INNER JOIN  loctbl.gnsloc AS b
             ON  BLK_SPLIT(SEP_WRD(a.City, %d)) = b.sort_name_ro
            AND  a.country = b.cc1
-         WHERE  SEP_CNT(a.City) >= %d
+         WHERE  sep_cnt(a.City) >= %d
            AND  a.City != "" """
       return stmt;
 
@@ -323,7 +323,7 @@ def foreign_first3_jaro_winkler_sql():
             ON  SUBSTR(BLK_SPLIT(SEP_WRD(a.City, %d)),1,3) = b.sort_name_ro
            AND  a.country = b.cc1
          WHERE  jaro > %s
-           AND  SEP_CNT(a.City) >= %d
+           AND  sep_cnt(a.City) >= %d
            AND  a.City != ""
       ORDER BY  a.City, a.Country, jaro"""
       return stmt;
@@ -352,7 +352,7 @@ def foreign_last4_jaro_winkler_sql():
             ON  REV_WRD(BLK_SPLIT(SEP_WRD(a.City, %d)),4) = b.sort_name_ro
            AND  a.country = b.cc1
          WHERE  jaro > %s
-           AND  SEP_CNT(a.City) >= %d
+           AND  sep_cnt(a.City) >= %d
            AND  a.City != ""
       ORDER BY  a.City, a.Country, jaro"""
       #""" % (sep, sep, "20.90", scnt))
@@ -536,7 +536,7 @@ def domestic_zipcode_sql():
 ####                b.city, b.state, 'US', b.zipcode, b.lat, b.long
 ####          FROM  loc AS a INNER JOIN usloc AS b
 ####            ON  SEP_WRD(a.City, %d)=b.city AND a.country=b.state
-####         WHERE  SEP_CNT(a.City)>=%d AND a.City!="";
+####         WHERE  sep_cnt(a.City)>=%d AND a.City!="";
 ####        """ % (sep, scnt))
 
 
