@@ -34,6 +34,12 @@ do
   diff test/integration/consolidate/ipg120327.two/${table}.csv /tmp/integration/ipg120327.two/${table}.csv
 done
 
+for table in invpat
+do
+  sqlite3 -csv invpat.sqlite3 "select * from ${table}"  > /tmp/integration/ipg120327.two/${table}.csv
+  diff test/integration/consolidate/ipg120327.two/${table}.csv /tmp/integration/ipg120327.two/${table}.csv
+done
+
 exit 0
 
 ### 18 rows
