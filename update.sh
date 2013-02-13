@@ -9,6 +9,7 @@
 csvfile=${PATENT_CSVFILE:?"Need to set PATENT_CSVFILE to destination of state file."}
 datadir=${PATENT_DATADIR:?"Need to set PATENT_DATADIR to desired destination of downloaded files"}
 logfile=${PATENT_LOGFILE:?"Need to set PATENT_LOGFILE to location of log file"}
+patyear=${PATENT_YEAR:?"Need to set PATENT_YEAR to year of patents found in PATENT_DATADIR"}
 
 p1=`date +"%Y" | cut -c3-`
 p2=`date +"%m"`
@@ -53,7 +54,7 @@ function download_next() {
   next_filename $week_id
   until [[ $week_id > $most_current ]] ; do
     next_filename $week_id
-    wget -q -P "$datadir" "http://commondatastorage.googleapis.com/patents/grant_full_text/2013/ipg${week_id}.zip"
+    wget -q -P "$datadir" "http://commondatastorage.googleapis.com/patents/grant_full_text/${patyear}/ipg${week_id}.zip"
     status=$?
     if [[ "0" -eq $status ]] ; then
       printf "\e[32m" ;
