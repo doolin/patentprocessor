@@ -18,25 +18,31 @@ def print_table_info(c):
     print "var_f: ", var_f
 
 
-
-# TODO: Find a way to unit test this set of queries
-def create_loc_and_locmerge_tables(cursor):
+def create_table_temp2(cursor):
     cursor.executescript("""
-
         CREATE TEMPORARY TABLE temp2 AS
             SELECT  CityA,
                     StateA,
                     CountryA,
                     ZipcodeA,
-                    count(*) as cnt
+                    count(*) AS cnt
               FROM  temp1
           GROUP BY  CityA,
                     StateA,
                     CountryA,
                     ZipcodeA;
 
-        CREATE INDEX IF NOT EXISTS t1_idx ON temp1 (CityA, StateA, CountryA, ZipcodeA);
         CREATE INDEX IF NOT EXISTS t2_idx ON temp2 (CityA, StateA, CountryA, ZipcodeA);
+          """)
+
+
+# TODO: Find a way to unit test this set of queries
+def create_loc_and_locmerge_tables(cursor):
+
+    create_table_temp2(cursor)
+
+    cursor.executescript("""
+        CREATE INDEX IF NOT EXISTS t1_idx ON temp1 (CityA, StateA, CountryA, ZipcodeA);
 
         INSERT OR REPLACE INTO locMerge
             SELECT  b.cnt,
