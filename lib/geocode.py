@@ -15,11 +15,6 @@ from fwork import cityctry
 from fwork import tblExist
 
 
-# geocode_replace_loc consists of a series of functions,
-# each with a SQL statement that is passed as a parameter
-# to replace_loc. Uses temporary tables for handling
-# intermediate relations.
-from geocode_replace_loc import *
 
 # TODO: switch to import the tested version of sep_wrd.
 from sep_wrd_geocode import sep_wrd
@@ -56,6 +51,11 @@ print "Finish setup for geocoding: ", datetime.datetime.now()
 # executed as `python lib/geocode.py`
 #exit()
 
+# geocode_replace_loc consists of a series of functions,
+# each with a SQL statement that is passed as a parameter
+# to replace_loc. Uses temporary tables for handling
+# intermediate relations.
+from geocode_replace_loc import *
 
 def print_loc_and_merge(c):
     VarX = c.execute("select count(*) from loc").fetchone()[0]
