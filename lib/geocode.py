@@ -14,14 +14,18 @@ from fwork import jarow
 from fwork import cityctry
 from fwork import tblExist
 
-
-
 # TODO: switch to import the tested version of sep_wrd.
 from sep_wrd_geocode import sep_wrd
 
 
-conn = sqlite3.connect("hashTbl.sqlite3")
+def get_connection(db):
+    conn = sqlite3.connect(db)
+    return conn
+
+conn = get_connection("hashTbl.sqlite3")
+
 c = conn.cursor()
+
 # TODO: Consider replacing the lambdas with functions which can be tested.
 conn.create_function("blk_split", 1, lambda x: re.sub(" ", "", x))
 conn.create_function("sep_cnt",   1, lambda x: len(re.findall("[,|]", x)))
@@ -50,6 +54,7 @@ print "Finish setup for geocoding: ", datetime.datetime.now()
 # Exiting here gets the initial hashTbl.sqlite3 file when
 # executed as `python lib/geocode.py`
 #exit()
+
 
 # geocode_replace_loc consists of a series of functions,
 # each with a SQL statement that is passed as a parameter
