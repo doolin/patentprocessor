@@ -11,6 +11,7 @@ from sep_wrd_geocode import sep_wrd
 #from fwork import *
 from fwork import jarow
 from fwork import cityctry
+from fwork import tblExist
 
 
 def get_connection(db):
@@ -65,6 +66,17 @@ def loc_create_table(cursor):
         DROP INDEX IF EXISTS loc_ixnCS;
         DROP INDEX IF EXISTS loc3_idxCC;
         """)
+
+
+def create_hashtbl(cursor, connection):
+    geocode_db_initialize(cursor)
+    loc_create_table(cursor)
+    if not(tblExist(cursor, "locMerge")):
+        fix_city_country(cursor)
+        fix_state_zip(cursor)
+        create_loc_indexes(connection)
+    create_usloc_table(cursor)
+    create_locMerge_table(cursor)
 
 
 # This feels a little overboard, but this DRYs up

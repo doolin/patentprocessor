@@ -10,7 +10,6 @@ import os
 import re
 import sqlite3
 
-from fwork import tblExist
 
 # TODO: cover geocode setup functions with unit tests.
 from geocode_setup import *
@@ -20,19 +19,7 @@ c = get_cursor(conn)
 create_sql_helper_functions(conn)
 
 print "Start setup for geocoding: ", datetime.datetime.now()
-
-def create_hashtbl(cursor, connection):
-    geocode_db_initialize(cursor)
-    loc_create_table(cursor)
-    if not(tblExist(cursor, "locMerge")):
-        fix_city_country(cursor)
-        fix_state_zip(cursor)
-        create_loc_indexes(connection)
-    create_usloc_table(cursor)
-    create_locMerge_table(cursor)
-
 create_hashtbl(c, conn)
-
 print "Finish setup for geocoding: ", datetime.datetime.now()
 
 # End of setup.
