@@ -34,11 +34,6 @@ print "Finish setup for geocoding: ", datetime.datetime.now()
 # intermediate relations.
 from geocode_replace_loc import *
 
-def print_loc_and_merge(c):
-    VarX = c.execute("select count(*) from loc").fetchone()[0]
-    VarY = c.execute("select count(*) from locMerge").fetchone()[0]
-    print " - Loc =", VarX, " OkM =", VarY, " Total =", VarX+VarY, "  ", datetime.datetime.now()
-
 
 # TODO: Unit test extensively.
 def replace_loc(script):

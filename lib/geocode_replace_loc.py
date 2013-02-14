@@ -4,6 +4,7 @@
 # and have been put here both for debugging purposes and to
 # modularize the process.
 
+import datetime
 import sys
 
 # TODO: Unit test this so that it and the unit test can be
@@ -16,6 +17,12 @@ def print_table_info(c):
     field = ["[%s]" % x[1] for x in c.execute("PRAGMA TABLE_INFO(temp1)")][2:6]
     var_f = ",".join(field)
     print "var_f: ", var_f
+
+
+def print_loc_and_merge(cursor):
+    VarX = cursor.execute("select count(*) from loc").fetchone()[0]
+    VarY = cursor.execute("select count(*) from locMerge").fetchone()[0]
+    print " - Loc =", VarX, " OkM =", VarY, " Total =", VarX+VarY, "  ", datetime.datetime.now()
 
 
 def create_table_temp2(cursor):
