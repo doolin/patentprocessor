@@ -34,11 +34,15 @@ class TestGeocodeSetup(unittest.TestCase):
     def test_fix_city_country(self):
         make_assignee_db()
         fix_city_country(self.c)
+        # Inspect loc table in hashTbl, find something
+        # to assert.
         assert('FOO' == 'FOO')
 
     def test_fix_state_zip(self):
         make_inventor_db()
         fix_state_zip(self.c)
+        # Inspect loc table in hashTbl, find something
+        # to assert.
         assert('FOO' == 'FOO')
 
     def tearDown(self):
@@ -46,7 +50,8 @@ class TestGeocodeSetup(unittest.TestCase):
 
     @classmethod
     def tearDownClass(self):
-        my_sane_remove_wrapper("hashTbl.sqlite3")
+        # Comment out the removal to examine hashTbl after test
+        #my_sane_remove_wrapper("hashTbl.sqlite4")
         print "Done"
 
 if __name__ == '__main__':
