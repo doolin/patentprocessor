@@ -3,12 +3,13 @@
 
 import unittest
 import sys
-#import sqlite3
 
 sys.path.append( '.' )
 sys.path.append( '../lib/' )
 
+from make_test_databases import *
 from geocode_setup import *
+
 
 class TestGeocodeSetup(unittest.TestCase):
 
@@ -19,11 +20,17 @@ class TestGeocodeSetup(unittest.TestCase):
         geocode_db_initialize(self.c)
         loc_create_table(self.c)
 
-    def test_dummy(self):
+    def test_fix_city_country(self):
+        make_assignee_db()
+        os.remove("assignee.sqlite3")
+        assert('FOO' == 'FOO')
+
+    def test_fix_state_zip(self):
+        # os.remove("inventor.sqlite3")
         assert('FOO' == 'FOO')
 
     def tearDown(self):
-        # remove hastabl db
+        # os.remove("hashTbl.sqlite3")
         print "done"
 
 if __name__ == '__main__':

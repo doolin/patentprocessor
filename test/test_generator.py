@@ -21,7 +21,7 @@ class TestGenerator(unittest.TestCase):
 
     def setUp(self):
         # print "setup"
-        pass 
+        pass
 
     def test_process_csv(self):
         file_name = open("./fixtures/csv/gen_sample.csv", "rb")
@@ -45,7 +45,7 @@ class TestGenerator(unittest.TestCase):
                         (Firstname = \"JOHN\" and Lastname = \"SMITH\"
                          and Patent = \"D01234567\");"""
         test_con = sql.connect('test.db') # Make this in memory :memory:
-        test_con_cur = test_con.cursor()  
+        test_con_cur = test_con.cursor()
         test_con_cur.execute(""" DROP TABLE IF EXISTS TEST; """)
         test_con_cur.execute(""" CREATE TABLE TEST(
                                  Firstname TEXT,
@@ -158,6 +158,6 @@ class TestGenerator(unittest.TestCase):
     def tearDown(self):
         pass
 
-    
+
 if __name__ == '__main__':
     unittest.main()
