@@ -1,8 +1,21 @@
 #!/usr/bin/env python
 # vim: set fileencoding=utf-8 :
 
+import os
 import sqlite3
 import csv
+
+def my_sane_remove_wrapper(filename):
+    try:
+        os.remove(filename)
+    except os.error:
+        pass
+
+def remove_existing_databases():
+    my_sane_remove_wrapper("assignee.sqlite3")
+    my_sane_remove_wrapper("inventor.sqlite3")
+    my_sane_remove_wrapper("hashTbl.sqlite4")
+
 
 def make_assignee_db():
     conn = sqlite3.connect("assignee.sqlite3")

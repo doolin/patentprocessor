@@ -11,16 +11,11 @@ from make_test_databases import *
 from geocode_setup import *
 
 
-def my_sane_remove_wrapper(filename):
-    try:
-        os.remove(filename)
-    except os.error:
-        pass
-
 class TestGeocodeSetup(unittest.TestCase):
 
     @classmethod
     def setUpClass(self):
+        remove_existing_databases()
         self.conn = get_connection("hashTbl.sqlite3")
         self.c = get_cursor(self.conn)
         create_sql_helper_functions(self.conn)
@@ -28,9 +23,7 @@ class TestGeocodeSetup(unittest.TestCase):
         loc_create_table(self.c)
 
     def setUp(self):
-        # These aren't in the right place.
-        my_sane_remove_wrapper("assignee.sqlite3")
-        my_sane_remove_wrapper("inventor.sqlite3")
+        pass
 
     def test_fix_city_country(self):
         make_assignee_db()
@@ -57,8 +50,6 @@ class TestGeocodeSetup(unittest.TestCase):
 
     @classmethod
     def tearDownClass(self):
-        # Comment out the removal to examine hashTbl after test
-        #my_sane_remove_wrapper("hashTbl.sqlite4")
         pass
 
 if __name__ == '__main__':
