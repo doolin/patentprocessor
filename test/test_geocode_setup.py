@@ -11,6 +11,12 @@ from make_test_databases import *
 from geocode_setup import *
 
 
+def my_sane_remove_wrapper(filename):
+    try:
+        os.remove(filename)
+    except os.error:
+        pass
+
 class TestGeocodeSetup(unittest.TestCase):
 
     def setUp(self):
@@ -19,14 +25,15 @@ class TestGeocodeSetup(unittest.TestCase):
         create_sql_helper_functions(self.conn)
         geocode_db_initialize(self.c)
         loc_create_table(self.c)
+        my_sane_remove_wrapper("assignee.sqlite3")
+        my_sane_remove_wrapper("inventor.sqlite3")
 
     def test_fix_city_country(self):
         make_assignee_db()
-        os.remove("assignee.sqlite3")
         assert('FOO' == 'FOO')
 
     def test_fix_state_zip(self):
-        # os.remove("inventor.sqlite3")
+        make_inventor_db()
         assert('FOO' == 'FOO')
 
     def tearDown(self):

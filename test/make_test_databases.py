@@ -18,4 +18,16 @@ def make_assignee_db():
     conn.commit()
     conn.close()
 
-
+def make_inventor_db():
+    conn = sqlite3.connect("inventor.sqlite3")
+    f = open('../schemas/inventor.sql', 'r')
+    schema = f.read()
+    c = conn.cursor()
+    c.executescript(schema)
+    csvfile = open("./integration/consolidate/ipg120327.two/inventor.csv", 'r')
+    inventors = csv.reader(csvfile)
+    for i in inventors:
+        c.execute('INSERT INTO inventor VALUES (?,?,?,?,?,?,?,?,?,?)', i )
+    csvfile.close()
+    conn.commit()
+    conn.close()
