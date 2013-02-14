@@ -28,6 +28,7 @@ class TestGeocodeSetup(unittest.TestCase):
         loc_create_table(self.c)
 
     def setUp(self):
+        # These aren't in the right place.
         my_sane_remove_wrapper("assignee.sqlite3")
         my_sane_remove_wrapper("inventor.sqlite3")
 
@@ -45,14 +46,20 @@ class TestGeocodeSetup(unittest.TestCase):
         # to assert.
         assert('FOO' == 'FOO')
 
+    def test_create_usloc_table(self):
+        create_loc_indexes(self.conn)
+        create_usloc_table(self.c)
+        # Inpect the usloc table, find some assertion to make.
+        assert('FOO' == 'FOO')
+
     def tearDown(self):
-        print "done"
+        pass
 
     @classmethod
     def tearDownClass(self):
         # Comment out the removal to examine hashTbl after test
         #my_sane_remove_wrapper("hashTbl.sqlite4")
-        print "Done"
+        pass
 
 if __name__ == '__main__':
     unittest.main()
