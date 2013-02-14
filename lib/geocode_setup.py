@@ -95,7 +95,7 @@ def update_table_loc_from_typos(cursor):
 
 def create_table_temp_assignees(cursor):
     cursor.executescript("""
-        CREATE TEMPORARY TABLE temp AS
+       CREATE TEMPORARY TABLE temp AS
             SELECT  UPPER(City)    AS CityX,
                     UPPER(State)   AS StateX,
                     UPPER(Country) AS CountryX,
@@ -108,7 +108,7 @@ def create_table_temp_assignees(cursor):
 
 def create_table_temp_inventors(cursor):
     cursor.executescript("""
-        CREATE TEMPORARY TABLE temp AS
+       CREATE TEMPORARY TABLE temp AS
             SELECT  UPPER(City)    AS CityX,
                     UPPER(State)   AS StateX,
                     UPPER(Country) AS CountryX,
@@ -136,13 +136,13 @@ def create_table_temp_inventors_db(cursor):
 def create_table_temp2_assignees(cursor):
     cursor.executescript("""
         CREATE TEMPORARY TABLE temp2 AS
-            SELECT  sum(Cnt) as Cnt,
-                    cityctry(CityX, CountryX, 'city') as CityY,
-                    StateX as StateY,
-                    cityctry(CityX, CountryX, 'ctry') as CtryY,
-                    '' as ZipcodeY
+            SELECT  sum(Cnt)                          AS Cnt,
+                    cityctry(CityX, CountryX, 'city') AS CityY,
+                    StateX                            AS StateY,
+                    cityctry(CityX, CountryX, 'ctry') AS CtryY,
+                    ''                                AS ZipcodeY
               FROM  temp
-             WHERE  CityY!=""
+             WHERE  CityY != ""
           GROUP BY  CityY, StateY, CtryY;
         """)
 
@@ -150,13 +150,13 @@ def create_table_temp2_assignees(cursor):
 def create_table_temp2_inventors(cursor):
     cursor.executescript("""
         CREATE TEMPORARY TABLE temp2 AS
-            SELECT  sum(Cnt) as Cnt,
-                    cityctry(CityX, CountryX, 'city') as CityY,
-                    StateX as StateY,
-                    cityctry(CityX, CountryX, 'ctry') as CtryY,
-                    Zipcode as ZipcodeY
+            SELECT  sum(Cnt)                          AS Cnt,
+                    cityctry(CityX, CountryX, 'city') AS CityY,
+                    StateX                            AS StateY,
+                    cityctry(CityX, CountryX, 'ctry') AS CtryY,
+                    Zipcode                           AS ZipcodeY
               FROM  temp
-             WHERE  CityY!=""
+             WHERE  CityY != ""
           GROUP BY  CityY, StateY, CtryY, ZipcodeY;
         """)
 
