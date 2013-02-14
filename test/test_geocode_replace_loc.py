@@ -26,9 +26,9 @@ class TestGeocode(unittest.TestCase):
 
     def test_domestic_sql(self):
         query = domestic_sql() % (-1, -1)
-        print query
+        #print query
         result = self.cursor.execute(query)
-        print result
+        #print result
         pass
 
 
