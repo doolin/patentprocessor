@@ -10,7 +10,7 @@ def make_assignee_db():
     schema = f.read()
     c = conn.cursor()
     c.executescript(schema)
-    csvfile = open("./integration/consolidate/ipg120327.two/assignee.csv", 'r')
+    csvfile = open("./integration/parse/ipg120327.two/assignee.csv", 'r')
     assignees = csv.reader(csvfile)
     for a in assignees:
         c.execute('INSERT INTO assignee VALUES (?,?,?,?,?,?,?,?,?)', a )
@@ -24,7 +24,7 @@ def make_inventor_db():
     schema = f.read()
     c = conn.cursor()
     c.executescript(schema)
-    csvfile = open("./integration/consolidate/ipg120327.two/inventor.csv", 'r')
+    csvfile = open("./integration/parse/ipg120327.two/inventor.csv", 'r')
     inventors = csv.reader(csvfile)
     for i in inventors:
         c.execute('INSERT INTO inventor VALUES (?,?,?,?,?,?,?,?,?,?)', i )

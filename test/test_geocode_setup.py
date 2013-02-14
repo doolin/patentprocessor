@@ -19,26 +19,35 @@ def my_sane_remove_wrapper(filename):
 
 class TestGeocodeSetup(unittest.TestCase):
 
-    def setUp(self):
+    @classmethod
+    def setUpClass(self):
         self.conn = get_connection("hashTbl.sqlite3")
         self.c = get_cursor(self.conn)
         create_sql_helper_functions(self.conn)
         geocode_db_initialize(self.c)
         loc_create_table(self.c)
+
+    def setUp(self):
         my_sane_remove_wrapper("assignee.sqlite3")
         my_sane_remove_wrapper("inventor.sqlite3")
 
     def test_fix_city_country(self):
         make_assignee_db()
+        fix_city_country(self.c)
         assert('FOO' == 'FOO')
 
     def test_fix_state_zip(self):
         make_inventor_db()
+        fix_state_zip(self.c)
         assert('FOO' == 'FOO')
 
     def tearDown(self):
-        # os.remove("hashTbl.sqlite3")
         print "done"
+
+    @classmethod
+    def tearDownClass(self):
+        my_sane_remove_wrapper("hashTbl.sqlite3")
+        print "Done"
 
 if __name__ == '__main__':
     unittest.main()
