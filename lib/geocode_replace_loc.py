@@ -485,15 +485,15 @@ def foreign_first3_2nd_jaro_winkler_sql():
 
       stmt = """SELECT  24+jarow(blk_split(a.NCity),
                 b.sort_name_ro) AS Jaro,
-                a.cnt as cnt,
-                a.city as CityA,
-                a.state as StateA,
-                a.country as CountryA,
-                a.zipcode as ZipcodeA,
+                a.cnt     AS cnt,
+                a.city    AS CityA,
+                a.state   AS StateA,
+                a.country AS CountryA,
+                a.zipcode AS ZipcodeA,
                 b.full_name_nd_ro,
-                '' as state,
+                ''        AS state,
                 b.cc1,
-                '' as zip,
+                ''        AS zip,
                 b.lat,
                 b.long
           FROM  (SELECT  * FROM  loc WHERE  NCity IS NOT NULL) AS a
@@ -510,19 +510,23 @@ def domestic_zipcode_sql():
       print sys._getframe().f_code.co_name
 
       stmt = """SELECT  31,
-                a.cnt as cnt,
-                a.city as CityA,
-                a.state as StateA,
-                a.country as CountryA,
-                a.zipcode as ZipcodeA,
+                a.cnt     AS cnt,
+                a.city    AS CityA,
+                a.state   AS StateA,
+                a.country AS CountryA,
+                a.zipcode AS ZipcodeA,
                 b.City,
                 b.State,
                 'US',
                 b.zipcode,
                 b.latitude,
                 b.longitude
-          FROM  (SELECT  *, (SEP_WRD(zipcode,0)+0) as Zip2 FROM loc WHERE  Zipcode != '' AND Country = 'US') AS a
-    INNER JOIN usloc AS b
+          FROM  (SELECT  *,
+                         (SEP_WRD(zipcode,0)+0) as Zip2
+                   FROM  loc
+                  WHERE  Zipcode != ''
+                    AND  Country = 'US') AS a
+    INNER JOIN  usloc AS b
             ON  a.Zip2 = b.Zipcode"""
       return stmt;
 
