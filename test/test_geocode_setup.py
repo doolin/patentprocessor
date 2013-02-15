@@ -30,14 +30,18 @@ class TestGeocodeSetup(unittest.TestCase):
         fix_city_country(self.c)
         # Inspect loc table in hashTbl, find something
         # to assert.
-        assert('FOO' == 'FOO')
+        rows = self.c.execute('select * from loc').fetchall()
+        #print rows
+        pass
 
     def test_fix_state_zip(self):
         make_inventor_db()
         fix_state_zip(self.c)
         # Inspect loc table in hashTbl, find something
         # to assert.
-        assert('FOO' == 'FOO')
+        rows = self.c.execute('select * from loc').fetchall()
+        #print rows
+        pass
 
     def test_create_usloc_table(self):
         create_loc_indexes(self.conn)
